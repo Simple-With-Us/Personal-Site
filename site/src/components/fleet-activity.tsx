@@ -14,6 +14,11 @@ import { site } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 const PARSE_MAX_DAYS = 60;
+const PRIVATE_DESTINATION = /(?:fleet-ops|mac\.jays\.services|board\.jays\.services|control\.jays\.services)/i;
+
+function isPublicItem(item: DigestItem): boolean {
+  return item.repo !== "OPS" && !(item.href && PRIVATE_DESTINATION.test(item.href));
+}
 
 function formatDayLabel(raw: string): string {
   const m = raw.trim().match(/^(\d{4})-(\d{2})-(\d{2})/);
@@ -137,7 +142,9 @@ function ItemRow({ item }: { item: DigestItem }) {
 }
 
 function DayBody({ day }: { day: DigestDay }) {
-  const sections = day.sections.filter((s) => s.items.length > 0);
+  const sections = day.sections
+    .map((section) => ({ ...section, items: section.items.filter(isPublicItem) }))
+    .filter((s) => s.items.length > 0);
   return (
     <div className="grid gap-4">
       {sections.length === 0 ? (
@@ -221,7 +228,7 @@ export function FleetActivity() {
               rel="noopener noreferrer"
               className="mt-3 inline-flex text-link hover:underline"
             >
-              Open the full activity site instead
+              Open the public activity digest instead
             </a>
           </div>
         ) : null}

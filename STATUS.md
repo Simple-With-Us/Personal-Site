@@ -1,5 +1,6 @@
 # Status
 
+- 2026-09-26: Codex portfolio boundary pass is in progress on `codex/web-assets-improvements`.  The TanStack source now targets six public projects, routes availability to Simple With Us, removes the private Fleet Ops card and internal destinations, and adds visible focus states.  `/start/` is now a minimal redirect to the protected operator alias.  No production deployment or DNS change was made.
 - 2026-09-17: Vercel Speed Insights is already on `main` (PR #70 squash `9c56966`, board `87efa14b`).  `@vercel/speed-insights/react` in `__root.tsx`.  Live `/_vercel/speed-insights/script.js` HTTP 200.  vercel-ignore-hourly `:(top)` pathspec is PR #61 (`1dd093f`, board `298e80ed`).  No duplicate Speed Insights PR.
 - 2026-09-14: Host Claude's Safari start page at `/start/` for iPhone Add to Home Screen.  Source of truth is AFC `scripts/safari-start`.  Board `970746b9`.  Branch `fx/safari-start`.
 - 2026-09-13: Vercel production deploys only when `site/` changed, at most once per hour.  Previews skipped.  Stops agent spam of empty Hobby builds.  Board `0934111e`.  Branch `fx/vercel-skip-pointless`.

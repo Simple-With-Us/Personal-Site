@@ -58,9 +58,18 @@ export function HomePage() {
         <div className="mx-auto flex min-h-[7.5rem] max-w-5xl items-center px-4 py-8 sm:min-h-[8.5rem] sm:px-6 sm:py-10">
           <div className="w-full max-w-2xl">
             <HeroNameAnchor />
+            <p className="max-w-xl text-base leading-relaxed text-fg-muted sm:text-lg">
+              {withDoubleSpaces(site.tagline)}
+            </p>
             <div className="flex flex-wrap items-center gap-3">
               <Button asChild>
-                <a href="#betas">TestFlight Betas</a>
+                <a
+                  href={site.catalog.root}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Explore all apps
+                </a>
               </Button>
               <Button asChild variant="secondary">
                 <a href="#activity">View Daily Activities</a>
@@ -86,7 +95,15 @@ export function HomePage() {
 
       <section id="work" className="scroll-mt-20">
         <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 sm:py-20">
-          <SectionLabel>Work</SectionLabel>
+          <SectionLabel>Selected work</SectionLabel>
+          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-fg sm:text-3xl">
+            Public projects
+          </h2>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-fg-muted">
+            {withDoubleSpaces(
+              "A few products and tools I build.  Open a live project or read its public source, then check Simple With Us for current platform availability.",
+            )}
+          </p>
           <div className="mt-8 grid gap-4 sm:grid-cols-2">
             {site.projects.map((p) => (
               <div
@@ -116,17 +133,17 @@ export function HomePage() {
                     <h3 className="text-lg font-medium tracking-tight text-fg">{p.name}</h3>
                   </div>
                   <a
-                    href={p.href}
+                    href={p.primaryHref}
                     target="_blank"
                     rel="noopener noreferrer"
-                    aria-label={`View ${p.name} on GitHub`}
+                    aria-label={`${p.primaryLabel} ${p.name}`}
                     className="inline-flex items-center gap-1.5 rounded-full border border-border bg-bg-subtle/80 px-2.5 py-1 text-xs font-medium text-fg-muted shadow-xs transition-all duration-150 hover:border-border-strong hover:bg-bg-elevated hover:text-fg group/btn"
                   >
+                    <span>{p.primaryLabel}</span>
                     <ArrowRight
                       className="size-3.5 transition-transform group-hover/btn:translate-x-0.5"
                       aria-hidden
                     />
-                    <SocialIcon id="github" className="size-3.5" />
                   </a>
                 </div>
                 <p className="mt-3 flex-1 text-sm leading-relaxed text-fg-muted">
@@ -142,81 +159,55 @@ export function HomePage() {
                     </span>
                   ))}
                 </div>
-                {"testflight" in p && p.testflight && p.testflight.length > 0 && (
-                  <div className="mt-3.5 flex flex-wrap items-center gap-1.5 border-t border-border/50 pt-3">
-                    <span className="text-xs font-medium text-fg-subtle">TestFlight:</span>
-                    {p.testflight.map((tf) => (
-                      <a
-                        key={tf.url}
-                        href={tf.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 rounded-full border border-[#0071e3]/30 bg-[#0071e3]/10 px-2 py-0.5 text-[11px] font-medium text-[#0071e3] transition-colors hover:border-[#0071e3]/60 hover:bg-[#0071e3]/20 dark:text-[#2997ff]"
-                      >
-                        <span>{tf.platform}</span>
-                        <ExternalLink className="size-2.5" aria-hidden />
-                      </a>
-                    ))}
-                  </div>
-                )}
+                <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-border/50 pt-3">
+                  <a
+                    href={p.primaryHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-border bg-bg-subtle px-3 py-1.5 text-xs font-semibold text-fg transition-colors hover:border-border-strong hover:bg-bg-elevated"
+                  >
+                    {p.primaryLabel} app
+                    <ExternalLink className="size-3" aria-hidden />
+                  </a>
+                  <a
+                    href={p.sourceHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 rounded-full px-2 py-1.5 text-xs font-medium text-fg-muted transition-colors hover:text-fg"
+                  >
+                    <SocialIcon id="github" className="size-3.5" />
+                    Source
+                  </a>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section id="betas" className="scroll-mt-20">
+      <section id="apps" className="scroll-mt-20">
         <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 sm:py-20">
           <div className="flex flex-col gap-1">
-            <SectionLabel>Public Betas</SectionLabel>
+            <SectionLabel>Availability</SectionLabel>
             <h2 className="text-2xl font-semibold tracking-tight text-fg sm:text-3xl">
-              TestFlight Public Beta Access
+              Find the current release
             </h2>
             <p className="mt-1 text-sm text-fg-muted">
               {withDoubleSpaces(
-                "Install and test the latest beta releases directly via Apple TestFlight on iOS and macOS.",
+                "Platform availability and beta links can change.  Simple With Us keeps the current app pages, supported platforms, and next actions together.",
               )}
             </p>
           </div>
 
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-2">
-            {site.testflight.map((beta) => (
-              <div
-                key={beta.url}
-                className="flex items-center justify-between gap-4 rounded-[var(--radius-lg)] border border-border bg-bg-elevated/90 p-4 shadow-[var(--shadow-soft)] backdrop-blur-[2px] transition-all hover:border-border-strong"
-              >
-                <div className="flex min-w-0 items-center gap-3">
-                  <img
-                    src={beta.icon}
-                    alt=""
-                    width={40}
-                    height={40}
-                    className="size-10 shrink-0 rounded-[var(--radius-sm)] border border-border bg-bg object-cover shadow-[var(--shadow-soft)]"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2">
-                      <h3 className="truncate text-base font-medium text-fg">{beta.name}</h3>
-                      <span className="inline-flex shrink-0 items-center rounded-full border border-border bg-bg-subtle px-2 py-0.5 text-[10px] font-semibold text-fg-muted">
-                        {beta.platform}
-                      </span>
-                    </div>
-                    <p className="truncate text-xs text-fg-muted">{beta.blurb}</p>
-                  </div>
-                </div>
-                <a
-                  href={beta.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-[#0071e3]/40 bg-[#0071e3] px-3.5 py-1.5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-[#0077ed] hover:shadow-sm dark:bg-[#0071e3] dark:hover:bg-[#0077ed]"
-                >
-                  <span>Join</span>
-                  <ExternalLink className="size-3" aria-hidden />
-                </a>
-              </div>
-            ))}
-          </div>
+          <a
+            href={site.catalog.root}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-6 inline-flex items-center gap-2 rounded-[var(--radius-sm)] bg-accent px-4 py-2.5 text-sm font-medium text-accent-fg transition-opacity hover:opacity-90"
+          >
+            Open Simple With Us
+            <ExternalLink className="size-3.5" aria-hidden />
+          </a>
         </div>
       </section>
 

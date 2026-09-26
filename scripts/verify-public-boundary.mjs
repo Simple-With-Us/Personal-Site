@@ -1,12 +1,30 @@
-import { readFile } from "node:fs/promises";
+import { readFile, readdir } from "node:fs/promises";
 
-const files = {
-  site: new URL("../site/src/lib/site.ts", import.meta.url),
-  catalog: new URL("../site/src/lib/public-catalog.ts", import.meta.url),
-  home: new URL("../site/src/components/home-page.tsx", import.meta.url),
-  start: new URL("../site/public/start/index.html", import.meta.url),
-  agents: new URL("../AGENTS.md", import.meta.url),
-};
+const roots = [
+  new URL("../site/src/", import.meta.url),
+  new URL("../site/public/", import.meta.url),
+];
+const textExtensions = new Set([".css", ".html", ".json", ".js", ".md", ".ts", ".tsx"]);
+
+async function textFiles(root) {
+  const entries = await readdir(root, { withFileTypes: true });
+  const nested = await Promise.all(
+    entries.map(async (entry) => {
+      const url = new URL(entry.name, root);
+      if (entry.isDirectory()) return textFiles(new URL(`${entry.name}/`, root));
+      const extension = entry.name.slice(entry.name.lastIndexOf("."));
+      return textExtensions.has(extension) ? [url] : [];
+    }),
+  );
+  return nested.flat();
+}
+
+const files = Object.fromEntries(
+  [
+    ...(await Promise.all(roots.map(textFiles))).flat(),
+    new URL("../AGENTS.md", import.meta.url),
+  ].map((url) => [url.pathname, url]),
+);
 
 const contents = Object.fromEntries(
   await Promise.all(
@@ -14,7 +32,7 @@ const contents = Object.fromEntries(
   ),
 );
 
-const publicSource = `${contents.site}\n${contents.catalog}\n${contents.home}\n${contents.start}\n${contents.agents}`;
+const publicSource = Object.values(contents).join("\n");
 const forbiddenPrivateDestinations = [
   /https?:\/\/github\.com\/jaywedgeworth22\/fleet-ops/i,
   /https?:\/\/(?:mac|board|control)\.jays\.services/i,
@@ -26,12 +44,16 @@ for (const pattern of forbiddenPrivateDestinations) {
   }
 }
 
-const projectCount = (contents.site.match(/\bkey: \"/g) ?? []).length;
+const siteSource =
+  Object.entries(contents).find(([path]) => path.endsWith("/site/src/lib/site.ts"))?.[1] ?? "";
+const catalogSource =
+  Object.entries(contents).find(([path]) => path.endsWith("/site/src/lib/public-catalog.ts"))?.[1] ?? "";
+const projectCount = (siteSource.match(/\bkey: \"/g) ?? []).length;
 if (projectCount !== 6) {
   throw new Error(`expected six selected projects, found ${projectCount}`);
 }
 
-if (!contents.site.includes("Earlier work included")) {
+if (!siteSource.includes("Earlier work included")) {
   throw new Error("required About work-history copy is missing");
 }
 
@@ -39,7 +61,7 @@ if (/testflight\.apple\.com\/join/i.test(publicSource)) {
   throw new Error("portfolio source contains a duplicated TestFlight invite");
 }
 
-for (const match of contents.catalog.matchAll(/:\s*\"(https:\/\/[^\"]+)\"/g)) {
+for (const match of catalogSource.matchAll(/:\s*\"(https:\/\/[^\"]+)\"/g)) {
   new URL(match[1]);
 }
 

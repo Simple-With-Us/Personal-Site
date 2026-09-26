@@ -18,4 +18,4 @@ Codex updated the Personal-Site TanStack source on `codex/web-assets-improvement
 
 ## Validation
 
-Cheap checks passed for `git diff --check` and `node scripts/verify-public-boundary.mjs`.  Dependency installation and `npm run typecheck` were stopped because the Mac reported severe load and swap pressure; root should run `cd site && npm run typecheck && npm run build` after resources recover.  No production deployment, DNS change, snapshot rewrite, or telemetry change was made.
+Cheap checks passed for `git diff --check` and `node scripts/verify-public-boundary.mjs`, which scans all text under `site/src` and `site/public` plus public `AGENTS.md` for private destinations and duplicate beta invites.  GitHub CI passed typecheck, lint, build, Playwright e2e, verify, and gitleaks.  No production deployment, DNS change, snapshot rewrite, or telemetry change was made.

@@ -2,7 +2,7 @@
 
 Canonical repository for **[jays.services](https://jays.services)** and **[jaywedgeworth.com](https://jaywedgeworth.com)**.
 
-Public work on the site is Socratic Trade, Congress.Trade, Usage Monitor, DealDex, Autorotate, ContactLogo, and AI Fleet Coordinator.  Crest and BadgeBook combined into ContactLogo (`jaywedgeworth22/ContactLogo`, site contactlogo.com).  This personal site deploys from GitHub `main` → `site/`, behind Cloudflare.
+The portfolio highlights Socratic Trade, Congress.Trade, Usage Monitor, DealDex, ContactLogo, and BotFleet.  Current app pages and platform availability are maintained in Simple With Us; public source links remain on each project card.  Crest and BadgeBook combined into ContactLogo (`jaywedgeworth22/ContactLogo`, site contactlogo.com).  This personal site deploys from GitHub `main` → `site/`, behind Cloudflare.
 
 ## Layout
 

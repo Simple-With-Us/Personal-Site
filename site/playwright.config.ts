@@ -18,6 +18,10 @@ export default defineConfig({
   // the smoke test before any visual specs existed).  Retry once on CI so a
   // cold dev server does not red the job; visual assertions stay strict.
   retries: process.env.CI ? 1 : 0,
+  // Run serially: concurrent tests hammering a cold dev server worsen the
+  // warm-up flake, and serial order lets the smoke test warm the server for
+  // the visual specs.
+  workers: 1,
   reporter: 'list',
   use: { baseURL },
   projects: [{ name: 'chromium', use: { browserName: 'chromium' } }],

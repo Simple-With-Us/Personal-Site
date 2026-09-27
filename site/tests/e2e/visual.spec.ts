@@ -5,6 +5,16 @@ import { test, expect, type Page } from '@playwright/test';
 // regions are masked, never snapshotted raw: the activity feed varies with
 // the live digest API, and the media section embeds third-party iframes
 // (Sketchfab, YouTube) whose content is outside our control.
+const DIGEST_URL = 'https://jaywedgeworth22.github.io/AI-Fleet-Coordinator/digest.md';
+
+// The fleet digest is a live network fetch: abort it so the activity feed
+// always renders its deterministic fallback, in CI and locally alike.
+// (The section is masked regardless; this keeps page height stable too.)
+// Must be called before page.goto().
+async function blockDigest(page: Page) {
+  await page.route(DIGEST_URL, (route) => route.abort());
+}
+
 async function settlePage(page: Page) {
   // App icons and social icons are loading="lazy", so they only fetch near
   // the viewport.  Walk to the bottom to trigger every image, wait for them
@@ -24,6 +34,7 @@ async function settlePage(page: Page) {
 
 test.describe('visual', () => {
   test('homepage', async ({ page }) => {
+    await blockDigest(page);
     await page.goto('/');
     await page.waitForLoadState('networkidle');
     await settlePage(page);

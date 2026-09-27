@@ -46,6 +46,8 @@ for (const pattern of forbiddenPrivateDestinations) {
 
 const siteSource =
   Object.entries(contents).find(([path]) => path.endsWith("/site/src/lib/site.ts"))?.[1] ?? "";
+const homeSource =
+  Object.entries(contents).find(([path]) => path.endsWith("/site/src/components/home-page.tsx"))?.[1] ?? "";
 const catalogSource =
   Object.entries(contents).find(([path]) => path.endsWith("/site/src/lib/public-catalog.ts"))?.[1] ?? "";
 const projectCount = (siteSource.match(/\bkey: \"/g) ?? []).length;
@@ -59,6 +61,18 @@ if (!siteSource.includes("Earlier work included")) {
 
 if (/testflight\.apple\.com\/join/i.test(publicSource)) {
   throw new Error("portfolio source contains a duplicated TestFlight invite");
+}
+
+if (publicSource.includes("https://jaywedgeworth22.github.io/ai-fleet-coordinator")) {
+  throw new Error("portfolio source contains the case-sensitive digest URL variant");
+}
+
+if (homeSource.includes("{p.primaryLabel} app")) {
+  throw new Error("project CTA still appends an inaccurate generic suffix");
+}
+
+if (homeSource.includes('allow="autoplay; fullscreen; xr-spatial-tracking"')) {
+  throw new Error("Sketchfab should not load with autoplay enabled");
 }
 
 for (const match of catalogSource.matchAll(/:\s*\"(https:\/\/[^\"]+)\"/g)) {

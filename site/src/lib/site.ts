@@ -5,7 +5,7 @@ export type Project = {
   name: string;
   blurb: string;
   primaryHref: string;
-  primaryLabel: "Open" | "Details";
+  primaryLabel: "Visit website" | "View details";
   sourceHref: string;
   tags: readonly string[];
   icon?: string;
@@ -55,7 +55,7 @@ export const site = {
       blurb:
         "Review AI-generated trading proposals and manage execution with your broker.  Live at SocraticTrade.com.",
       primaryHref: publicCatalog.websites.socraticTrade,
-      primaryLabel: "Open",
+      primaryLabel: "Visit website",
       sourceHref: "https://github.com/jaywedgeworth22/Socratic.Trade",
       tags: ["Markets", "Trading", "Web"],
       icon: "/app-icons/st.png",
@@ -67,7 +67,7 @@ export const site = {
       blurb:
         "Explore public trading disclosures, filter by person, company, and filing date, then inspect the source.  Live at Congress.Trade.",
       primaryHref: publicCatalog.websites.congressTrade,
-      primaryLabel: "Open",
+      primaryLabel: "Visit website",
       sourceHref: "https://github.com/jaywedgeworth22/Congress.Trade",
       tags: ["Markets", "Disclosures", "Web"],
       icon: "/app-icons/ct.png",
@@ -79,7 +79,7 @@ export const site = {
       blurb:
         "Review provider usage, balances, and costs from a server-backed dashboard.  Details and platform availability are listed in Simple With Us.",
       primaryHref: publicCatalog.pages.usageClient,
-      primaryLabel: "Details",
+      primaryLabel: "View details",
       sourceHref: "https://github.com/jaywedgeworth22/Usage-Monitor",
       tags: ["Usage", "Costs", "Dashboard"],
       icon: "/app-icons/um.png",
@@ -91,7 +91,7 @@ export const site = {
       blurb:
         "Compare collectible card prices across marketplaces and inspect the sources.  Live at DealDex.net.",
       primaryHref: publicCatalog.websites.dealDex,
-      primaryLabel: "Open",
+      primaryLabel: "Visit website",
       sourceHref: "https://github.com/jaywedgeworth22/DealDex",
       tags: ["Prices", "Sources", "Web"],
       icon: "/app-icons/dd.png",
@@ -103,7 +103,7 @@ export const site = {
       blurb:
         "Recognize business contacts at a glance, then review suggested logos before applying them.  Live at ContactLogo.com.",
       primaryHref: publicCatalog.websites.contactLogo,
-      primaryLabel: "Open",
+      primaryLabel: "Visit website",
       sourceHref: "https://github.com/jaywedgeworth22/ContactLogo",
       tags: ["Contacts", "Review", "Web"],
       icon: "/app-icons/cl.png",
@@ -115,7 +115,7 @@ export const site = {
       blurb:
         "Run your AI bots from one workspace.  Explore BotFleet.app for current platform availability.",
       primaryHref: publicCatalog.websites.botfleet,
-      primaryLabel: "Open",
+      primaryLabel: "Visit website",
       sourceHref: "https://github.com/jaywedgeworth22/BotFleet",
       tags: ["AI", "Workspace", "Web"],
       icon: "/app-icons/bf.png",
@@ -146,12 +146,12 @@ export const site = {
     youtube: "https://www.youtube.com/embed/GkrkEgaQqcg",
   },
   fleet: {
-    html: "https://jaywedgeworth22.github.io/ai-fleet-coordinator/",
-    markdown: "https://jaywedgeworth22.github.io/ai-fleet-coordinator/digest.md",
+    html: "https://jaywedgeworth22.github.io/AI-Fleet-Coordinator/",
+    markdown: "https://jaywedgeworth22.github.io/AI-Fleet-Coordinator/digest.md",
     icsDaily:
-      "https://jaywedgeworth22.github.io/ai-fleet-coordinator/calendar/daily-digest.ics",
+      "https://jaywedgeworth22.github.io/AI-Fleet-Coordinator/calendar/daily-digest.ics",
     icsCommits:
-      "https://jaywedgeworth22.github.io/ai-fleet-coordinator/calendar/agent-activity.ics",
+      "https://jaywedgeworth22.github.io/AI-Fleet-Coordinator/calendar/agent-activity.ics",
   },
 } as const;
 

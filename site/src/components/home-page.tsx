@@ -1,4 +1,5 @@
 import { ArrowRight, ExternalLink } from "lucide-react";
+import { useState } from "react";
 import { site } from "@/lib/site";
 import { FleetActivity } from "@/components/fleet-activity";
 import { HeroNameAnchor } from "@/components/morphing-name";
@@ -49,6 +50,46 @@ function renderBlurbWithLinks(text: string): React.ReactNode {
   }
 
   return nodes;
+}
+
+function SketchfabMedia() {
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  return (
+    <div className="relative aspect-video w-full bg-bg-subtle">
+      {isLoaded ? (
+        <iframe
+          title="Spaceport3D on Sketchfab"
+          src={site.media.sketchfab}
+          className="absolute inset-0 h-full w-full border-0"
+          allow="fullscreen; xr-spatial-tracking"
+          allowFullScreen
+          loading="lazy"
+        />
+      ) : (
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center">
+          <p className="text-sm text-fg-muted">Interactive 3D model</p>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <button
+              type="button"
+              onClick={() => setIsLoaded(true)}
+              className="rounded-[var(--radius-sm)] bg-accent px-3 py-2 text-sm font-medium text-accent-fg transition-opacity hover:opacity-90"
+            >
+              Load model
+            </button>
+            <a
+              href="https://sketchfab.com/Spaceport3D"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-link hover:underline"
+            >
+              Open model
+            </a>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 export function HomePage() {
@@ -166,7 +207,7 @@ export function HomePage() {
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1.5 rounded-full border border-border bg-bg-subtle px-3 py-1.5 text-xs font-semibold text-fg transition-colors hover:border-border-strong hover:bg-bg-elevated"
                   >
-                    {p.primaryLabel} app
+                    {p.primaryLabel}
                     <ExternalLink className="size-3" aria-hidden />
                   </a>
                   <a
@@ -216,16 +257,7 @@ export function HomePage() {
           <SectionLabel>Media</SectionLabel>
           <div className="mt-8 grid gap-6 lg:grid-cols-2">
             <div className="overflow-hidden rounded-[var(--radius-lg)] border border-border bg-bg-elevated/90 shadow-[var(--shadow-soft)] backdrop-blur-[2px]">
-              <div className="relative aspect-video w-full bg-bg-subtle">
-                <iframe
-                  title="Spaceport3D on Sketchfab"
-                  src={site.media.sketchfab}
-                  className="absolute inset-0 h-full w-full border-0"
-                  allow="autoplay; fullscreen; xr-spatial-tracking"
-                  allowFullScreen
-                  loading="lazy"
-                />
-              </div>
+              <SketchfabMedia />
               <div className="flex items-center justify-between gap-3 border-t border-border px-4 py-3">
                 <p className="text-sm text-fg-muted">Sketchfab · Spaceport3D</p>
                 <a
@@ -234,7 +266,7 @@ export function HomePage() {
                   rel="noopener noreferrer"
                   className="text-sm text-link hover:underline"
                 >
-                  Open
+                  Open model
                 </a>
               </div>
             </div>

@@ -77,7 +77,9 @@ if (homeSource.includes('allow="autoplay; fullscreen; xr-spatial-tracking"')) {
   throw new Error("Sketchfab should not load with autoplay enabled");
 }
 
-if (!homeSource.includes("site.media.sketchfabModel")) {
+const sketchfabModelUrl =
+  "https://sketchfab.com/3d-models/south-texas-launch-site-with-sn15-33cd23b2245b422e926b37d2172e3e4e";
+if (!siteSource.includes(sketchfabModelUrl) || !homeSource.includes("site.media.sketchfabModel")) {
   throw new Error("Sketchfab links should use the specific model destination");
 }
 

@@ -60,6 +60,11 @@ test.describe('visual', () => {
       fullPage: true,
       animations: 'disabled',
       timeout: 15000,
+      // Bundled Lato ensures identical glyph shapes, but FreeType versions
+      // differ in subpixel anti-aliasing.  Tolerate small per-pixel color
+      // differences and up to 2% differing pixels.
+      threshold: 0.4,
+      maxDiffPixelRatio: 0.02,
       mask: [page.locator('#activity'), page.locator('#media')],
     });
   });
@@ -74,6 +79,9 @@ test.describe('visual', () => {
       fullPage: true,
       animations: 'disabled',
       timeout: 15000,
+      // Same anti-aliasing tolerance as the homepage test.
+      threshold: 0.4,
+      maxDiffPixelRatio: 0.02,
     });
   });
 });

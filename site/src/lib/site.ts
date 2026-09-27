@@ -5,11 +5,11 @@ export type Project = {
   name: string;
   blurb: string;
   primaryHref: string;
-  primaryLabel: "Visit website" | "View details";
-  sourceHref: string;
-  tags: readonly string[];
+  primaryLabel: "Visit website" | "View app" | "View source";
+  sourceHref?: string;
+  category: "Coding" | "Financial" | "Utility";
   icon?: string;
-  acronym?: string;
+  editions?: readonly { name: string; href: string; icon: string }[];
 };
 
 export const site = {
@@ -27,7 +27,7 @@ export const site = {
     "https://cdn.myportfolio.com/b0e28c58-4665-4144-92af-be86ffe7c576/580ae635-0852-46ab-93a9-0b63612c9488_rwc_0x0x1289x864x1289.png?h=ee5eb6a7bc277f48f2c0c473556d4d06",
   tagline: "Building software for AI workflows, markets, and everyday tasks.",
   about: [
-    "I build software for market analysis, AI workflows, API usage, and coordination tools.",
+    "I build software for market analysis, AI workflows, usage monitoring, and everyday utilities.",
     "Earlier work included 3D photogrammetry, aerial videography, managing construction projects with a SpaceX contractor, municipal lobbying and government relations, VoIP communication, and assisting the Visual Impairment and Intracranial Pressure team at NASA.",
     "Studied medicine at UTHealth San Antonio School of Medicine and UTRGV, public health at UTHealth Houston and George Washington University, and biochemistry at Baylor University.",
   ],
@@ -50,76 +50,114 @@ export const site = {
   ],
   projects: [
     {
-      key: "st",
-      name: "Socratic Trade",
-      blurb:
-        "Review AI-generated trading proposals and manage execution with your broker.  Live at SocraticTrade.com.",
-      primaryHref: publicCatalog.websites.socraticTrade,
-      primaryLabel: "Visit website",
-      sourceHref: "https://github.com/jaywedgeworth22/Socratic.Trade",
-      tags: ["Markets", "Trading", "Web"],
-      icon: "/app-icons/st.png",
-      acronym: "ST",
-    },
-    {
-      key: "ct",
-      name: "Congress.Trade",
-      blurb:
-        "Explore public trading disclosures, filter by person, company, and filing date, then inspect the source.  Live at Congress.Trade.",
-      primaryHref: publicCatalog.websites.congressTrade,
-      primaryLabel: "Visit website",
-      sourceHref: "https://github.com/jaywedgeworth22/Congress.Trade",
-      tags: ["Markets", "Disclosures", "Web"],
-      icon: "/app-icons/ct.png",
-      acronym: "CT",
+      key: "cc",
+      name: "CodeCaps",
+      blurb: "See supported AI coding quotas and reset windows from the Mac menu bar.",
+      primaryHref: publicCatalog.pages.codeCaps,
+      primaryLabel: "View app",
+      sourceHref: "https://github.com/jaywedgeworth22/codecaps",
+      category: "Coding",
+      icon: "/app-icons/cc.png",
     },
     {
       key: "um",
       name: "Usage Monitor",
-      blurb:
-        "Review provider usage, balances, and costs from a server-backed dashboard.  Details and platform availability are listed in Simple With Us.",
-      primaryHref: publicCatalog.pages.usageClient,
-      primaryLabel: "View details",
+      blurb: "Check provider usage through a self-hosted server or directly on iPhone.",
+      primaryHref: publicCatalog.websites.usageMonitor,
+      primaryLabel: "Visit website",
       sourceHref: "https://github.com/jaywedgeworth22/Usage-Monitor",
-      tags: ["Usage", "Costs", "Dashboard"],
-      icon: "/app-icons/um.png",
-      acronym: "UM",
+      category: "Coding",
+      editions: [
+        { name: "Client", href: publicCatalog.pages.usageClient, icon: "/app-icons/usage-client.png" },
+        { name: "Local", href: publicCatalog.pages.usageLocal, icon: "/app-icons/usage-local.png" },
+      ],
+    },
+    {
+      key: "hr",
+      name: "Harness",
+      blurb: "Run a local agent harness with DeepSeek and MiniMax support.",
+      primaryHref: "https://github.com/jaywedgeworth22/Harness",
+      primaryLabel: "View source",
+      category: "Coding",
+      icon: "/app-icons/hr.svg",
+    },
+    {
+      key: "mm",
+      name: "MiniMax Remote",
+      blurb: "Follow MiniMax Code sessions on an iPhone paired with a Mac.",
+      primaryHref: publicCatalog.pages.miniMaxRemote,
+      primaryLabel: "View app",
+      category: "Coding",
+      icon: "/app-icons/mm.png",
+    },
+    {
+      key: "bf",
+      name: "BotFleet",
+      blurb: "Run and inspect AI bots from one workspace.",
+      primaryHref: publicCatalog.websites.botfleet,
+      primaryLabel: "Visit website",
+      sourceHref: "https://github.com/jaywedgeworth22/BotFleet",
+      category: "Coding",
+      icon: "/app-icons/bf.png",
+    },
+    {
+      key: "st",
+      name: "Socratic Trade",
+      blurb: "Review AI-generated trading proposals and manage broker execution.",
+      primaryHref: publicCatalog.websites.socraticTrade,
+      primaryLabel: "Visit website",
+      sourceHref: "https://github.com/jaywedgeworth22/Socratic-Trade",
+      category: "Financial",
+      icon: "/app-icons/st.png",
+    },
+    {
+      key: "ct",
+      name: "Congress.Trade",
+      blurb: "Explore public trading disclosures and inspect source filings.",
+      primaryHref: publicCatalog.websites.congressTrade,
+      primaryLabel: "Visit website",
+      sourceHref: "https://github.com/jaywedgeworth22/Congress.Trade",
+      category: "Financial",
+      icon: "/app-icons/ct.png",
     },
     {
       key: "dd",
-      name: "DealDex.net",
-      blurb:
-        "Compare collectible card prices across marketplaces and inspect the sources.  Live at DealDex.net.",
+      name: "DealDex",
+      blurb: "Compare Pokémon card listing prices across marketplaces and available sources.",
       primaryHref: publicCatalog.websites.dealDex,
       primaryLabel: "Visit website",
       sourceHref: "https://github.com/jaywedgeworth22/DealDex",
-      tags: ["Prices", "Sources", "Web"],
+      category: "Utility",
       icon: "/app-icons/dd.png",
-      acronym: "DD",
     },
     {
       key: "cl",
       name: "ContactLogo",
-      blurb:
-        "Recognize business contacts at a glance, then review suggested logos before applying them.  Live at ContactLogo.com.",
+      blurb: "Review suggested company logos before applying them to contacts.",
       primaryHref: publicCatalog.websites.contactLogo,
       primaryLabel: "Visit website",
       sourceHref: "https://github.com/jaywedgeworth22/ContactLogo",
-      tags: ["Contacts", "Review", "Web"],
+      category: "Utility",
       icon: "/app-icons/cl.png",
-      acronym: "CL",
     },
     {
-      key: "bf",
-      name: "BotFleet.app",
-      blurb:
-        "Run your AI bots from one workspace.  Explore BotFleet.app for current platform availability.",
-      primaryHref: publicCatalog.websites.botfleet,
-      primaryLabel: "Visit website",
-      sourceHref: "https://github.com/jaywedgeworth22/BotFleet",
-      tags: ["AI", "Workspace", "Web"],
-      icon: "/app-icons/bf.png",
-      acronym: "BF",
+      key: "ar",
+      name: "Autorotate",
+      blurb: "Manage supported credential rotations with verification and an audit trail.",
+      primaryHref: publicCatalog.pages.autorotate,
+      primaryLabel: "View app",
+      sourceHref: "https://github.com/jaywedgeworth22/Autorotate",
+      category: "Utility",
+      icon: "/app-icons/ar.png",
+    },
+    {
+      key: "hh",
+      name: "HogHunter",
+      blurb: "See which Mac processes use the most CPU and memory.",
+      primaryHref: "https://github.com/jaywedgeworth22/HogHunter",
+      primaryLabel: "View source",
+      category: "Utility",
+      icon: "/app-icons/hh.png",
     },
   ] satisfies Project[],
   appIcons: {
@@ -132,7 +170,7 @@ export const site = {
     PS: "/app-icons/ps.png",
     CC: "/app-icons/cc.png",
     MM: "/app-icons/mm.png",
-    HR: "/app-icons/hr.png",
+    HR: "/app-icons/hr.svg",
     HH: "/app-icons/hh.png",
     CTS: "/app-icons/fleet.png",
     AFC: "/app-icons/fleet.png",

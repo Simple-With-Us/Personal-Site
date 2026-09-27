@@ -1,5 +1,6 @@
 # Status
 
+- 2026-09-27: Codex is updating the public portfolio to the 11-family app catalog.  Usage Monitor Client and Local remain separately linked within one family card.  Current ST and Usage icons, Simple With Us artwork, category labels, and copy are being checked in `codex/portfolio-branding-20260927` (board `47564913`).  Production deployment has not yet been verified.
 - 2026-09-26: Codex portfolio boundary pass is completed and deployed from PRs #96 and #99 (`af968ba8`, `73b9872e`).  Vercel deployment `3hNFiCaAcZBGGuuTpKvAo9imiTLR` is Ready/Production with `jaywedgeworth.com` assigned; `jays.services` and `jaywedgeworth.com` both served the six public projects, exact Sketchfab model URL, and `/start/` redirect without FleetOPS/private-board URLs or effort-board text.  No DNS change was made.
 - 2026-09-17: Vercel Speed Insights is already on `main` (PR #70 squash `9c56966`, board `87efa14b`).  `@vercel/speed-insights/react` in `__root.tsx`.  Live `/_vercel/speed-insights/script.js` HTTP 200.  vercel-ignore-hourly `:(top)` pathspec is PR #61 (`1dd093f`, board `298e80ed`).  No duplicate Speed Insights PR.
 - 2026-09-14: Host Claude's Safari start page at `/start/` for iPhone Add to Home Screen.  Source of truth is AFC `scripts/safari-start`.  Board `970746b9`.  Branch `fx/safari-start`.

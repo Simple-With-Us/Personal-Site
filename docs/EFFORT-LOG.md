@@ -13,6 +13,7 @@ Protocol: /Users/jay/apps/EFFORT-LOG-PROTOCOL.md (canonical). Live board: this f
 - **2026-09-13 — FX — IN PROGRESS — Stop advertising Autorotate.Codes as a live host (`fx/dead-links-hoghunter`, worktree `~/apps/personal-fx-links`, board `56fea494`).**  NXDOMAIN.  Card/digest/TestFlight say Autorotate.  Hog Hunter added as local-only.
 
 ## In Progress
+- **2026-09-27 - CODEX - IN_PROGRESS - Personal-Site public app catalog, branding, and copy parity with Simple With Us.** <!-- wb-agent-report:47564913f76c46da93d82a647c831a30 -->
 - **2026-09-01 — GROK — IN PROGRESS — Datadog Free-tier fail-closed: `prod`→`production`, error-only logs, us5 fallback (board `ad678866`, branch `grok/datadog-free-tier`, worktree `~/apps/personal-grok-datadog-free`).**  Rollout: `docs/rollouts/2026-09-01-datadog-free-tier.md`.
 
 ## Deployed

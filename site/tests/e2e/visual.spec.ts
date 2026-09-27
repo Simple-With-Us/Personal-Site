@@ -1,4 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
+import { latoFontCss } from './fonts';
 
 // Visual regression for the Personal-Site pages.  Baselines are committed
 // under ./visual.spec.ts-snapshots and compared on every CI run.  Dynamic
@@ -15,13 +16,18 @@ async function blockDigest(page: Page) {
   await page.route(DIGEST_URL, (route) => route.abort());
 }
 
-// Google Fonts (Lato) renders with different metrics depending on whether
-// the webfont loads, which varies by network.  Block it so both CI and
-// local runs use the same system fallback, keeping text wrapping stable.
-// Must be called before page.goto().
+// Lato from Google Fonts renders with different metrics depending on network
+// conditions.  Block the CDN and inject our bundled Lato (identical files in
+// CI and locally) so text wrapping is deterministic.  Must be called before
+// page.goto(); call injectLato() after navigation to apply it.
 async function blockWebFonts(page: Page) {
   await page.route('https://fonts.googleapis.com/**', (route) => route.abort());
   await page.route('https://fonts.gstatic.com/**', (route) => route.abort());
+}
+
+async function injectLato(page: Page) {
+  await page.addStyleTag({ content: latoFontCss() });
+  await page.evaluate(() => document.fonts.ready);
 }
 
 async function settlePage(page: Page) {
@@ -46,6 +52,8 @@ test.describe('visual', () => {
     await blockDigest(page);
     await blockWebFonts(page);
     await page.goto('/');
+    await injectLato(page);
+    await page.waitForLoadState('networkidle');
     await page.waitForLoadState('networkidle');
     await settlePage(page);
     await expect(page).toHaveScreenshot('homepage.png', {
@@ -59,6 +67,7 @@ test.describe('visual', () => {
   test('terms of service', async ({ page }) => {
     await blockWebFonts(page);
     await page.goto('/terms-of-service');
+    await injectLato(page);
     await page.waitForLoadState('networkidle');
     await settlePage(page);
     await expect(page).toHaveScreenshot('terms-of-service.png', {

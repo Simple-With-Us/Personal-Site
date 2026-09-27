@@ -25,6 +25,7 @@ function isPublicItem(item: DigestItem): boolean {
 export function publicDigestDays(days: DigestDay[]): DigestDay[] {
   return days.flatMap((day) => {
     const sections = day.sections
+      .filter((section) => section.kind !== "effort")
       .map((section) => ({ ...section, items: section.items.filter(isPublicItem) }))
       .filter((section) => section.items.length > 0);
     return sections.length > 0 ? [{ ...day, sections }] : [];

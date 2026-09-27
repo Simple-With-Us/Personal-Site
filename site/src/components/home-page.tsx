@@ -78,7 +78,7 @@ function SketchfabMedia() {
               Load model
             </button>
             <a
-              href="https://sketchfab.com/Spaceport3D"
+              href={site.media.sketchfabModel}
               target="_blank"
               rel="noopener noreferrer"
               className="text-sm text-link hover:underline"
@@ -261,7 +261,7 @@ export function HomePage() {
               <div className="flex items-center justify-between gap-3 border-t border-border px-4 py-3">
                 <p className="text-sm text-fg-muted">Sketchfab · Spaceport3D</p>
                 <a
-                  href="https://sketchfab.com/Spaceport3D"
+                  href={site.media.sketchfabModel}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-sm text-link hover:underline"

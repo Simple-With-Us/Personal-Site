@@ -94,6 +94,10 @@ rg -n "Earlier work included" static/index.html
 CI `verify` is file-existence + About-copy grep.  `site/` is the TanStack
 Start source.  Do not invent `npm test`.  Local: `cd site && npm run dev`.
 
+## Visual verification
+
+UI changes must be covered by automated visual verification where feasible: Playwright screenshot assertions for web surfaces (`site/tests/e2e/visual.spec.ts`, with baselines committed under `visual.spec.ts-snapshots/`), `xcrun simctl io booted screenshot` for iOS simulator.  The owner never takes manual screenshots and does not run local UI preview sessions.  Native Mac app UI is verified through code review and CI.  The `e2e` job in `.github/workflows/site-ci.yml` runs the visual specs on every PR; dynamic regions (activity feed, third-party media embeds) are masked in the spec, never snapshotted raw.
+
 ## Product / stack
 
 - `site/` is the live TanStack Start / Vite app (Nitro `vercel` preset).
@@ -194,3 +198,4 @@ into chat. Never run bare `infisical secrets`.
 ## Fleet recall
 
 Search `fleet-agents` before re-deriving a lesson (`recall "<topic>"` or MCP `recall_search`).  Contribute every reusable lesson at closeout (`recall contribute "…" --category lesson --app personal-site`).  Cloud seats: https://agents.jays.services/mcp .  Do not dump chat logs into the corpus.  Canonical: ai-fleet-coordinator/docs/RAG-FLEET-INFRA.md.
+

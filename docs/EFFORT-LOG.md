@@ -2,6 +2,8 @@
 Protocol: /Users/jay/apps/EFFORT-LOG-PROTOCOL.md (canonical). Live board: this file
 (mirror: docs/EFFORT-LOG.md in the repo). As of 2026-08-17.
 
+- 2026-09-27 — FINCH added Playwright visual regression specs for the site (homepage + terms-of-service, committed baselines; live activity feed and third-party media embeds masked) and documented the automated-only visual verification policy in AGENTS.md (PR opened, auto-merge armed).
+
 > ⚠️ **AGENT AVAILABILITY NOTICE (2026-08-21):** KIMI is **RETIRED / UNAVAILABLE** long-term (owner directive). All agents MUST NOT assign work or wait on KIMI in-flight work. Reassign any open KIMI effort board lanes or GitHub issues to active seats (AG, GROK, CLAUDE, MONET, etc.).
 
 - **2026-09-14 — FX — IN PROGRESS — Host Safari start page at `/start/` (`fx/safari-start`, worktree `~/apps/personal-fx-safari-start`, board `970746b9`).**
@@ -72,3 +74,4 @@ Protocol: /Users/jay/apps/EFFORT-LOG-PROTOCOL.md (canonical). Live board: this f
 - 2026-08-14 — GROK moved fleet onboard + About copy to Completed (PR #1).
 - 2026-08-14 — GROK claimed fleet onboard + About copy; moved social redirects to Deployed after live 301 verify.
 - 2026-08-14 — bootstrapped by onboard-new-app.sh.
+

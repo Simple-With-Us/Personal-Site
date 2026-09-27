@@ -154,13 +154,6 @@ function ItemRow({ item }: { item: DigestItem }) {
 }
 
 function DayBody({ day }: { day: DigestDay }) {
-<<<<<<< ours
-=======
-  const sections = day.sections
-    .filter((section) => section.kind !== "effort")
-    .map((section) => ({ ...section, items: section.items.filter(isPublicItem) }))
-    .filter((s) => s.items.length > 0);
->>>>>>> theirs
   return (
     <div className="grid gap-4">
       {day.sections.map((section) => (

@@ -143,6 +143,8 @@ export const site = {
   media: {
     sketchfab:
       "https://sketchfab.com/models/33cd23b2245b422e926b37d2172e3e4e/embed",
+    sketchfabModel:
+      "https://sketchfab.com/3d-models/south-texas-launch-site-with-sn15-33cd23b2245b422e926b37d2172e3e4e",
     youtube: "https://www.youtube.com/embed/GkrkEgaQqcg",
   },
   fleet: {

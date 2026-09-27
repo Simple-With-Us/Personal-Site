@@ -143,6 +143,7 @@ function ItemRow({ item }: { item: DigestItem }) {
 
 function DayBody({ day }: { day: DigestDay }) {
   const sections = day.sections
+    .filter((section) => section.kind !== "effort")
     .map((section) => ({ ...section, items: section.items.filter(isPublicItem) }))
     .filter((s) => s.items.length > 0);
   return (

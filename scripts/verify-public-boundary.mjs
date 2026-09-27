@@ -4,7 +4,7 @@ const roots = [
   new URL("../site/src/", import.meta.url),
   new URL("../site/public/", import.meta.url),
 ];
-const textExtensions = new Set([".css", ".html", ".json", ".js", ".md", ".ts", ".tsx"]);
+const textExtensions = new Set([".css", ".html", ".json", ".js", ".md", ".svg", ".ts", ".tsx"]);
 
 async function textFiles(root) {
   const entries = await readdir(root, { withFileTypes: true });

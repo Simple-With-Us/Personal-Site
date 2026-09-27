@@ -13,10 +13,10 @@ Protocol: /Users/jay/apps/EFFORT-LOG-PROTOCOL.md (canonical). Live board: this f
 - **2026-09-13 — FX — IN PROGRESS — Stop advertising Autorotate.Codes as a live host (`fx/dead-links-hoghunter`, worktree `~/apps/personal-fx-links`, board `56fea494`).**  NXDOMAIN.  Card/digest/TestFlight say Autorotate.  Hog Hunter added as local-only.
 
 ## In Progress
-- **2026-09-26 — CODEX — IN PROGRESS — Public portfolio boundary, selected work, catalog links, accessibility, and `/start/` redirect (`codex/web-assets-improvements`, worktree `~/apps/personal-site-codex-web-assets`).**  Parent aggregate tracks Fleet-OPS issues #31–33; this lane removes private/internal public-site destinations and keeps release facts in Simple With Us.
 - **2026-09-01 — GROK — IN PROGRESS — Datadog Free-tier fail-closed: `prod`→`production`, error-only logs, us5 fallback (board `ad678866`, branch `grok/datadog-free-tier`, worktree `~/apps/personal-grok-datadog-free`).**  Rollout: `docs/rollouts/2026-09-01-datadog-free-tier.md`.
 
 ## Deployed
+- **2026-09-26 — CODEX — COMPLETED/DEPLOYED — Public portfolio boundary, selected work, catalog links, accessibility, and `/start/` redirect (`codex/web-assets-improvements`, worktree `~/apps/personal-site-codex-web-assets`).**  PRs #96 and #99 merged as `af968ba88ba5ad5e8630d6629303dfc93b69b4e0` and `73b9872eea2c649d807932adf7a6abab4f0b8ed3`.  Production deployment `3hNFiCaAcZBGGuuTpKvAo9imiTLR` is Ready/Production with `jaywedgeworth.com` assigned; `jays.services` and `jaywedgeworth.com` both returned HTTP 200 HTML containing the exact South Texas Launch Site Sketchfab URL and six public projects.  No FleetOPS/private-board URL or effort-board text was observed.
 - [AG] COMPLETED update ST and BotFleet app icons 2026-09-15
 - **2026-08-22 - CURSOR - DEPLOYED - Enable Vercel Web Analytics on Personal-Site.**  PR #17 on production.  insights/script.js + insights/view 200 on personal-site-jayw.vercel.app. <!-- wb-agent-report:365732267fe143c589160c3f6bb59cf4 -->
 - **2026-08-22 — CURSOR — DEPLOYED — Vercel Web Analytics (PR #17).**  `@vercel/analytics/react` in TanStack Start root.  Production `https://personal-site-jayw.vercel.app/` loaded `/_vercel/insights/script.js` and POSTed `/_vercel/insights/view` HTTP 200.  Board `36573226`.

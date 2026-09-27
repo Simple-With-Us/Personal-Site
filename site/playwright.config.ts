@@ -13,6 +13,11 @@ const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? 'http://127.0.0.1:4173';
 export default defineConfig({
   testDir: './tests/e2e',
   timeout: 60_000,
+  // The e2e job runs against the Vite dev server, whose first request can
+  // intermittently fail while the compiler warms up (observed ~25% flake on
+  // the smoke test before any visual specs existed).  Retry once on CI so a
+  // cold dev server does not red the job; visual assertions stay strict.
+  retries: process.env.CI ? 1 : 0,
   reporter: 'list',
   use: { baseURL },
   projects: [{ name: 'chromium', use: { browserName: 'chromium' } }],

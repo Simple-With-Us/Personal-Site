@@ -15,6 +15,15 @@ async function blockDigest(page: Page) {
   await page.route(DIGEST_URL, (route) => route.abort());
 }
 
+// Google Fonts (Lato) renders with different metrics depending on whether
+// the webfont loads, which varies by network.  Block it so both CI and
+// local runs use the same system fallback, keeping text wrapping stable.
+// Must be called before page.goto().
+async function blockWebFonts(page: Page) {
+  await page.route('https://fonts.googleapis.com/**', (route) => route.abort());
+  await page.route('https://fonts.gstatic.com/**', (route) => route.abort());
+}
+
 async function settlePage(page: Page) {
   // App icons and social icons are loading="lazy", so they only fetch near
   // the viewport.  Walk to the bottom to trigger every image, wait for them
@@ -35,23 +44,27 @@ async function settlePage(page: Page) {
 test.describe('visual', () => {
   test('homepage', async ({ page }) => {
     await blockDigest(page);
+    await blockWebFonts(page);
     await page.goto('/');
     await page.waitForLoadState('networkidle');
     await settlePage(page);
     await expect(page).toHaveScreenshot('homepage.png', {
       fullPage: true,
       animations: 'disabled',
+      timeout: 15000,
       mask: [page.locator('#activity'), page.locator('#media')],
     });
   });
 
   test('terms of service', async ({ page }) => {
+    await blockWebFonts(page);
     await page.goto('/terms-of-service');
     await page.waitForLoadState('networkidle');
     await settlePage(page);
     await expect(page).toHaveScreenshot('terms-of-service.png', {
       fullPage: true,
       animations: 'disabled',
+      timeout: 15000,
     });
   });
 });

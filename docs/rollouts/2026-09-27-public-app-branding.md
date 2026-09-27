@@ -8,4 +8,4 @@ Card copy states a concrete user action and omits unverified distribution claims
 
 Local verification: `node scripts/verify-public-boundary.mjs`, `npm run typecheck --prefix site`, `npm run lint --prefix site`, and `npm run build:dev` passed.  The existing lint warnings remain.  Browser review at desktop and 390 px found all 11 cards, separate Usage edition destinations, no horizontal overflow, and the complete Simple With Us logo.  The local Playwright smoke test could not launch because its Chromium binary is absent; the PR's Site CI installs Chromium and runs that test.
 
-Production deployment and live page verification are recorded separately after merge.
+PR #102 merged as `28cfbe00f8bd3af2b2fddddacc5496202c8093c7`.  Vercel production deployment `dpl_9HnXAm1Bq6YpZVYuk7EacYrUBjQs` reached Ready for that exact commit.  Both `https://jays.services/` and `https://jaywedgeworth.com/` served the new catalog with the full Simple With Us logo path and separate Usage edition links.  The live logo matched the checked-in PNG byte-for-byte; both Usage icons returned HTTP 200.  Site CI, including its Playwright smoke test, passed on the PR.

@@ -9,7 +9,7 @@ export function SiteFooter() {
       <div className="mx-auto flex w-full max-w-5xl flex-col items-center gap-6 px-4 py-10 sm:px-6 sm:gap-8 sm:py-12">
         <div className="mx-auto w-[70%]">
           <div className="grid w-full grid-cols-5 gap-[clamp(0.3rem,1.2vw,0.55rem)] sm:grid-cols-10 sm:gap-[clamp(0.3rem,1vw,0.65rem)]">
-            {site.social.map((s) => (
+            {site.social.filter((s) => s.id !== "simplewithus").map((s) => (
               <a
                 key={s.id}
                 href={s.href}
@@ -25,6 +25,24 @@ export function SiteFooter() {
             ))}
           </div>
         </div>
+
+        <a
+          href={site.catalog.root}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Browse the Simple With Us app catalog"
+          className="rounded-[var(--radius-sm)] px-3 py-2 transition-opacity hover:opacity-75"
+        >
+          <img
+            src="/brand/simple-with-us-wide.png"
+            alt="Simple With Us"
+            width={1920}
+            height={200}
+            className="h-auto w-[260px] max-w-full"
+            loading="lazy"
+            decoding="async"
+          />
+        </a>
 
         <div className="flex flex-col items-center gap-3">
           <p className="inline-flex items-center gap-2 text-base font-medium tracking-tight text-fg-muted sm:text-lg">

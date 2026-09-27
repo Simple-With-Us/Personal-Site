@@ -48,6 +48,8 @@ const siteSource =
   Object.entries(contents).find(([path]) => path.endsWith("/site/src/lib/site.ts"))?.[1] ?? "";
 const homeSource =
   Object.entries(contents).find(([path]) => path.endsWith("/site/src/components/home-page.tsx"))?.[1] ?? "";
+const activitySource =
+  Object.entries(contents).find(([path]) => path.endsWith("/site/src/components/fleet-activity.tsx"))?.[1] ?? "";
 const catalogSource =
   Object.entries(contents).find(([path]) => path.endsWith("/site/src/lib/public-catalog.ts"))?.[1] ?? "";
 const projectCount = (siteSource.match(/\bkey: \"/g) ?? []).length;
@@ -73,6 +75,14 @@ if (homeSource.includes("{p.primaryLabel} app")) {
 
 if (homeSource.includes('allow="autoplay; fullscreen; xr-spatial-tracking"')) {
   throw new Error("Sketchfab should not load with autoplay enabled");
+}
+
+if (!homeSource.includes("site.media.sketchfabModel")) {
+  throw new Error("Sketchfab links should use the specific model destination");
+}
+
+if (!activitySource.includes('section.kind !== "effort"')) {
+  throw new Error("internal effort-board activity must stay out of the public view");
 }
 
 for (const match of catalogSource.matchAll(/:\s*\"(https:\/\/[^\"]+)\"/g)) {

@@ -14,6 +14,22 @@ import { site } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 const PARSE_MAX_DAYS = 60;
+const PRIVATE_DESTINATION = /(?:fleet-ops|mac\.jays\.services|board\.jays\.services|control\.jays\.services)/i;
+
+function isPublicItem(item: DigestItem): boolean {
+  return item.repo !== "OPS" && !PRIVATE_DESTINATION.test(item.title) &&
+    !(item.href && PRIVATE_DESTINATION.test(item.href));
+}
+
+/** Remove private rows before choosing a date or computing pagination bounds. */
+export function publicDigestDays(days: DigestDay[]): DigestDay[] {
+  return days.flatMap((day) => {
+    const sections = day.sections
+      .map((section) => ({ ...section, items: section.items.filter(isPublicItem) }))
+      .filter((section) => section.items.length > 0);
+    return sections.length > 0 ? [{ ...day, sections }] : [];
+  });
+}
 
 function formatDayLabel(raw: string): string {
   const m = raw.trim().match(/^(\d{4})-(\d{2})-(\d{2})/);
@@ -137,13 +153,9 @@ function ItemRow({ item }: { item: DigestItem }) {
 }
 
 function DayBody({ day }: { day: DigestDay }) {
-  const sections = day.sections.filter((s) => s.items.length > 0);
   return (
     <div className="grid gap-4">
-      {sections.length === 0 ? (
-        <p className="text-sm text-fg-muted">No activity rows for this day.</p>
-      ) : null}
-      {sections.map((section) => (
+      {day.sections.map((section) => (
         <div key={section.label}>
           <div className="mb-1.5 flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-fg-subtle">
             <SectionIcon kind={section.kind} />
@@ -185,7 +197,7 @@ export function FleetActivity() {
     retry: 1,
   });
 
-  const allDays = q.data?.days ?? [];
+  const allDays = useMemo(() => publicDigestDays(q.data?.days ?? []), [q.data]);
   const day = allDays[dayIndex] ?? null;
   const canPrev = dayIndex < allDays.length - 1;
   const canNext = dayIndex > 0;
@@ -221,7 +233,7 @@ export function FleetActivity() {
               rel="noopener noreferrer"
               className="mt-3 inline-flex text-link hover:underline"
             >
-              Open the full activity site instead
+              Open the public activity digest instead
             </a>
           </div>
         ) : null}

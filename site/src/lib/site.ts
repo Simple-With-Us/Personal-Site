@@ -1,17 +1,15 @@
-export type TestFlightLink = {
-  platform: "iOS" | "macOS" | "Client (iOS)" | "Local (iOS)";
-  url: string;
-};
+import { publicCatalog } from "@/lib/public-catalog";
 
 export type Project = {
   key: string;
   name: string;
   blurb: string;
-  href: string;
+  primaryHref: string;
+  primaryLabel: "Visit website" | "View details";
+  sourceHref: string;
   tags: readonly string[];
   icon?: string;
   acronym?: string;
-  testflight?: readonly TestFlightLink[];
 };
 
 export const site = {
@@ -27,9 +25,9 @@ export const site = {
   domains: ["jays.services", "jaywedgeworth.com"] as const,
   ogImage:
     "https://cdn.myportfolio.com/b0e28c58-4665-4144-92af-be86ffe7c576/580ae635-0852-46ab-93a9-0b63612c9488_rwc_0x0x1289x864x1289.png?h=ee5eb6a7bc277f48f2c0c473556d4d06",
-  tagline: "Building agentic trading systems with multi-agent engineering fleets.",
+  tagline: "Building software for AI workflows, markets, and everyday tasks.",
   about: [
-    "Recent work includes developing applications for market analysis, agentic trading, optimizing API/LLM usage, and AI fleet coordination.",
+    "I build software for market analysis, AI workflows, API usage, and coordination tools.",
     "Earlier work included 3D photogrammetry, aerial videography, managing construction projects with a SpaceX contractor, municipal lobbying and government relations, VoIP communication, and assisting the Visual Impairment and Intracranial Pressure team at NASA.",
     "Studied medicine at UTHealth San Antonio School of Medicine and UTRGV, public health at UTHealth Houston and George Washington University, and biochemistry at Baylor University.",
   ],
@@ -45,7 +43,7 @@ export const site = {
     { id: "vimeo", label: "Vimeo", href: "http://vimeo.com/Advocacy" },
     { id: "facebook", label: "Facebook", href: "https://facebook.com/JayWedgeworth" },
     { id: "instagram", label: "Instagram", href: "https://instagram.com/JayWedgeworth" },
-    { id: "x", label: "X", href: "https://twitter.com/JayWedgeworth" },
+    { id: "x", label: "X", href: "https://x.com/JayWedgeworth" },
     { id: "youtube", label: "YouTube", href: "https://www.youtube.com/spaceport3d" },
     { id: "simplewithus", label: "Simple With Us", href: "https://simplewithus.com" },
     { id: "email", label: "Email", href: "mailto:mail@jays.services" },
@@ -55,9 +53,11 @@ export const site = {
       key: "st",
       name: "Socratic Trade",
       blurb:
-        "Agentic trading console connecting Alpaca, Tradier, and Robinhood with automated risk controls and broker sandbox/live execution.  Live at SocraticTrade.com.",
-      href: "https://github.com/jaywedgeworth22/Socratic.Trade",
-      tags: ["TypeScript", "Agents", "Markets", "Trading"],
+        "Review AI-generated trading proposals and manage execution with your broker.  Live at SocraticTrade.com.",
+      primaryHref: publicCatalog.websites.socraticTrade,
+      primaryLabel: "Visit website",
+      sourceHref: "https://github.com/jaywedgeworth22/Socratic.Trade",
+      tags: ["Markets", "Trading", "Web"],
       icon: "/app-icons/st.png",
       acronym: "ST",
     },
@@ -65,158 +65,61 @@ export const site = {
       key: "ct",
       name: "Congress.Trade",
       blurb:
-        "Capitol Hill STOCK Act disclosures and trade tracker for the House, Senate, and Executive Branch.  Live at Congress.Trade, plus iOS.",
-      href: "https://github.com/jaywedgeworth22/Congress.Trade",
-      tags: ["Markets", "Data", "Web", "iOS"],
+        "Explore public trading disclosures, filter by person, company, and filing date, then inspect the source.  Live at Congress.Trade.",
+      primaryHref: publicCatalog.websites.congressTrade,
+      primaryLabel: "Visit website",
+      sourceHref: "https://github.com/jaywedgeworth22/Congress.Trade",
+      tags: ["Markets", "Disclosures", "Web"],
       icon: "/app-icons/ct.png",
       acronym: "CT",
-      testflight: [
-        { platform: "iOS", url: "https://testflight.apple.com/join/VNUEU6Ge" },
-      ],
     },
     {
       key: "um",
       name: "Usage Monitor",
       blurb:
-        "Centralized cost governance and usage telemetry tracking LLM API balances, credits, and spend via OTLP metrics.  Live at usage.jays.services, plus iOS.",
-      href: "https://github.com/jaywedgeworth22/Usage-Monitor",
-      tags: ["Ops", "Billing", "Dashboard", "iOS"],
+        "Review provider usage, balances, and costs from a server-backed dashboard.  Details and platform availability are listed in Simple With Us.",
+      primaryHref: publicCatalog.pages.usageClient,
+      primaryLabel: "View details",
+      sourceHref: "https://github.com/jaywedgeworth22/Usage-Monitor",
+      tags: ["Usage", "Costs", "Dashboard"],
       icon: "/app-icons/um.png",
       acronym: "UM",
-      testflight: [
-        { platform: "Client (iOS)", url: "https://testflight.apple.com/join/KPq42UrC" },
-        { platform: "Local (iOS)", url: "https://testflight.apple.com/join/YXZGGeUs" },
-      ],
     },
     {
       key: "dd",
       name: "DealDex.net",
       blurb:
-        "Real-time collectible card arbitrage desk scoring eBay and Mercari listings against TCGPlayer market values.  Native Android, iOS, and DealDex.net.",
-      href: "https://github.com/jaywedgeworth22/DealDex",
-      tags: ["Markets", "Android", "iOS", "Web"],
+        "Compare collectible card prices across marketplaces and inspect the sources.  Live at DealDex.net.",
+      primaryHref: publicCatalog.websites.dealDex,
+      primaryLabel: "Visit website",
+      sourceHref: "https://github.com/jaywedgeworth22/DealDex",
+      tags: ["Prices", "Sources", "Web"],
       icon: "/app-icons/dd.png",
       acronym: "DD",
-    },
-    {
-      key: "ar",
-      name: "Autorotate",
-      blurb:
-        "Zero-plaintext secret lifecycle management and automated credential rotation across cloud providers and devices.  Native iOS and macOS companions; the public web host is not live yet.",
-      href: "https://github.com/jaywedgeworth22/Autorotate",
-      tags: ["Security", "macOS", "iOS"],
-      icon: "/app-icons/ar.png",
-      acronym: "AR",
-      testflight: [
-        { platform: "iOS", url: "https://testflight.apple.com/join/bZ7vntkJ" },
-        { platform: "macOS", url: "https://testflight.apple.com/join/5yDXA8Vk" },
-      ],
     },
     {
       key: "cl",
       name: "ContactLogo",
       blurb:
-        "Curated high-resolution brand icons for your address book with review-first logo matching.  Native macOS, iOS, Android, and ContactLogo.com.",
-      href: "https://github.com/jaywedgeworth22/ContactLogo",
-      tags: ["macOS", "iOS", "Android", "Web"],
+        "Recognize business contacts at a glance, then review suggested logos before applying them.  Live at ContactLogo.com.",
+      primaryHref: publicCatalog.websites.contactLogo,
+      primaryLabel: "Visit website",
+      sourceHref: "https://github.com/jaywedgeworth22/ContactLogo",
+      tags: ["Contacts", "Review", "Web"],
       icon: "/app-icons/cl.png",
       acronym: "CL",
-      testflight: [
-        { platform: "iOS", url: "https://testflight.apple.com/join/HRzFDeA1" },
-        { platform: "macOS", url: "https://testflight.apple.com/join/xsPB27gf" },
-      ],
-    },
-    {
-      key: "ps",
-      name: "Personal Site",
-      blurb:
-        "Personal portfolio site, live multi-agent fleet activity surface, and TestFlight beta hub at jays.services.",
-      href: "https://github.com/jaywedgeworth22/Personal-Site",
-      tags: ["TypeScript", "Vite", "Web"],
-      icon: "/app-icons/ps.png",
-      acronym: "PS",
-    },
-    {
-      key: "shared",
-      name: "congress-trading-shared",
-      blurb:
-        "Shared TypeScript contracts, Zod schemas, domain constants, and cross-app utilities powering the fleet ecosystem.",
-      href: "https://github.com/jaywedgeworth22/congress-trading-shared",
-      tags: ["TypeScript", "Zod", "Cross-App", "Package"],
-      acronym: "CTS",
-    },
-    {
-      key: "fleet",
-      name: "AI Fleet Coordinator",
-      blurb:
-        "Mac-hosted multi-agent coding fleet orchestration: live board at mac.jays.services, Slack #agent-sync, and activity digests at activity.jays.services.",
-      href: "https://github.com/jaywedgeworth22/ai-fleet-coordinator",
-      tags: ["Agents", "CI", "Ops"],
-      icon: "/app-icons/fleet.png",
-      acronym: "AFC",
-    },
-    {
-      key: "hh",
-      name: "Hog Hunter",
-      blurb:
-        "Mac menu bar utility that names the processes and apps eating CPU and memory now, over the past hour, and over the past 24 hours.  Local only — not App Store or TestFlight.",
-      href: "https://github.com/jaywedgeworth22/HogHunter",
-      tags: ["macOS"],
-      icon: "/app-icons/hh.png",
-      acronym: "HH",
-    },
-    {
-      key: "cc",
-      name: "CodeCaps",
-      blurb:
-        "Centralized monitor and alerting for AI subscription plans, quotas, and caps across Claude, Codex, Cursor, Antigravity, and MiniMax.  Native macOS menu bar and companion iOS app at codecaps.simplewithus.com.",
-      href: "https://github.com/jaywedgeworth22/codecaps",
-      tags: ["macOS", "iOS", "Monitoring", "Agents"],
-      icon: "/app-icons/cc.png",
-      acronym: "CC",
-    },
-    {
-      key: "mm",
-      name: "MiniMax Remote",
-      blurb:
-        "Native iOS TestFlight companion for MiniMax Code: chat, sessions, scheduled tasks, agents, and Drive, all from your phone.  Pairs to your Mac via QR code.",
-      href: "https://github.com/jaywedgeworth22/MiniMax-ios",
-      tags: ["iOS", "MiniMax", "Agents"],
-      icon: "/app-icons/mm.png",
-      acronym: "MM",
-    },
-    {
-      key: "hr",
-      name: "Harness",
-      blurb:
-        "DeepSeek and multi-model coding agent harness, benchmark evaluator, and workspace isolation engine.",
-      href: "https://github.com/jaywedgeworth22/Harness",
-      tags: ["Agents", "Testing", "Infra"],
-      icon: "/app-icons/hr.png",
-      acronym: "HR",
     },
     {
       key: "bf",
       name: "BotFleet.app",
       blurb:
-        "Multi-agent desktop environment and autonomous execution runtime for macOS and iOS.  Live at BotFleet.app, with local and cloud computer control.",
-      href: "https://github.com/jaywedgeworth22/BotFleet",
-      tags: ["macOS", "iOS", "Agents"],
+        "Run your AI bots from one workspace.  Explore BotFleet.app for current platform availability.",
+      primaryHref: publicCatalog.websites.botfleet,
+      primaryLabel: "Visit website",
+      sourceHref: "https://github.com/jaywedgeworth22/BotFleet",
+      tags: ["AI", "Workspace", "Web"],
       icon: "/app-icons/bf.png",
       acronym: "BF",
-      testflight: [
-        { platform: "iOS", url: "https://testflight.apple.com/join/ER6sPNMh" },
-        { platform: "macOS", url: "https://testflight.apple.com/join/cQnDtFse" },
-      ],
-    },
-    {
-      key: "ops",
-      name: "Fleet Ops",
-      blurb:
-        "Private fleet infrastructure operations, bare-metal host provisioning, and distributed service orchestration across the fleet.",
-      href: "https://github.com/jaywedgeworth22/fleet-ops",
-      tags: ["Ops", "Infra"],
-      acronym: "OPS",
     },
   ] satisfies Project[],
   appIcons: {
@@ -234,95 +137,21 @@ export const site = {
     CTS: "/app-icons/fleet.png",
     AFC: "/app-icons/fleet.png",
     BF: "/app-icons/bf.png",
-    OPS: "/app-icons/fleet.png",
     fleet: "/app-icons/fleet.png",
   } as const,
-  testflight: [
-    {
-      name: "ContactLogo (iOS)",
-      appName: "ContactLogo",
-      platform: "iOS",
-      url: "https://testflight.apple.com/join/HRzFDeA1",
-      icon: "/app-icons/cl.png",
-      blurb: "Brand icons for address book contacts.",
-    },
-    {
-      name: "ContactLogo for Mac",
-      appName: "ContactLogo",
-      platform: "macOS",
-      url: "https://testflight.apple.com/join/xsPB27gf",
-      icon: "/app-icons/cl.png",
-      blurb: "Native macOS menu bar and batch contact logo updater.",
-    },
-    {
-      name: "Autorotate (iOS)",
-      appName: "Autorotate",
-      platform: "iOS",
-      url: "https://testflight.apple.com/join/bZ7vntkJ",
-      icon: "/app-icons/ar.png",
-      blurb: "Zero-plaintext credential rotation on mobile.",
-    },
-    {
-      name: "Autorotate for Mac",
-      appName: "Autorotate",
-      platform: "macOS",
-      url: "https://testflight.apple.com/join/5yDXA8Vk",
-      icon: "/app-icons/ar.png",
-      blurb: "Native macOS secret manager and rotation client.",
-    },
-    {
-      name: "Congress.Trade (iOS)",
-      appName: "Congress.Trade",
-      platform: "iOS",
-      url: "https://testflight.apple.com/join/VNUEU6Ge",
-      icon: "/app-icons/ct.png",
-      blurb: "Capitol Hill STOCK Act disclosures and trade tracker.",
-    },
-    {
-      name: "Usage Client Monitor (iOS)",
-      appName: "Usage Monitor",
-      platform: "iOS",
-      url: "https://testflight.apple.com/join/KPq42UrC",
-      icon: "/app-icons/um.png",
-      blurb: "Mobile dashboard for API costs, credits, and usage.",
-    },
-    {
-      name: "Usage Local Monitor (iOS)",
-      appName: "Usage Monitor",
-      platform: "iOS",
-      url: "https://testflight.apple.com/join/YXZGGeUs",
-      icon: "/app-icons/um.png",
-      blurb: "Local machine usage and daemon metric telemetry.",
-    },
-    {
-      name: "BotFleet (iOS)",
-      appName: "BotFleet",
-      platform: "iOS",
-      url: "https://testflight.apple.com/join/ER6sPNMh",
-      icon: "/app-icons/bf.png",
-      blurb: "Mobile companion for BotFleet agent orchestration and live thread interaction.",
-    },
-    {
-      name: "BotFleet for Mac",
-      appName: "BotFleet",
-      platform: "macOS",
-      url: "https://testflight.apple.com/join/cQnDtFse",
-      icon: "/app-icons/bf.png",
-      blurb: "Native macOS desktop runtime, computer control, and agent workspace environment.",
-    },
-  ] as const,
+  catalog: publicCatalog,
   media: {
     sketchfab:
       "https://sketchfab.com/models/33cd23b2245b422e926b37d2172e3e4e/embed",
     youtube: "https://www.youtube.com/embed/GkrkEgaQqcg",
   },
   fleet: {
-    html: "https://jaywedgeworth22.github.io/ai-fleet-coordinator/",
-    markdown: "https://jaywedgeworth22.github.io/ai-fleet-coordinator/digest.md",
+    html: "https://jaywedgeworth22.github.io/AI-Fleet-Coordinator/",
+    markdown: "https://jaywedgeworth22.github.io/AI-Fleet-Coordinator/digest.md",
     icsDaily:
-      "https://jaywedgeworth22.github.io/ai-fleet-coordinator/calendar/daily-digest.ics",
+      "https://jaywedgeworth22.github.io/AI-Fleet-Coordinator/calendar/daily-digest.ics",
     icsCommits:
-      "https://jaywedgeworth22.github.io/ai-fleet-coordinator/calendar/agent-activity.ics",
+      "https://jaywedgeworth22.github.io/AI-Fleet-Coordinator/calendar/agent-activity.ics",
   },
 } as const;
 

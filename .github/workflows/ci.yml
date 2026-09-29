@@ -35,3 +35,6 @@ jobs:
 
       - name: Datadog fail-closed instrumentation
         run: node scripts/verify-datadog.mjs
+
+      - name: Sentry CI reporter alignment
+        run: python3 scripts/verify-sentry-ci-report.py

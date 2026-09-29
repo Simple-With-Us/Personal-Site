@@ -21,17 +21,22 @@ jobs:
 
       - name: Fetch live site
         run: |
-          rm -rf static
-          mkdir -p static
+          rm -rf tmp-mirror
           wget --recursive --level=2 --convert-links --adjust-extension \
             --page-requisites --no-parent \
             --domains=jays.services,jaywedgeworth.grok.me \
             --directory-prefix=tmp-mirror \
             -e robots=off \
-            https://jays.services/ || true
-          if [ -d tmp-mirror/jays.services ]; then
-            cp -r tmp-mirror/jays.services/* static/ || true
+            https://jays.services/ || echo "::warning::wget reported errors; validating fetch output before touching static/"
+          # Never wipe static/ unless the fetch produced a usable mirror.
+          # A failed fetch must fail the run, not publish an empty site.
+          if [ ! -s tmp-mirror/jays.services/index.html ]; then
+            echo "::error::mirror fetch failed: tmp-mirror/jays.services/index.html missing or empty; leaving static/ untouched"
+            exit 1
           fi
+          rm -rf static
+          mkdir -p static
+          cp -r tmp-mirror/jays.services/* static/
           rm -rf tmp-mirror
           
           # Restore updated app icons from git so they aren't overwritten by outdated live site assets
@@ -74,5 +79,5 @@ jobs:
             echo "No changes to commit"
           else
             git commit -m "chore: update static mirror of live site $(date -u +%Y-%m-%d)"
-            git push || echo "Direct push to main skipped (branch rules require PR); continuing."
+            git push
           fi

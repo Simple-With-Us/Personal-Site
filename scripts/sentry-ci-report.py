@@ -86,18 +86,11 @@ from pathlib import Path
 # This repo's identity in the shared fleet-infra project. Tags every event and
 # participates in the fingerprint so cross-repo CI failures never collapse into
 # one Sentry issue.
-APP = "socratic-trade"
+APP = "personal-site"
 
 CRON_SCHEDULES = {
-    "CI": "47 7 * * *",
-    "Cleanup Actions Caches": "5 3 * * *",
-    "Effort Issues Sync": "12 6 * * *",
-    "iOS TestFlight ship": "*/30 * * * *",
-    "Security": "41 10 * * 1",
-    "Playwright Smoke": "17 9 * * *",
-    "Shared package pin check": "0 13 * * 1",
-    "Deploy freshness": "13,33,53 * * * *",
-    "RTH Deploy Latch": "20 21 * * 1-5",
+    "Effort Issues Sync": "27 6 * * *",
+    "Mirror live site": "0 6 * * *",
 }
 _CRON_SCHEDULES_FOLDED = {name.casefold(): expr for name, expr in CRON_SCHEDULES.items()}
 
@@ -112,13 +105,10 @@ DEFAULT_CHECKIN_MARGIN = 15
 # copy this onto 30-min macos ship crons (FLEET-INFRA-CC / DA / CX): those
 # drop ticks entirely, so a wider margin still misses.  Pre-#3302 slugs
 # (`ci-effort-issues-sync`, `ci-cleanup-actions-caches`, `ci-rth-deploy-latch`)
-# stay orphaned; HEAD upserts `ci-socratic-trade-*`.
+# stay orphaned; HEAD upserts `ci-personal-site-*`.
 CHECKIN_MARGIN_OVERRIDES = {
-    "Deploy freshness": 600,
-    "RTH Deploy Latch": 600,
-    "Cleanup Actions Caches": 600,
     "Effort Issues Sync": 600,
-    "CI": 600,
+    "Mirror live site": 600,
 }
 _CHECKIN_MARGINS_FOLDED = {name.casefold(): margin for name, margin in CHECKIN_MARGIN_OVERRIDES.items()}
 

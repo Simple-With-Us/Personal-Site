@@ -10,7 +10,6 @@ export const publicCatalog = {
     contactLogo: "https://simplewithus.com/contactlogo/",
     congressTrade: "https://simplewithus.com/congress-trade/",
     dealDex: "https://simplewithus.com/dealdex/",
-    miniMaxRemote: "https://simplewithus.com/minimax-remote/",
     socraticTrade: "https://simplewithus.com/socratic-trade/",
     usageClient: "https://simplewithus.com/usage-client/",
     usageLocal: "https://simplewithus.com/usage-local/",

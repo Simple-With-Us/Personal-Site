@@ -75,20 +75,11 @@ export const site = {
     {
       key: "hr",
       name: "Harness",
-      blurb: "Run a local agent harness with DeepSeek and MiniMax support.",
+      blurb: "Run a local agent harness with DeepSeek and MiniMax support, with an iPhone app coming soon.",
       primaryHref: "https://github.com/jaywedgeworth22/Harness",
       primaryLabel: "View source",
       category: "Coding",
       icon: "/app-icons/hr.svg",
-    },
-    {
-      key: "mm",
-      name: "MiniMax Remote",
-      blurb: "Follow MiniMax Code sessions on an iPhone paired with a Mac.",
-      primaryHref: publicCatalog.pages.miniMaxRemote,
-      primaryLabel: "View app",
-      category: "Coding",
-      icon: "/app-icons/mm.png",
     },
     {
       key: "bf",

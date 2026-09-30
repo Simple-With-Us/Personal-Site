@@ -227,7 +227,7 @@ export function repoLabel(code: RepoCode): string {
     case "CC":
       return "CodeCaps";
     case "MM":
-      return "MiniMax Remote";
+      return "MiniMax Remote (retired)";
     case "HH":
       return "Hog Hunter";
     case "HR":

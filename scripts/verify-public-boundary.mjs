@@ -53,7 +53,7 @@ const activitySource =
 const catalogSource =
   Object.entries(contents).find(([path]) => path.endsWith("/site/src/lib/public-catalog.ts"))?.[1] ?? "";
 const projectKeys = [...siteSource.matchAll(/\bkey: "([^"]+)"/g)].map((match) => match[1]);
-const expectedProjectKeys = ["cc", "um", "hr", "mm", "bf", "st", "ct", "dd", "cl", "ar", "hh"];
+const expectedProjectKeys = ["cc", "um", "hr", "bf", "st", "ct", "dd", "cl", "ar", "hh"];
 if (projectKeys.length !== expectedProjectKeys.length ||
     expectedProjectKeys.some((key) => !projectKeys.includes(key))) {
   throw new Error(`public app families differ from the approved roster: ${projectKeys.join(", ")}`);

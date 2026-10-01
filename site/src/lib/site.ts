@@ -161,6 +161,9 @@ export const site = {
     PS: "/app-icons/ps.png",
     CC: "/app-icons/cc.png",
     MM: "/app-icons/mm.png",
+    CK: "/app-icons/ck.svg",
+    // HR is the retired Harness code.  Old digest lines still carry it, and
+    // Harness is the same app as Clutch, so it shows the Clutch icon too.
     HR: "/app-icons/ck.svg",
     HH: "/app-icons/hh.png",
     CTS: "/app-icons/fleet.png",

@@ -53,7 +53,7 @@ const activitySource =
 const catalogSource =
   Object.entries(contents).find(([path]) => path.endsWith("/site/src/lib/public-catalog.ts"))?.[1] ?? "";
 const projectKeys = [...siteSource.matchAll(/\bkey: "([^"]+)"/g)].map((match) => match[1]);
-const expectedProjectKeys = ["cc", "um", "hr", "bf", "st", "ct", "dd", "cl", "ar", "hh"];
+const expectedProjectKeys = ["cc", "um", "ck", "bf", "st", "ct", "dd", "cl", "ar", "hh"];
 if (projectKeys.length !== expectedProjectKeys.length ||
     expectedProjectKeys.some((key) => !projectKeys.includes(key))) {
   throw new Error(`public app families differ from the approved roster: ${projectKeys.join(", ")}`);
@@ -109,7 +109,7 @@ for (const path of [
   "../site/public/app-icons/st.png",
   "../site/public/app-icons/usage-client.png",
   "../site/public/app-icons/usage-local.png",
-  "../site/public/app-icons/hr.svg",
+  "../site/public/app-icons/ck.svg",
   "../site/public/brand/simple-with-us-wide.png",
   "../site/public/brand/simple-with-us-square.png",
 ]) {
@@ -117,9 +117,9 @@ for (const path of [
 }
 
 if (!homeSource.includes("/brand/simple-with-us-wide.png") ||
-    !siteSource.includes('icon: "/app-icons/hr.svg"') ||
-    siteSource.includes("/app-icons/hr.png")) {
-  throw new Error("Simple With Us and Harness branding regressed");
+    !siteSource.includes('icon: "/app-icons/ck.svg"') ||
+    siteSource.includes("/app-icons/ck.png")) {
+  throw new Error("Simple With Us and Clutch branding regressed");
 }
 
 console.log("public portfolio boundary checks passed");

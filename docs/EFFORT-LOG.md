@@ -2,6 +2,7 @@
 Protocol: /Users/jay/apps/EFFORT-LOG-PROTOCOL.md (canonical). Live board: this file
 (mirror: docs/EFFORT-LOG.md in the repo). As of 2026-08-17.
 
+- 2026-10-01 — CLAUDE renamed the Harness portfolio card to Clutch (`ck.svg`, `CK` digest code, repo link) and regenerated the homepage visual baseline (`claude/clutch-rename`, worktree `~/apps/personal-claude-clutch`, PR #118, board `870265a6`).  Rollout note `docs/rollouts/2026-10-01-clutch-rename.md`.
 - 2026-09-27 — FINCH added Playwright visual regression specs for the site (homepage + terms-of-service, committed baselines; live activity feed and third-party media embeds masked) and documented the automated-only visual verification policy in AGENTS.md (PR opened, auto-merge armed).
 
 > ⚠️ **AGENT AVAILABILITY NOTICE (2026-08-21):** KIMI is **RETIRED / UNAVAILABLE** long-term (owner directive). All agents MUST NOT assign work or wait on KIMI in-flight work. Reassign any open KIMI effort board lanes or GitHub issues to active seats (AG, GROK, CLAUDE, MONET, etc.).

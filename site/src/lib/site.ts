@@ -73,13 +73,13 @@ export const site = {
       ],
     },
     {
-      key: "hr",
-      name: "Harness",
-      blurb: "Run a local agent harness with DeepSeek and MiniMax support, with an iPhone app coming soon.",
-      primaryHref: "https://github.com/jaywedgeworth22/Harness",
+      key: "ck",
+      name: "Clutch",
+      blurb: "Run a local coding agent with DeepSeek and MiniMax support, with an iPhone app coming soon.",
+      primaryHref: "https://github.com/jaywedgeworth22/Clutch",
       primaryLabel: "View source",
       category: "Coding",
-      icon: "/app-icons/hr.svg",
+      icon: "/app-icons/ck.svg",
     },
     {
       key: "bf",
@@ -161,7 +161,10 @@ export const site = {
     PS: "/app-icons/ps.png",
     CC: "/app-icons/cc.png",
     MM: "/app-icons/mm.png",
-    HR: "/app-icons/hr.svg",
+    CK: "/app-icons/ck.svg",
+    // HR is the retired Harness code.  Old digest lines still carry it, and
+    // Harness is the same app as Clutch, so it shows the Clutch icon too.
+    HR: "/app-icons/ck.svg",
     HH: "/app-icons/hh.png",
     CTS: "/app-icons/fleet.png",
     AFC: "/app-icons/fleet.png",

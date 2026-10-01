@@ -14,6 +14,7 @@ export type RepoCode =
   | "MM"
   | "HH"
   | "HR"
+  | "CK"
   | "shared"
   | "fleet"
   | "other";
@@ -60,6 +61,8 @@ const REPO_MAP: Record<string, RepoCode> = {
   MM: "MM",
   HH: "HH",
   HR: "HR",
+  CK: "CK",
+  CLUTCH: "CK",
   CODECAPS: "CC",
   MINIMAX: "MM",
   HOGHUNTER: "HH",
@@ -94,7 +97,7 @@ function parseItem(line: string): DigestItem | null {
   const num = linkMatch?.[1];
 
   const repoMatch = raw.match(
-    /\*\*(ST|CT|UM|DD|AR|CL|PS|CTS|AFC|AFL|BF|OPS|CC|MM|HH|HR|CODECAPS|MINIMAX|HOGHUNTER|HARNESS|shared|fleet|SHARED|FLEET)\*\*/i,
+    /\*\*(ST|CT|UM|DD|AR|CL|PS|CTS|AFC|AFL|BF|OPS|CC|MM|HH|HR|CK|CODECAPS|MINIMAX|HOGHUNTER|HARNESS|CLUTCH|shared|fleet|SHARED|FLEET)\*\*/i,
   );
   const repoKey = repoMatch?.[1]?.toUpperCase() ?? "other";
   const repo = REPO_MAP[repoKey] ?? REPO_MAP[repoMatch?.[1] ?? ""] ?? "other";
@@ -116,7 +119,7 @@ function parseItem(line: string): DigestItem | null {
 
   let title = raw
     .replace(
-      /\*\*(ST|CT|UM|DD|AR|CL|PS|CTS|AFC|AFL|BF|OPS|CC|MM|HH|HR|CODECAPS|MINIMAX|HOGHUNTER|HARNESS|shared|fleet|SHARED|FLEET)\*\*/i,
+      /\*\*(ST|CT|UM|DD|AR|CL|PS|CTS|AFC|AFL|BF|OPS|CC|MM|HH|HR|CK|CODECAPS|MINIMAX|HOGHUNTER|HARNESS|CLUTCH|shared|fleet|SHARED|FLEET)\*\*/i,
       "",
     )
     .replace(/`[^`]+`/g, "")
@@ -232,6 +235,8 @@ export function repoLabel(code: RepoCode): string {
       return "Hog Hunter";
     case "HR":
       return "Harness";
+    case "CK":
+      return "Clutch";
     default:
       return "Repo";
   }

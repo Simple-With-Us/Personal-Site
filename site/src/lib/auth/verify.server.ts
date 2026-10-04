@@ -1,5 +1,8 @@
 import { getRequest } from "@tanstack/react-start/server";
 import { auth, authConfigured } from "./server";
+// Infisical SOT: "./server" awaits settings init at import, so settingsValue
+// reads the populated cache here.  See INFISICAL.md.
+import { settingsValue } from "../settings.server";
 
 /**
  * Server-side session resolution (server-only).
@@ -12,7 +15,7 @@ import { auth, authConfigured } from "./server";
  */
 
 /** True when a real database is configured server-side. */
-const databaseConfigured = Boolean(process.env.DATABASE_URL?.trim());
+const databaseConfigured = Boolean(settingsValue("DATABASE_URL"));
 
 /** Re-export so callers can branch on it without importing `server.ts`. */
 export { authConfigured };

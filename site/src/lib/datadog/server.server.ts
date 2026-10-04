@@ -10,14 +10,34 @@ import {
   datadogService,
   datadogSite,
   datadogVersion,
-  isDatadogRequired,
   readApiKey,
+  type DatadogEnv,
 } from "./fail-closed";
+// Infisical SOT: this module's import awaits settings init (top-level await
+// in settings.server.ts), so the cache is populated before initDatadogServer
+// runs at the bottom of this file.  See INFISICAL.md.
+import { getSettingsClient } from "../settings.server";
 
 type LogStatus = "info" | "warn" | "error";
 
 const originalError = console.error.bind(console);
 const originalWarn = console.warn.bind(console);
+
+/**
+ * The effective Datadog env: Infisical cache wins for managed keys (it is
+ * the SOT), process.env covers platform-injected vars (VERCEL_ENV, …) and
+ * degraded mode.  Memory-only — never touches the network — so it is safe
+ * in hot paths like sendServerLog.
+ */
+function currentDatadogEnv(): DatadogEnv {
+  const client = getSettingsClient();
+  if (!client) return process.env;
+  const merged: DatadogEnv = { ...process.env };
+  for (const [key, value] of Object.entries(client.getAll())) {
+    if (value.trim() !== "") merged[key] = value;
+  }
+  return merged;
+}
 
 const globalRef = globalThis as typeof globalThis & {
   __personalSiteDatadogServer__?: boolean;
@@ -25,19 +45,20 @@ const globalRef = globalThis as typeof globalThis & {
 };
 
 export function initDatadogServer(): void {
-  assertDatadogKeysOrThrow();
+  const ddEnv = currentDatadogEnv();
+  assertDatadogKeysOrThrow(ddEnv);
 
   if (globalRef.__personalSiteDatadogServer__) return;
   globalRef.__personalSiteDatadogServer__ = true;
 
-  const apiKey = readApiKey();
+  const apiKey = readApiKey(ddEnv);
   if (!apiKey) {
     return;
   }
 
-  applyDatadogProcessEnv();
+  applyDatadogProcessEnv(ddEnv);
 
-  const useAgent = Boolean(process.env.DD_AGENT_HOST?.trim());
+  const useAgent = Boolean(ddEnv.DD_AGENT_HOST?.trim());
 
   try {
     // dd-trace reads DD_* at import time, so env aliases must be set first.
@@ -46,14 +67,16 @@ export function initDatadogServer(): void {
       init: (opts?: Record<string, unknown>) => unknown;
     };
     tracer.init({
-      service: datadogService(),
-      env: datadogEnvName(),
-      version: datadogVersion(),
+      // Resolved values were published onto process.env by
+      // applyDatadogProcessEnv above; pass ddEnv explicitly for clarity.
+      service: datadogService(ddEnv),
+      env: datadogEnvName(ddEnv),
+      version: datadogVersion(ddEnv),
       logInjection: true,
       runtimeMetrics: false,
       plugins: true,
-      hostname: useAgent ? process.env.DD_AGENT_HOST : undefined,
-      port: useAgent ? process.env.DD_TRACE_AGENT_PORT || "8126" : undefined,
+      hostname: useAgent ? ddEnv.DD_AGENT_HOST : undefined,
+      port: useAgent ? ddEnv.DD_TRACE_AGENT_PORT || "8126" : undefined,
     });
   } catch (err) {
     // Native tracer is optional on Vercel.  HTTP logs still work.
@@ -65,19 +88,25 @@ export function initDatadogServer(): void {
   hookConsoleAndProcess();
 }
 
-function applyDatadogProcessEnv(): void {
-  const useAgent = Boolean(process.env.DD_AGENT_HOST?.trim());
+/**
+ * Resolve Datadog values from the effective env (Infisical SOT) and publish
+ * them back onto process.env, because dd-trace reads DD_* at import time.
+ * Writes only — the reads above come from the merged env.
+ */
+function applyDatadogProcessEnv(ddEnv: DatadogEnv): void {
+  const useAgent = Boolean(ddEnv.DD_AGENT_HOST?.trim());
   if (!useAgent && !process.env.DD_TRACE_EXPERIMENTAL_EXPORTER) {
     process.env.DD_TRACE_EXPERIMENTAL_EXPORTER = "agentless";
   }
-  if (!process.env.DD_SERVICE) process.env.DD_SERVICE = datadogService();
-  if (!process.env.DD_ENV) process.env.DD_ENV = datadogEnvName();
-  if (!process.env.DD_VERSION) process.env.DD_VERSION = datadogVersion();
-  if (!process.env.DD_SITE) process.env.DD_SITE = datadogSite();
+  if (!process.env.DD_SERVICE) process.env.DD_SERVICE = datadogService(ddEnv);
+  if (!process.env.DD_ENV) process.env.DD_ENV = datadogEnvName(ddEnv);
+  if (!process.env.DD_VERSION) process.env.DD_VERSION = datadogVersion(ddEnv);
+  if (!process.env.DD_SITE) process.env.DD_SITE = datadogSite(ddEnv);
 
   // Sample 20% of prod traces (fleet cost rule).  Errors stay visible.
+  // VERCEL_ENV is platform-injected, never an Infisical key.
   if (!process.env.DD_TRACE_SAMPLE_RATE && process.env.VERCEL_ENV === "production") {
-    process.env.DD_TRACE_SAMPLE_RATE = "0.2";
+    process.env.DD_TRACE_SAMPLE_RATE = ddEnv.DD_TRACE_SAMPLE_RATE || "0.2";
   }
 }
 
@@ -126,12 +155,14 @@ export async function sendServerLog(
   message: string,
   extra: Record<string, unknown> = {},
 ): Promise<void> {
-  const apiKey = readApiKey();
+  // Memory-only env merge (Infisical cache + process.env) — no network.
+  const ddEnv = currentDatadogEnv();
+  const apiKey = readApiKey(ddEnv);
   if (!apiKey) {
     return;
   }
 
-  const site = datadogSite();
+  const site = datadogSite(ddEnv);
   const url = `https://http-intake.logs.${site}/api/v2/logs`;
   try {
     const response = await fetch(url, {
@@ -143,9 +174,9 @@ export async function sendServerLog(
       body: JSON.stringify([
         {
           ddsource: "nodejs",
-          ddtags: `env:${datadogEnvName()},service:${datadogService()},version:${datadogVersion()}`,
-          hostname: process.env.VERCEL_URL || datadogService(),
-          service: datadogService(),
+          ddtags: `env:${datadogEnvName(ddEnv)},service:${datadogService(ddEnv)},version:${datadogVersion(ddEnv)}`,
+          hostname: process.env.VERCEL_URL || datadogService(ddEnv),
+          service: datadogService(ddEnv),
           status,
           message,
           ...extra,

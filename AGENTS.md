@@ -4,7 +4,7 @@ Jay Wedgeworth personal portfolio. Live domains **jays.services** (primary)
 and **jaywedgeworth.com** (apex redirects to jays.services). Slack `repo:`
 name: **`Personal-Site`**. Acronym: **`PS`**.
 
-GitHub: `jaywedgeworth22/Personal-Site` (public). Integration tree:
+GitHub: `Simple-With-Us/Personal-Site` (public). Integration tree:
 `/Users/jay/Code/Personal-Site`.
 
 Read this before making changes.

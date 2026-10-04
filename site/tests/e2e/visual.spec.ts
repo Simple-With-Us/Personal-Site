@@ -84,4 +84,26 @@ test.describe('visual', () => {
       maxDiffPixelRatio: 0.02,
     });
   });
+
+  test('admin settings (signed out)', async ({ page }) => {
+    // The admin console gates on the signed-in owner; signed-out visitors see
+    // the sign-in card.  That state is fully deterministic (no session, no
+    // settings fetch), so it is safe to snapshot.
+    await blockWebFonts(page);
+    await page.goto('/admin/settings');
+    await injectLato(page);
+    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('networkidle');
+    // The SignedOut gate renders only after the session check resolves.
+    await page
+      .getByRole('heading', { name: 'Admin Settings' })
+      .waitFor({ timeout: 15000 });
+    await expect(page).toHaveScreenshot('admin-settings-signed-out.png', {
+      animations: 'disabled',
+      timeout: 15000,
+      // Same anti-aliasing tolerance as the homepage test.
+      threshold: 0.4,
+      maxDiffPixelRatio: 0.02,
+    });
+  });
 });

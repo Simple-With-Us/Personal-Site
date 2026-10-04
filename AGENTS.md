@@ -185,8 +185,12 @@ RUM Session Replay stays at 0.  Prod APM sample rate is 0.2.  Code:
 
 ## Secrets
 
-No Infisical project yet. `~/.secrets/` is handoff-only. Never paste secrets
-into chat. Never run bare `infisical secrets`.
+Infisical is the sole source of truth for app settings and secrets — see
+`INFISICAL.md` at the repo root for the full policy, key inventory, and
+admin contract.  Server code reads settings only through
+`site/src/lib/settings.server.ts` (memory cache, never per-request fetches);
+the admin console is `/admin/settings`.  `~/.secrets/` is handoff-only.
+Never paste secrets into chat. Never run bare `infisical secrets`.
 
 ## Delegation & model economics (fleet rule)
 

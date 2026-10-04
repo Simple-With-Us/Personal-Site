@@ -1,10 +1,15 @@
 /** Which database backend is active. */
 export type DbSource = "neon" | "pglite";
 
+// Infisical SOT: settings init runs at this module's import (top-level await
+// in settings.server.ts), so the cache is populated before these constants
+// are computed.  In degraded mode (no bootstrap identity) settingsValue falls
+// back to process.env — see INFISICAL.md.
+import { settingsValue } from "./settings.server";
+
 // An empty/whitespace DATABASE_URL (an easy misconfig in deploy UIs) must mean
 // "unset" — otherwise production would silently run on the PGLite fallback.
-const rawDatabaseUrl =
-  typeof process !== "undefined" ? process.env.DATABASE_URL : undefined;
+const rawDatabaseUrl = settingsValue("DATABASE_URL");
 const databaseUrl =
   rawDatabaseUrl && rawDatabaseUrl.trim() ? rawDatabaseUrl : undefined;
 

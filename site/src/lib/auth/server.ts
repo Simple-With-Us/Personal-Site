@@ -2,7 +2,8 @@
  * Self-hosted Better Auth for THIS app (server-only).
  *
  * Pre-wired for live preview + deploy — do not rewrite this file. To enable
- * local email/password, flip the flag in `./email-password` only (see auth skill).
+ * local email/password, set the `EMAIL_PASSWORD_ENABLED` knob in Infisical
+ * (see `./email-password` and INFISICAL.md).
  *
  * The app runs its own Better Auth at `/api/auth/*`, so the session cookie stays
  * on this app's own origin. Sign-in federates to the shared **Grok auth broker**
@@ -35,7 +36,7 @@ import { getCookie } from "@tanstack/react-start/server";
 import { randomBytes } from "node:crypto";
 import { Pool } from "pg";
 import { ensureDbReady, getPglite } from "../db";
-import { emailAndPasswordEnabled } from "./email-password";
+import { EMAIL_PASSWORD_ENABLED_DEFAULT } from "./email-password";
 import { GROK_PROVIDERS } from "./providers";
 import { pgliteDialect } from "./pglite-dialect";
 import {
@@ -44,6 +45,13 @@ import {
   PREVIEW_CLIENT_ID,
   PREVIEW_CLIENT_SECRET,
 } from "./preview";
+// Infisical SOT: this module's import awaits settings init (top-level await
+// in settings.server.ts), so the cache is populated before the constants
+// below are computed.  See INFISICAL.md.
+import {
+  settingsFlag,
+  settingsValue,
+} from "../settings.server";
 
 // Kick (and share) PGLite bootstrap as soon as the auth server module loads.
 void ensureDbReady();
@@ -62,11 +70,8 @@ function previewAuthSecret(): string {
   return globalAuthRef.__grokAuthPreviewSecret__;
 }
 
-/** Read an env var, treating empty/whitespace as unset. */
-const env = (key: string): string | undefined => {
-  const value = process.env[key]?.trim();
-  return value ? value : undefined;
-};
+/** Read an app setting: Infisical cache first, process.env fallback (degraded mode). */
+const env = (key: string): string | undefined => settingsValue(key);
 
 // Explicit off-switch. The deployer sets `VITE_AUTH_ENABLED=true` when it
 // provisions auth; set it to "false" to force auth off everywhere (dev user).
@@ -122,6 +127,14 @@ const trustedOrigins: string[] = explicitBaseURL
       ...previewAllowedHosts.flatMap((host) => [`https://${host}`, `http://${host}`]),
       ...LOCAL_DEV_ORIGINS,
     ];
+
+// Local email/password sign-in is a tunable knob now: Infisical
+// `EMAIL_PASSWORD_ENABLED` ("true" to enable), defaulting to the constant
+// below.  Flip it in the admin settings UI — no code deploy needed.
+const emailPasswordEnabled = settingsFlag(
+  "EMAIL_PASSWORD_ENABLED",
+  EMAIL_PASSWORD_ENABLED_DEFAULT,
+);
 
 const databaseUrl = env("DATABASE_URL");
 
@@ -204,8 +217,9 @@ export const auth = betterAuth({
   // flicker-prevention guidance (gate on `isPending`; SSR the session).
   session: { cookieCache: { enabled: true, maxAge: 300 } },
 
-  // Local email/password — toggled only via `./email-password` (not a plugin).
-  ...(emailAndPasswordEnabled ? { emailAndPassword: { enabled: true } } : {}),
+  // Local email/password — toggled via the `EMAIL_PASSWORD_ENABLED` Infisical
+  // knob (default in `./email-password`), not a plugin.
+  ...(emailPasswordEnabled ? { emailAndPassword: { enabled: true } } : {}),
 
   // `__Host-` prefixed cookies: the browser REFUSES any same-named cookie that
   // carries a `Domain` attribute, so a sibling `*.grok.me` app cannot "toss" a

@@ -19,7 +19,7 @@ The shared helper applies additional extension and sensitive-path exclusions, ve
 
 ## Verification
 
-- Passed: 65 shared controller/generator tests, including fork/head rejection, explicit zero/pending gates, bounded proxy requests, and create-only publication.
+- Executed from the public congress-trading-shared checkout at immutable source snapshot `8ef33de1953158f26b2fd872b8d1bc045032844e`: `node --test .github/kody-autofix/fleet.node-test.mjs .github/kody-autofix/generate-caller.node-test.mjs` using Node 24.19.0.  Recorded result: exit 0; 65 tests passed, 0 failed, 0 skipped.  Coverage includes fork/head rejection, explicit zero/pending gates, bounded proxy requests, and create-only publication.
 - Caller YAML, immutable pin, repository identity, source scopes, and disabled defaults are checked offline before publication.
 - This repository's complete application/native checks have not been run locally for this workflow-only draft.  Hosted CI and review remain prerequisites to merge; no green result is assumed.
 - No live fixer run or provider request was made for validation.

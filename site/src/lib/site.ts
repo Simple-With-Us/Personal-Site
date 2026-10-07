@@ -134,7 +134,7 @@ export const site = {
     {
       key: "ar",
       name: "Autorotate",
-      blurb: "Retired. Credential rotation is now handled natively by Infisical.",
+      blurb: "Retired.  Credential rotation is now handled natively by Infisical.",
       primaryHref: publicCatalog.pages.autorotate,
       primaryLabel: "View app",
       sourceHref: "https://github.com/Simple-With-Us/Autorotate",

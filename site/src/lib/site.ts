@@ -5,7 +5,7 @@ export type Project = {
   name: string;
   blurb: string;
   primaryHref: string;
-  primaryLabel: "Visit website" | "View app" | "View source";
+  primaryLabel: "Visit website" | "View app" | "View source" | "View archived source";
   sourceHref?: string;
   category: "Coding" | "Financial" | "Utility";
   icon?: string;
@@ -134,10 +134,10 @@ export const site = {
     {
       key: "ar",
       name: "Autorotate",
-      blurb: "Manage supported credential rotations with verification and an audit trail.",
+      blurb: "Retired.  Credential rotation is now handled natively by Infisical.",
       primaryHref: publicCatalog.pages.autorotate,
       primaryLabel: "View app",
-      sourceHref: "https://github.com/jaywedgeworth22/Autorotate",
+      sourceHref: "https://github.com/Simple-With-Us/Autorotate",
       category: "Utility",
       icon: "/app-icons/ar.png",
     },

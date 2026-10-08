@@ -27,8 +27,9 @@ export function MorphingNavBrand({ className }: { className?: string }) {
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+    // Off the homepage the rendered size is derived (`t` is 1).  Setting
+    // progress here would be a synchronous setState in the effect.
     if (!isHome) {
-      setProgress(1);
       return;
     }
 

@@ -68,22 +68,31 @@ function SettingsPanel() {
   const [notice, setNotice] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
-  const load = useCallback(async () => {
-    setState({ status: "loading" });
-    try {
-      const items = await getSettingsInventory();
-      setState({ status: "ready", items });
-    } catch (err) {
-      setState({
-        status: "error",
-        message: err instanceof Error ? err.message : String(err),
-      });
-    }
+  // setState lives in the promise callbacks, not the effect body.  Initial
+  // state is already "loading".  save/reload set "loading" in the click
+  // handler, then reuse this fetch.
+  const fetchInventory = useCallback(() => {
+    return getSettingsInventory().then(
+      (items) => {
+        setState({ status: "ready", items });
+      },
+      (err: unknown) => {
+        setState({
+          status: "error",
+          message: err instanceof Error ? err.message : String(err),
+        });
+      },
+    );
   }, []);
 
   useEffect(() => {
-    void load();
-  }, [load]);
+    void fetchInventory();
+  }, [fetchInventory]);
+
+  const load = useCallback(() => {
+    setState({ status: "loading" });
+    return fetchInventory();
+  }, [fetchInventory]);
 
   const save = async (key: string) => {
     setSaving(true);

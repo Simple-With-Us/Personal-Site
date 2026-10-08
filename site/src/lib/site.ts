@@ -5,7 +5,7 @@ export type Project = {
   name: string;
   blurb: string;
   primaryHref: string;
-  primaryLabel: "Visit website" | "View app" | "View source";
+  primaryLabel: "Visit website" | "View app" | "View source" | "View archived source";
   sourceHref?: string;
   category: "Coding" | "Financial" | "Utility";
   icon?: string;

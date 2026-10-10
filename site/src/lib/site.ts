@@ -152,16 +152,6 @@ export const site = {
       category: "Utility",
       icon: "/app-icons/hh.png",
     },
-    {
-      key: "fl",
-      name: "FleetLink",
-      blurb: "Share files, previews, and static sites with expiring links and iOS App Clip previews.",
-      primaryHref: publicCatalog.websites.fleetlink,
-      primaryLabel: "Visit website",
-      sourceHref: "https://github.com/Simple-With-Us/FleetLink",
-      category: "Utility",
-      icon: "/app-icons/fl.png",
-    },
   ] satisfies Project[],
   appIcons: {
     ST: "/app-icons/st.png",

@@ -193,16 +193,30 @@ export const SETTINGS_INVENTORY: readonly SettingMeta[] = [
   },
 ];
 
-/** Map the hosting environment to the Infisical environment slug. */
+/**
+ * The only Infisical environment this app reads (owner directive 2026-10-10:
+ * prod only; the `dev` and `staging` environments are being retired).
+ */
+export const INFISICAL_ENVIRONMENT = "prod";
+
+/**
+ * Resolve the Infisical environment slug.  Always `prod`, whatever the hosting
+ * environment: Vercel Preview, local development and an unset `VERCEL_ENV` all
+ * read prod.  An `INFISICAL_ENV` override with any other value is refused: it
+ * logs a warning and is ignored.  It never throws, because it runs while the
+ * settings client boots and a throw would take the server down.
+ */
 export function infisicalEnvironment(
   env: Record<string, string | undefined> = process.env,
 ): string {
-  const override = env.INFISICAL_ENV?.trim();
-  if (override) return override;
-  const vercelEnv = env.VERCEL_ENV?.trim();
-  if (vercelEnv === "production") return "prod";
-  if (vercelEnv === "preview") return "staging";
-  return "dev";
+  const requested = env.INFISICAL_ENV?.trim();
+  if (requested && requested !== INFISICAL_ENVIRONMENT) {
+    console.warn(
+      "[settings] INFISICAL_ENV is set to a non-prod value and is ignored: " +
+        "this app reads Infisical prod only.  See INFISICAL.md.",
+    );
+  }
+  return INFISICAL_ENVIRONMENT;
 }
 
 function readEnv(name: string): string | undefined {

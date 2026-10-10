@@ -6,7 +6,7 @@ everything the app's behavior depends on that is not code.  Per-user settings
 stay in the app's own store and never go in Infisical.
 
 - Infisical project: **Personal Site** (`44091453-1d4d-4369-b476-751a188c1ee4`), jays-services org.
-- Environments: `dev` (local / preview), `staging` (Vercel Preview), `prod` (Vercel Production).  The app maps `VERCEL_ENV=production` → `prod`, `preview` → `staging`, anything else → `dev` (`INFISICAL_ENV` overrides; see `site/src/lib/settings.server.ts`).
+- Environments: **`prod` only** (owner directive 2026-10-10: `dev` and `staging` are being retired).  `infisicalEnvironment()` in `site/src/lib/settings.server.ts` returns `prod` for every hosting environment, including Vercel Preview and local development, and refuses an `INFISICAL_ENV` override: a non-prod value logs a warning and is ignored.  The Cursor boot script reads `prod` and exits 1 if `INFISICAL_ENV` is anything else.
 - Bootstrap: the server needs `INFISICAL_CLIENT_ID` / `INFISICAL_CLIENT_SECRET` (universal-auth machine identity) in its own environment.  These two are the ONLY env vars that live outside Infisical by design — they are the identity that reads everything else.  Set them in Vercel (all environments) and in local `.env` (see `site/.env.example`).
 
 ## Key inventory
@@ -33,9 +33,13 @@ stay in the app's own store and never go in Infisical.
 | `DD_TRACE_SAMPLE_RATE` | knob | Seeded (`0.2` — fleet cost rule for production traces). |
 | `DD_FAIL_CLOSED` | knob | Empty (= default off).  `"1"` = Datadog required even outside production. |
 
-Non-sensitive defaults were seeded into the **dev** environment; staging/prod
-are filled by the admin at deploy time.  Secret values are NEVER invented,
-guessed, or copied from elsewhere — empty means "admin fills this".
+The six non-empty defaults (`DD_SERVICE`, `DD_SITE`, `DD_TRACE_SAMPLE_RATE`,
+`GROK_AUTH_ISSUER`, `SENTRY_FLEET_DSN`, `VITE_AUTH_ENABLED`) live in the **prod**
+environment.  The eleven keys marked empty above were deliberately not carried
+over from the retired `dev` environment: an empty key in prod is the
+exists-but-missing trap, so the admin adds each one in prod when it is needed.
+Secret values are NEVER invented, guessed, or copied from elsewhere — empty means
+"admin fills this".
 
 ## What is deliberately NOT in Infisical (and why)
 

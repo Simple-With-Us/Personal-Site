@@ -6,25 +6,19 @@ Protocol: /Users/jay/apps/EFFORT-LOG-PROTOCOL.md (canonical). Live board: this f
 
 - 2026-10-01 — CLAUDE renamed the Harness portfolio card to Clutch (`ck.svg`, `CK` digest code, repo link) and regenerated the homepage visual baseline (`claude/clutch-rename`, worktree `~/apps/personal-claude-clutch`, PR #118, board `870265a6`).  Rollout note `docs/rollouts/2026-10-01-clutch-rename.md`.
 - 2026-09-27 — FINCH added Playwright visual regression specs for the site (homepage + terms-of-service, committed baselines; live activity feed and third-party media embeds masked) and documented the automated-only visual verification policy in AGENTS.md (PR opened, auto-merge armed).
-
 > ⚠️ **AGENT AVAILABILITY NOTICE (2026-08-21):** KIMI is **RETIRED / UNAVAILABLE** long-term (owner directive). All agents MUST NOT assign work or wait on KIMI in-flight work. Reassign any open KIMI effort board lanes or GitHub issues to active seats (AG, GROK, CLAUDE, MONET, etc.).
 
-- **2026-09-14 — FX — IN PROGRESS — Host Safari start page at `/start/` (`fx/safari-start`, worktree `~/apps/personal-fx-safari-start`, board `970746b9`).**
-
-- **2026-09-13 — FX — IN PROGRESS — Skip pointless Vercel production deploys (`fx/vercel-skip-pointless`, worktree `~/apps/personal-fx-deploy`, board `0934111e`).**  No site-file change = skip.  Cap 1/hour.
-
-- **2026-09-13 — FX — IN PROGRESS — Merge to main is Vercel production (`fx/merge-equals-live`, worktree `~/apps/personal-fx-deploy`, board `ef71d6c1`).**  Drop hourly ignore.  Preview auto-deploys stay skipped.
-
-- **2026-09-13 — FX — IN PROGRESS — Stop advertising Autorotate.Codes as a live host (`fx/dead-links-hoghunter`, worktree `~/apps/personal-fx-links`, board `56fea494`).**  NXDOMAIN.  Card/digest/TestFlight say Autorotate.  Hog Hunter added as local-only.
-
 ## In Progress
+- **2026-10-10 — AG — IN PROGRESS — Add FleetLink card, update app blurbs with TestFlight public beta availability, rewire org repo links, and refresh app icons (`ag/project-catalog-refresh`, worktree `~/apps/personal-antigravity`, board `a1b2c3d4`).**
+- **2026-10-08 - BF-COMPILER - IN_PROGRESS - Personal-Site e2e red on main 18 runs straight — stale homepage visual baseline, ungated.** <!-- wb-agent-report:a6882e50c1d54c9f94390cbd9af25163 -->
+- **2026-10-07 - BF-Builder - IN PROGRESS - Personal-Site mirror opens a pull request instead of pushing main (`builder/mirror-site-pr`).**  The required verify check stays.  <!-- wb-agent-report:1f2e8f9723ae4c528bf2f4aec670bc6b -->
+- **2026-10-01 — CLAUDE — IN PR #118 — Rename the Harness portfolio card to Clutch (`claude/clutch-rename`, worktree `~/apps/personal-claude-clutch`, board `870265a6`).**  `ck.svg`, `CK` digest code, repo link, homepage baseline regenerated.  Rollout note `docs/rollouts/2026-10-01-clutch-rename.md`.
+- **2026-09-14 — FX — IN PROGRESS — Host Safari start page at `/start/` (`fx/safari-start`, worktree `~/apps/personal-fx-safari-start`, board `970746b9`).**
+- **2026-09-13 — FX — IN PROGRESS — Merge to main is Vercel production (`fx/merge-equals-live`, worktree `~/apps/personal-fx-deploy`, board `ef71d6c1`).**
 - **2026-09-01 — GROK — IN PROGRESS — Datadog Free-tier fail-closed: `prod`→`production`, error-only logs, us5 fallback (board `ad678866`, branch `grok/datadog-free-tier`, worktree `~/apps/personal-grok-datadog-free`).**  Rollout: `docs/rollouts/2026-09-01-datadog-free-tier.md`.
 
 ## Deployed
 - **2026-09-27 - CODEX - IN_PROGRESS - Personal-Site public app catalog, branding, and copy parity with Simple With Us.** <!-- wb-agent-report:47564913f76c46da93d82a647c831a30 -->
-  - Deployed: PR #102 merged as `28cfbe00f8bd3af2b2fddddacc5496202c8093c7`; Vercel deployment `dpl_9HnXAm1Bq6YpZVYuk7EacYrUBjQs` is Ready for that commit.  `jays.services` and `jaywedgeworth.com` served the 11-family catalog and complete Simple With Us wordmark; live Usage Client and Local icon assets returned HTTP 200.
-- **2026-09-26 — CODEX — COMPLETED/DEPLOYED — Public portfolio boundary, selected work, catalog links, accessibility, and `/start/` redirect (`codex/web-assets-improvements`, worktree `~/apps/personal-site-codex-web-assets`).**  PRs #96 and #99 merged as `af968ba88ba5ad5e8630d6629303dfc93b69b4e0` and `73b9872eea2c649d807932adf7a6abab4f0b8ed3`.  Production deployment `3hNFiCaAcZBGGuuTpKvAo9imiTLR` is Ready/Production with `jaywedgeworth.com` assigned; `jays.services` and `jaywedgeworth.com` both returned HTTP 200 HTML containing the exact South Texas Launch Site Sketchfab URL and six public projects.  No FleetOPS/private-board URL or effort-board text was observed.
-- [AG] COMPLETED update ST and BotFleet app icons 2026-09-15
 - **2026-08-22 - CURSOR - DEPLOYED - Enable Vercel Web Analytics on Personal-Site.**  PR #17 on production.  insights/script.js + insights/view 200 on personal-site-jayw.vercel.app. <!-- wb-agent-report:365732267fe143c589160c3f6bb59cf4 -->
 - **2026-08-22 — CURSOR — DEPLOYED — Vercel Web Analytics (PR #17).**  `@vercel/analytics/react` in TanStack Start root.  Production `https://personal-site-jayw.vercel.app/` loaded `/_vercel/insights/script.js` and POSTed `/_vercel/insights/view` HTTP 200.  Board `36573226`.
 - **2026-08-22 — CURSOR — PICKUP GROK — github-sync chat already DEPLOYED (Hobby Vercel + Drive #94).**  Cursor Auto owns remaining apex/domain cutover if asked.  Grok is no longer owner.
@@ -34,8 +28,14 @@ Protocol: /Users/jay/apps/EFFORT-LOG-PROTOCOL.md (canonical). Live board: this f
 - **2026-08-14 — GROK — DEPLOYED — Social short-link URL redirects on jaywedgeworth.com.** Cloudflare Single Redirects (301) + dummy proxied `AAAA 100::`.  doximity → view profile (see row above); facebook/fb → Facebook; instagram/ig → Instagram; x → X; linkedin → LinkedIn `/in/JayWedgeworth`.
 
 ## Completed
-- **2026-09-17 — GROK — COMPLETED — Vercel Speed Insights already on main (PR #70 squash `9c56966`, board `87efa14b`).**  `@vercel/speed-insights/react` in `site/src/routes/__root.tsx` next to Analytics.  Live `/_vercel/speed-insights/script.js` HTTP 200 on jays.services and personal-site-jayw.vercel.app.  No duplicate PR.  About copy and Doximity `/profiles/…/view` URL preserved.
+- **2026-09-26 — CODEX — COMPLETED/DEPLOYED — Public portfolio boundary, selected work, catalog links, accessibility, and `/start/` redirect (`codex/web-assets-improvements`, worktree `~/apps/personal-site-codex-web-assets`).**  PRs #96 and #99 merged as `af968ba88ba5ad5e8630d6629303dfc93b69b4e0` and `73b9872eea2c649d807932adf7a6abab4f0b8ed3`.  Production deployment `3hNFiCaAcZBGGuuTpKvAo9imiTLR` is Ready/Production with `jaywedgeworth.com` assigned; `jays.services` and `jaywedgeworth.com` both returned HTTP 200 HTML containing the exact South Texas Launch Site Sketchfab URL and six public projects.  No FleetOPS/private-board URL or effort-board text was observed.
 - **2026-09-17 — GROK — COMPLETED — vercel-ignore-hourly watch_args `:(top)` pathspec already on main (PR #61 `1dd093f`, board `298e80ed`).**  Nested `site/` uses `:(top)${rel}`.  Did not invent a second Vercel project.
+- **2026-09-17 — GROK — COMPLETED — Vercel Speed Insights already on main (PR #70 squash `9c56966`, board `87efa14b`).**  `@vercel/speed-insights/react` in `site/src/routes/__root.tsx` next to Analytics.  Live `/_vercel/speed-insights/script.js` HTTP 200 on jays.services and personal-site-jayw.vercel.app.  No duplicate PR.  About copy and Doximity `/profiles/…/view` URL preserved.
+- **2026-09-01 - GROK - IN_PROGRESS - Vercel auto-deploys skip unless site files changed, plus 1/hour (branch `grok/vercel-site-watch`, worktree `~/apps/personal-grok-vercel-watch`).**  Board `46837afd`.  Script watches `site/`.
+- **2026-09-01 — GROK — COMPLETED — Cap automatic Vercel deploys to one production build per hour.**  Board `9051c3ac`.  PR #53.  Follow-up is site-file watch on `grok/vercel-site-watch`.
+- **2026-09-13 - FX - PLANNED - Merge to main must production-deploy Vercel sites (PS/DD/BF/CL).** <!-- wb-agent-report:ef71d6c1a98a49289dbe32619973fa7c -->
+- **2026-09-13 - FX - PLANNED - Vercel: skip pointless production deploys; keep 1/hour cap.** <!-- wb-agent-report:0934111e27a246ed952d262d8a0975a7 -->
+- **2026-09-13 - FX - COMPLETED/MERGED PS #73 - Stop advertising Autorotate.Codes as a live host (`fx/dead-links-hoghunter`, worktree `~/apps/personal-fx-links`, board `56fea494`).**  GitHub merge does not auto-publish jays.services. <!-- wb-agent-report:56fea494a52c4a3f805fc83d76314618 -->
 - **2026-09-07 — AG — COMPLETED/DEPLOYED — Update BotFleet app logo (bf.png), remove Socratic Trade TestFlight links, and polish app descriptions (PR #65 merged `364dad1`).**  Deployed to production (`dpl_FV5tML6Y5oq1mDyf8hNHFBtZX3Ve`) on `https://jays.services`.  Verified live HTTP 200, `bf.png` 200, ST TestFlight removed, app blurbs refreshed.
 - **2026-09-07 — AG — COMPLETED/DEPLOYED — Fix Vercel auto-deploy rate-limit query (&state=READY) (PR #63 merged `ffa9d90`).**  Added &state=READY filter to `site/vercel-ignore-hourly.sh` and updated Vercel dashboard ignoreCommand fallback to `exit 1`.  Verified live production deployment on `https://jays.services` (HTTP 200).
 - **2026-09-01 — GROK — COMPLETED/MERGED #49 — Personal-Site stays Datadog-only; no Sentry project (`grok/sentry-datadog-only`).**  Board `ca3e27f0`.  Worktree `~/apps/personal-grok-sentry-docs`.  Explicit README/AGENTS sentence.  Tiny unhandled-window-error Sentry project is not wanted.  Preserve `Earlier work included` and the Doximity `/profiles/…/view` URL.  Slack `#agent-sync` post skipped (`account_inactive` / 403).
@@ -52,8 +52,6 @@ Protocol: /Users/jay/apps/EFFORT-LOG-PROTOCOL.md (canonical). Live board: this f
 - **2026-08-14 — GROK — COMPLETED — Onboard Personal-Site as a fleet app + About copy "included" (PR #1).**  AGENTS, board, static CI, effort-issues-sync.  Snapshot uses "Earlier work included".  Live Vercel project is not on the fleet MCP team, so production HTML is unchanged.
 
 ## In Progress
-- **2026-09-01 - GROK - IN_PROGRESS - Vercel auto-deploys skip unless site files changed, plus 1/hour (branch `grok/vercel-site-watch`, worktree `~/apps/personal-grok-vercel-watch`).**  Board `46837afd`.  Script watches `site/`.
-- **2026-09-01 — GROK — COMPLETED — Cap automatic Vercel deploys to one production build per hour.**  Board `9051c3ac`.  PR #53.  Follow-up is site-file watch on `grok/vercel-site-watch`.
 
 ## Planned / Reserved
 - (none)
@@ -77,4 +75,3 @@ Protocol: /Users/jay/apps/EFFORT-LOG-PROTOCOL.md (canonical). Live board: this f
 - 2026-08-14 — GROK moved fleet onboard + About copy to Completed (PR #1).
 - 2026-08-14 — GROK claimed fleet onboard + About copy; moved social redirects to Deployed after live 301 verify.
 - 2026-08-14 — bootstrapped by onboard-new-app.sh.
-

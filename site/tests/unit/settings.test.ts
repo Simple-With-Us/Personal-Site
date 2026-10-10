@@ -296,19 +296,37 @@ describe("personal-site settings service", () => {
     }
   });
 
-  it("infisicalEnvironment maps the hosting env to slugs", () => {
+  it("infisicalEnvironment reads prod in every hosting environment", () => {
     const { infisicalEnvironment } = settingsModule;
-    assert.equal(
-      infisicalEnvironment({ VERCEL_ENV: "production" }),
-      "prod",
-    );
-    assert.equal(infisicalEnvironment({ VERCEL_ENV: "preview" }), "staging");
-    assert.equal(infisicalEnvironment({}), "dev");
-    assert.equal(
-      infisicalEnvironment({ VERCEL_ENV: "production", INFISICAL_ENV: "dev" }),
-      "dev",
-      "explicit INFISICAL_ENV wins",
-    );
+    assert.equal(infisicalEnvironment({ VERCEL_ENV: "production" }), "prod");
+    assert.equal(infisicalEnvironment({ VERCEL_ENV: "preview" }), "prod");
+    assert.equal(infisicalEnvironment({ VERCEL_ENV: "development" }), "prod");
+    assert.equal(infisicalEnvironment({}), "prod");
+    assert.equal(infisicalEnvironment({ INFISICAL_ENV: "prod" }), "prod");
+    assert.equal(infisicalEnvironment({ INFISICAL_ENV: "  " }), "prod");
+  });
+
+  it("infisicalEnvironment refuses a non-prod INFISICAL_ENV: warns, ignores, never throws", () => {
+    const { infisicalEnvironment } = settingsModule;
+    const warnings: string[] = [];
+    const realWarn = console.warn;
+    console.warn = (...args: unknown[]) => {
+      warnings.push(args.map(String).join(" "));
+    };
+    try {
+      assert.equal(infisicalEnvironment({ INFISICAL_ENV: "dev" }), "prod");
+      assert.equal(
+        infisicalEnvironment({ VERCEL_ENV: "preview", INFISICAL_ENV: "staging" }),
+        "prod",
+      );
+    } finally {
+      console.warn = realWarn;
+    }
+    assert.equal(warnings.length, 2);
+    for (const line of warnings) {
+      assert.match(line, /INFISICAL_ENV/);
+      assert.match(line, /prod only/);
+    }
   });
 
   it("degraded mode: initSettings resolves null with zero network calls", async () => {

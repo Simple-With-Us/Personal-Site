@@ -1,34 +1,62 @@
 import type { Plugin } from "vite";
 import { defineConfig } from "vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
+import { sentryVitePlugin } from "@sentry/vite-plugin";
 import viteReact from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { nitro } from "nitro/vite";
-import {
-  assertDatadogKeysOrThrow,
-  datadogEnvName,
-  datadogService,
-  datadogSite,
-  datadogVersion,
-  readApplicationId,
-  readClientToken,
-} from "./src/lib/datadog/fail-closed.ts";
 
-function datadogPublicDefine(): Record<string, string> {
-  const production = process.env.VERCEL_ENV === "production";
-  // Never throw here.  A missing RUM/APM key must not fail `vite build`
-  // on Vercel Production (preview of the same commit stays green).
-  assertDatadogKeysOrThrow(process.env);
-  const failClosed = production || process.env.DD_FAIL_CLOSED === "1";
+function sentryRelease(): string {
+  return (
+    (process.env.SENTRY_RELEASE || "").trim() ||
+    (process.env.VERCEL_GIT_COMMIT_SHA || "").trim() ||
+    "unknown"
+  );
+}
+
+function sentryEnvironment(): string {
+  return (
+    (process.env.SENTRY_ENVIRONMENT || "").trim() ||
+    (process.env.VERCEL_ENV || "").trim() ||
+    (process.env.NODE_ENV || "").trim() ||
+    "development"
+  );
+}
+
+function sentryPublicDefine(): Record<string, string> {
+  // Never throw here.  A missing DSN must not fail `vite build` — the
+  // browser init stays dark until Jay attaches SENTRY_DSN on Vercel.
+  // Never put SENTRY_AUTH_TOKEN here.
   return {
-    "import.meta.env.DD_APPLICATION_ID": JSON.stringify(readApplicationId(process.env)),
-    "import.meta.env.DD_CLIENT_TOKEN": JSON.stringify(readClientToken(process.env)),
-    "import.meta.env.DD_SITE": JSON.stringify(datadogSite(process.env)),
-    "import.meta.env.DD_SERVICE": JSON.stringify(datadogService(process.env)),
-    "import.meta.env.DD_ENV": JSON.stringify(datadogEnvName(process.env)),
-    "import.meta.env.DD_VERSION": JSON.stringify(datadogVersion(process.env)),
-    "import.meta.env.DD_FAIL_CLOSED": JSON.stringify(failClosed ? "1" : ""),
+    "import.meta.env.SENTRY_DSN": JSON.stringify((process.env.SENTRY_DSN || "").trim()),
+    "import.meta.env.SENTRY_ENVIRONMENT": JSON.stringify(sentryEnvironment()),
+    "import.meta.env.SENTRY_RELEASE": JSON.stringify(sentryRelease()),
   };
+}
+
+/**
+ * Source-map upload to the `personal-site` Sentry project so events carry
+ * a release (VERCEL_GIT_COMMIT_SHA) that lines up with uploaded maps.
+ * Skipped entirely when SENTRY_AUTH_TOKEN is unset, so local and tokenless
+ * builds never fail on upload.
+ */
+function sentrySourceMapsPlugin(): Plugin[] {
+  const authToken = (process.env.SENTRY_AUTH_TOKEN || "").trim();
+  if (!authToken) {
+    if (process.env.VERCEL_ENV === "production") {
+      console.warn("Sentry source-map upload skipped: SENTRY_AUTH_TOKEN is unset.");
+    }
+    return [];
+  }
+  return [
+    sentryVitePlugin({
+      org: (process.env.SENTRY_ORG || "").trim() || "simple-with-us",
+      project: (process.env.SENTRY_PROJECT || "").trim() || "personal-site",
+      authToken,
+      release: { name: sentryRelease() },
+      telemetry: false,
+    }) as unknown as Plugin,
+  ];
 }
 
 /**
@@ -157,7 +185,11 @@ export default defineConfig(({ command }) => ({
     strictPort: true,
   },
   resolve: { tsconfigPaths: true },
-  define: datadogPublicDefine(),
+  define: sentryPublicDefine(),
+  build: {
+    // Hidden maps: uploaded to Sentry, never referenced by the bundle.
+    sourcemap: "hidden",
+  },
   ssr: {
     external: ["dd-trace"],
   },
@@ -180,5 +212,7 @@ export default defineConfig(({ command }) => ({
         ]
       : []),
     viteReact(),
+    // After the framework plugins so transformed chunks carry maps.
+    ...sentrySourceMapsPlugin(),
   ],
 }));

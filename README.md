@@ -19,16 +19,14 @@ The production site is the Vercel project **personal-site** on team **Jay's Serv
 
 ## Observability
 
-**Datadog only.**  There is no Sentry project for `jays.services`.  Do not
-create one, including a tiny unhandled-window-error project.  Agents must
-stop assuming Sentry covers this site.
+Browser errors, tracing, Session Replay, and logs go to the existing
+Sentry project **`personal-site`**.  Attach `SENTRY_DSN` (and
+`SENTRY_AUTH_TOKEN` for source-map upload) on the Vercel `personal-site`
+project.  Release is `VERCEL_GIT_COMMIT_SHA`.  Do not commit secret values.
 
-Datadog logs, APM, and RUM use the **existing** Datadog account.  Attach the
-already-created env vars on the Vercel `personal-site` project (`DD_API_KEY`,
-`DD_SITE`, `DD_APPLICATION_ID`, `DD_CLIENT_TOKEN`).  Production fails closed
-if those are missing.  Do not commit secret values.  PagerDuty is unused here.
-Datadog Session Replay stays off so it cannot collide with Sentry Replay
-(which this site also does not run).
+Server logs and APM stay on the existing Datadog account (`DD_API_KEY`,
+`DD_SITE`).  Do not run Datadog RUM next to Sentry Replay.  PagerDuty is
+unused here.
 
 ## Local
 

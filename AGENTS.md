@@ -97,8 +97,9 @@ test -f docs/EFFORT-LOG.md
 rg -n "Earlier work included" static/index.html
 ```
 
-CI `verify` is file-existence + About-copy grep.  `site/` is the TanStack
-Start source.  Do not invent `npm test`.  Local: `cd site && npm run dev`.
+CI `verify` is file-existence + About-copy grep + Datadog server + Sentry
+browser checks.  `site/` is the TanStack Start source.  Do not invent
+`npm test`.  Local: `cd site && npm run dev`.
 
 ## Visual verification
 
@@ -158,32 +159,37 @@ Zone: `jaywedgeworth.com` on Cloudflare account **Usage.Jays.Services**.
 Usage.Jays.Services Global API Key (`CLOUDFLARE_JAY_API_KEY` +
 `mail@jays.services`). Never print those values.
 
-## Observability is Datadog (no Sentry project)
+## Observability is Sentry (browser) + Datadog (server)
 
-This site has **no Sentry project**.  Observability for `jays.services` is
-Datadog (logs, APM, RUM on the existing org `us5.datadoghq.com`).  Do not add
-`@sentry/*`, a DSN, or a tiny unhandled-window-error Sentry project.  Fleet
-Sentry covers the product apps; Personal-Site stays on Datadog.  Canonical:
-`ai-fleet-coordinator` `docs/rollouts/2026-09-01-sentry-fleet-adoption.md`.
+Browser errors, tracing, Session Replay, and logs go to the existing
+Sentry project **`personal-site`** (`@sentry/react` + `@sentry/vite-plugin`).
+Server logs and APM stay on Datadog (`dd-trace`, agentless on Vercel).
+Do not run Datadog RUM alongside Sentry Replay.  Never hardcode a DSN or
+auth token.  Canonical: `docs/rollouts/2026-10-11-sentry-browser.md`.
 
-Reuse env vars already in the fleet.  Do not invent keys in git.  Production
-(`VERCEL_ENV=production`) and `DD_FAIL_CLOSED=1` fail closed if keys are
-missing.  Do not hide rendered errors.  Do not enable Datadog Session Replay
-(and there is no Sentry Replay here either — never run both on the same page).
+Reuse env vars already in the fleet.  Do not invent keys in git.  Missing
+`SENTRY_DSN` keeps the browser dark (never throw from init).  Production
+(`VERCEL_ENV=production`) and `DD_FAIL_CLOSED=1` still fail-closed for
+server Datadog keys.  Do not hide rendered errors.
 
 | Name | Used for |
 |------|----------|
+| `SENTRY_DSN` | Browser DSN for project `personal-site` (baked at build) |
+| `SENTRY_AUTH_TOKEN` | Build-time source-map upload (`project:releases`) |
+| `SENTRY_ORG` | Default `simple-with-us` |
+| `SENTRY_PROJECT` | Default `personal-site` |
+| `SENTRY_ENVIRONMENT` | Default `VERCEL_ENV` / `NODE_ENV` |
+| `SENTRY_RELEASE` | Default `VERCEL_GIT_COMMIT_SHA` |
 | `DD_API_KEY` (alias `DATADOG_API_KEY`) | Server logs + agentless APM |
 | `DD_SITE` | Intake site (existing: `us5.datadoghq.com`) |
-| `DD_APPLICATION_ID` | Existing RUM application (public) |
-| `DD_CLIENT_TOKEN` | Existing RUM / browser logs token (public) |
 | `DD_SERVICE` | Default `personal-site` |
 | `DD_ENV` | Default `VERCEL_ENV` / `NODE_ENV` |
 | `DD_VERSION` | Default `VERCEL_GIT_COMMIT_SHA` |
 | `DD_AGENT_HOST` / `DD_TRACE_AGENT_PORT` | Optional local Agent (Coolify).  Absent on Vercel → agentless |
 
-RUM Session Replay stays at 0.  Prod APM sample rate is 0.2.  Code:
-`site/src/lib/datadog/`.  Verify: `node scripts/verify-datadog.mjs`.
+Browser Replay is on (masked text, blocked media).  Prod APM sample rate is
+0.2.  Code: `site/src/lib/sentry/` and `site/src/lib/datadog/`.  Verify:
+`node scripts/verify-sentry.mjs` and `node scripts/verify-datadog.mjs`.
 
 ## Secrets
 

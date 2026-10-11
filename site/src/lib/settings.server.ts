@@ -32,8 +32,9 @@
  *
  * The ONLY process.env reads for migrated keys live in this module (plus the
  * dependency-injected defaults in `datadog/fail-closed.ts`, the build-time
- * `vite.config.ts`, and the build-time `scripts/migrate.mjs` — all called
- * out in INFISICAL.md).  `scripts/verify-infisical-sot.mjs` lints this.
+ * `vite.config.ts` Sentry defines, and the build-time `scripts/migrate.mjs`
+ * — all called out in INFISICAL.md).  `scripts/verify-infisical-sot.mjs`
+ * lints this.
  *
  * No secret VALUES live in this file — key names and metadata only.
  */
@@ -190,6 +191,46 @@ export const SETTINGS_INVENTORY: readonly SettingMeta[] = [
     required: false,
     description:
       "\"1\" = Datadog treated as required even outside production.",
+  },
+  {
+    key: "SENTRY_DSN",
+    kind: "secret",
+    required: false,
+    description:
+      "Browser DSN for the personal-site Sentry project.  Baked into the client bundle at build time (see INFISICAL.md).",
+  },
+  {
+    key: "SENTRY_AUTH_TOKEN",
+    kind: "secret",
+    required: false,
+    description:
+      "Sentry auth token with project:releases.  Build-time source-map upload only.  Never sent to the browser.",
+  },
+  {
+    key: "SENTRY_ORG",
+    kind: "env-config",
+    required: false,
+    description: "Sentry org slug.  Default simple-with-us.",
+  },
+  {
+    key: "SENTRY_PROJECT",
+    kind: "env-config",
+    required: false,
+    description: "Sentry project slug.  Default personal-site.",
+  },
+  {
+    key: "SENTRY_ENVIRONMENT",
+    kind: "env-config",
+    required: false,
+    description:
+      "Sentry environment tag.  Derived from VERCEL_ENV / NODE_ENV when unset.",
+  },
+  {
+    key: "SENTRY_RELEASE",
+    kind: "env-config",
+    required: false,
+    description:
+      "Sentry release.  Derived from VERCEL_GIT_COMMIT_SHA when unset.",
   },
 ];
 

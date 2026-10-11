@@ -47,6 +47,12 @@ const MIGRATED_KEYS = [
   "DD_TRACE_AGENT_PORT",
   "DD_TRACE_SAMPLE_RATE",
   "DD_FAIL_CLOSED",
+  "SENTRY_DSN",
+  "SENTRY_AUTH_TOKEN",
+  "SENTRY_ORG",
+  "SENTRY_PROJECT",
+  "SENTRY_ENVIRONMENT",
+  "SENTRY_RELEASE",
 ];
 // Note: DD_TRACE_EXPERIMENTAL_EXPORTER is written (not read) by
 // applyDatadogProcessEnv for dd-trace import-time compat — it is not a

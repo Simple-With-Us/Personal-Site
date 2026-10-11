@@ -291,6 +291,10 @@ describe("personal-site settings service", () => {
       "DD_CLIENT_TOKEN",
       "DD_SERVICE",
       "DD_TRACE_SAMPLE_RATE",
+      "SENTRY_DSN",
+      "SENTRY_AUTH_TOKEN",
+      "SENTRY_ORG",
+      "SENTRY_PROJECT",
     ]) {
       assert.ok(keys.includes(expected), `inventory missing ${expected}`);
     }

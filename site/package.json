@@ -18,8 +18,8 @@
     "test:unit": "node --experimental-strip-types --test \"tests/unit/**/*.test.ts\""
   },
   "dependencies": {
-    "@datadog/browser-logs": "^7.9.0",
-    "@datadog/browser-rum": "^7.9.0",
+    "@sentry/react": "^11.6.0",
+    "@sentry/vite-plugin": "^5.4.1",
     "@electric-sql/pglite": "^0.5.3",
     "@hookform/resolvers": "^5.0.0",
     "@jaywedgeworth22/congress-trading-shared": "github:Simple-With-Us/congress-trading-shared#semver:^2.7.1",

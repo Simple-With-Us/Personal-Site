@@ -11,7 +11,7 @@ export function AppErrorComponent({ error }: ErrorComponentProps) {
         : "An unexpected error occurred. Try reloading the page.";
 
   useEffect(() => {
-    void import("@/lib/datadog/rum").then((mod) => {
+    void import("@/lib/sentry/sentry").then((mod) => {
       mod.reportVisibleError(error);
     });
   }, [error]);

@@ -32,6 +32,12 @@ stay in the app's own store and never go in Infisical.
 | `DD_TRACE_AGENT_PORT` | knob | Empty (= default `8126`). |
 | `DD_TRACE_SAMPLE_RATE` | knob | Seeded (`0.2` — fleet cost rule for production traces). |
 | `DD_FAIL_CLOSED` | knob | Empty (= default off).  `"1"` = Datadog required even outside production. |
+| `SENTRY_DSN` | secret | Empty — **to be filled by admin**.  Browser DSN for the `personal-site` Sentry project.  Baked into the client bundle at build time (see below). |
+| `SENTRY_AUTH_TOKEN` | secret | Empty — **to be filled by admin**.  Build-time source-map upload only (`project:releases`).  Never sent to the browser. |
+| `SENTRY_ORG` | env-config | Empty — defaults to `simple-with-us` in `vite.config.ts`. |
+| `SENTRY_PROJECT` | env-config | Empty — defaults to `personal-site` in `vite.config.ts`. |
+| `SENTRY_ENVIRONMENT` | env-config | Empty — derived from `VERCEL_ENV` / `NODE_ENV` when unset. |
+| `SENTRY_RELEASE` | env-config | Empty — derived from `VERCEL_GIT_COMMIT_SHA` when unset. |
 
 The six non-empty defaults (`DD_SERVICE`, `DD_SITE`, `DD_TRACE_SAMPLE_RATE`,
 `GROK_AUTH_ISSUER`, `SENTRY_FLEET_DSN`, `VITE_AUTH_ENABLED`) live in the **prod**
@@ -45,7 +51,7 @@ Secret values are NEVER invented, guessed, or copied from elsewhere — empty me
 
 - **Per-user settings** (auth sessions, user rows, any per-user preference): live in the app's own store (Neon/PGLite via Better Auth + app tables).  Explicitly out of scope.
 - **Platform-injected vars** (`VERCEL_ENV`, `VERCEL_URL`, `VERCEL_GIT_COMMIT_SHA`): provided by Vercel at runtime; read directly where needed.
-- **Build-time client-bundle config** (`VITE_*`, `DD_APPLICATION_ID`, `DD_CLIENT_TOKEN`, `DD_SITE`, … via `vite.config.ts` → `import.meta.env`): these are baked into the browser bundle at build time and cannot be fetched from Infisical at runtime (the browser must never hold the universal-auth client secret).  Their SOURCE is still Infisical — the deploy pipeline must sync Infisical → Vercel environment variables so `vite build` picks them up.  A stale client bundle after a rotation is fixed by redeploying.
+- **Build-time client-bundle config** (`VITE_*`, `SENTRY_DSN`, `SENTRY_ENVIRONMENT`, `SENTRY_RELEASE`, leftover `DD_*` server keys via `vite.config.ts` → `import.meta.env`): these are baked into the browser bundle at build time and cannot be fetched from Infisical at runtime (the browser must never hold the universal-auth client secret).  Their SOURCE is still Infisical — the deploy pipeline must sync Infisical → Vercel environment variables so `vite build` picks them up.  A stale client bundle after a rotation is fixed by redeploying.  `SENTRY_AUTH_TOKEN` is build-time only and is never defined into the client.
 - **Build-time migration** (`site/scripts/migrate.mjs`, run as `db:migrate` during `npm run build`): reads `DATABASE_URL` from the build environment (Vercel), same sync as above.
 - **Build-time constants that never change at runtime** (route paths, OAuth endpoint path templates, preview allowlist `*.grok-sandbox.com`, P2P poll intervals): stay in code.
 
@@ -80,7 +86,7 @@ fail with a clear error instead of pretending to save.
 ## Rotating a value
 
 1. Open `/admin/settings` while signed in, find the key, choose Rotate/Set, type the new value, Save.  The save writes to Infisical first, then updates the running cache — no redeploy needed for server-side keys.
-2. For client-bundle keys (`DD_APPLICATION_ID`, `DD_CLIENT_TOKEN`, `VITE_*`): rotate in Infisical (or the admin console), then redeploy so `vite build` bakes the new values.  Confirm the Infisical → Vercel env sync picked them up before deploying.
+2. For client-bundle keys (`SENTRY_DSN`, `VITE_*`): rotate in Infisical (or the admin console), then redeploy so `vite build` bakes the new values.  Confirm the Infisical → Vercel env sync picked them up before deploying.
 3. `BETTER_AUTH_SECRET` rotation invalidates existing sessions (users sign in again).  `DATABASE_URL` rotation takes effect on the next background refresh (≤ 5 min) or an immediate Reload.
 4. Never commit a real value to the repo, `.env.example`, logs, or chat.  `scripts/verify-infisical-sot.mjs` (CI) lints for direct `process.env` reads of migrated keys and for secret-shaped values in the settings modules.
 

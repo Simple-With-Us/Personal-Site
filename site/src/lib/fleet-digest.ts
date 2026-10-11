@@ -243,4 +243,4 @@ export function repoLabel(code: RepoCode): string {
 }
 
 export const DIGEST_URL =
-  "https://jaywedgeworth22.github.io/AI-Fleet-Coordinator/digest.md";
+  "https://simple-with-us.github.io/AI-Fleet-Coordinator/digest.md";

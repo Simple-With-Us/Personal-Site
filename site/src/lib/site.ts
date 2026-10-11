@@ -183,12 +183,12 @@ export const site = {
     youtube: "https://www.youtube.com/embed/GkrkEgaQqcg",
   },
   fleet: {
-    html: "https://jaywedgeworth22.github.io/AI-Fleet-Coordinator/",
-    markdown: "https://jaywedgeworth22.github.io/AI-Fleet-Coordinator/digest.md",
+    html: "https://simple-with-us.github.io/AI-Fleet-Coordinator/",
+    markdown: "https://simple-with-us.github.io/AI-Fleet-Coordinator/digest.md",
     icsDaily:
-      "https://jaywedgeworth22.github.io/AI-Fleet-Coordinator/calendar/daily-digest.ics",
+      "https://simple-with-us.github.io/AI-Fleet-Coordinator/calendar/daily-digest.ics",
     icsCommits:
-      "https://jaywedgeworth22.github.io/AI-Fleet-Coordinator/calendar/agent-activity.ics",
+      "https://simple-with-us.github.io/AI-Fleet-Coordinator/calendar/agent-activity.ics",
   },
 } as const;
 

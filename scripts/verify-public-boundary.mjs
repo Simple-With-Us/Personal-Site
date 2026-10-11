@@ -79,7 +79,15 @@ if (/testflight\.apple\.com\/join/i.test(publicSource)) {
   throw new Error("portfolio source contains a duplicated TestFlight invite");
 }
 
-if (publicSource.includes("https://jaywedgeworth22.github.io/ai-fleet-coordinator")) {
+// The old Pages host returns 404 for every project path since the repos moved to
+// the Simple-With-Us org, so it is rejected in any letter case.
+if (/jaywedgeworth22\.github\.io/i.test(publicSource)) {
+  throw new Error("portfolio source contains the retired jaywedgeworth22.github.io digest host");
+}
+
+// Pages project paths are case-sensitive: the repo segment must stay AI-Fleet-Coordinator.
+// Deliberately no `i` flag, or the correct spelling would match too.
+if (/\.github\.io\/ai-fleet-coordinator/.test(publicSource)) {
   throw new Error("portfolio source contains the case-sensitive digest URL variant");
 }
 

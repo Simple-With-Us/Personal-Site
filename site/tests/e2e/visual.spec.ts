@@ -6,7 +6,7 @@ import { latoFontCss } from './fonts';
 // regions are masked, never snapshotted raw: the activity feed varies with
 // the live digest API, and the media section embeds third-party iframes
 // (Sketchfab, YouTube) whose content is outside our control.
-const DIGEST_URL = 'https://jaywedgeworth22.github.io/AI-Fleet-Coordinator/digest.md';
+const DIGEST_URL = 'https://simple-with-us.github.io/AI-Fleet-Coordinator/digest.md';
 
 // The fleet digest is a live network fetch: abort it so the activity feed
 // always renders its deterministic fallback, in CI and locally alike.

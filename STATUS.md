@@ -1,5 +1,7 @@
 # Status
 
+- 2026-10-11: Kody autofix caller now targets MiniMax M3 through the direct MiniMax API, using `MINIMAX_API_KEY`.  Existing scope, gates, profile, and five-attempt daily limit remain.  Branch `codex/cts-330-direct-minimax`; rollout note `docs/rollouts/2026-10-11-kody-minimax-direct-api.md`; PR pending.
+
 - 2026-10-11: Replaced Datadog RUM with Sentry browser SDK (tracing, replay, logs, release from `VERCEL_GIT_COMMIT_SHA`, vite source-map plugin) into project `personal-site`.  Mirror live-site now opens a PR because main is branch-protected.  Rollout note `docs/rollouts/2026-10-11-sentry-browser.md`.  Branch `cursor/sentry-rum-replace-d859`.
 - 2026-10-10: Updated project blurbs with active iOS companion and TestFlight public beta availability, rewired repo links to Simple-With-Us org, and refreshed canonical master icons for CodeCaps, HogHunter, and Clutch.  Rollout note `docs/rollouts/2026-10-10-project-catalog-refresh.md`.  Branch `ag/project-catalog-refresh`.
 - 2026-10-03: Infisical sole-source-of-truth rollout implemented on branch `infisical-sot` (fleet directive): settings service with memory cache + background refresh, owner-only `/admin/settings` console with write-through saves, `INFISICAL.md`, CI lint, 16 unit tests, visual baseline.  Rollout note `docs/rollouts/2026-10-03-infisical-sot.md`.  Owner follow-up: fill empty placeholder secrets in the Infisical `Personal Site` project; confirm Infisical→Vercel env sync.

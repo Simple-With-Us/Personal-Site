@@ -6,7 +6,7 @@ The Kody autofix caller uses the direct MiniMax API with model `MiniMax-M3`, end
 
 The caller keeps its display name, trigger and sender gates, permissions, concurrency, `web` profile, `site/src/` source scope, and five-attempt daily budget.  The synthetic provider compatibility canary passed without a paid API call.
 
-Branch: `codex/cts-330-direct-minimax`.  Pull request: pending.
+Branch: `codex/cts-330-direct-minimax`.  Pull request [#182](https://github.com/Simple-With-Us/Personal-Site/pull/182) is open and awaits shared-helper pin E before review.
 
 ## Verification
 

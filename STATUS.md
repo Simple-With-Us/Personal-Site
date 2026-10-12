@@ -1,6 +1,6 @@
 # Status
 
-- 2026-10-11: Kody autofix caller now targets MiniMax M3 through the direct MiniMax API, using `MINIMAX_API_KEY`.  Existing scope, gates, profile, and five-attempt daily limit remain.  Branch `codex/cts-330-direct-minimax`; rollout note `docs/rollouts/2026-10-11-kody-minimax-direct-api.md`; PR pending.
+- 2026-10-11: Kody autofix caller targets MiniMax M3 through the direct MiniMax API, using `MINIMAX_API_KEY`.  Existing scope, gates, profile, and five-attempt daily limit remain.  The PR awaits shared-helper pin E before review: [#182](https://github.com/Simple-With-Us/Personal-Site/pull/182).  Branch `codex/cts-330-direct-minimax`; rollout note `docs/rollouts/2026-10-11-kody-minimax-direct-api.md`.
 
 - 2026-10-11: Replaced Datadog RUM with Sentry browser SDK (tracing, replay, logs, release from `VERCEL_GIT_COMMIT_SHA`, vite source-map plugin) into project `personal-site`.  Mirror live-site now opens a PR because main is branch-protected.  Rollout note `docs/rollouts/2026-10-11-sentry-browser.md`.  Branch `cursor/sentry-rum-replace-d859`.
 - 2026-10-10: Updated project blurbs with active iOS companion and TestFlight public beta availability, rewired repo links to Simple-With-Us org, and refreshed canonical master icons for CodeCaps, HogHunter, and Clutch.  Rollout note `docs/rollouts/2026-10-10-project-catalog-refresh.md`.  Branch `ag/project-catalog-refresh`.

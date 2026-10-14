@@ -1,5 +1,7 @@
 # Status
 
+- 2026-10-14: TypeScript 6 on PR #179 (`renovate/typescript-6.x`).  Site CI `typecheck` failed with TS5101 because `site/tsconfig.json` still set `baseUrl`.  That option is removed.  The `@/*` alias stays on `paths` as `./src/*`.  Rollout note `docs/rollouts/2026-10-14-typescript-6-baseurl.md`.
+
 - 2026-10-11: Kody autofix caller targets MiniMax M3 through the direct MiniMax API, using `MINIMAX_API_KEY`.  Existing scope, gates, profile, and five-attempt daily limit remain.  The PR now pins final shared helper J, which pins I with MiniMax reasoning disabled to avoid upstream answer truncation, and awaits current-head review: [#182](https://github.com/Simple-With-Us/Personal-Site/pull/182).  Branch `codex/cts-330-direct-minimax`; rollout note `docs/rollouts/2026-10-11-kody-minimax-direct-api.md`.
 
 - 2026-10-11: Replaced Datadog RUM with Sentry browser SDK (tracing, replay, logs, release from `VERCEL_GIT_COMMIT_SHA`, vite source-map plugin) into project `personal-site`.  Mirror live-site now opens a PR because main is branch-protected.  Rollout note `docs/rollouts/2026-10-11-sentry-browser.md`.  Branch `cursor/sentry-rum-replace-d859`.

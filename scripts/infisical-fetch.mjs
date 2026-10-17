@@ -45,9 +45,12 @@ export async function loginUniversalAuth({ siteUrl, clientId, clientSecret, fetc
     throw new Error(`Infisical login failed: HTTP ${res.status}`);
   }
   const body = await res.json();
-  const token = body && body.accessToken;
-  if (!token) {
-    throw new Error("Infisical login response carried no accessToken");
+  // Boundary check without a schema library: this script is dependency-free by
+  // design (see the header), so the response shape is asserted by hand.  A
+  // non-string or empty token is a contract failure, not a usable bearer.
+  const token = body !== null && typeof body === "object" ? body.accessToken : undefined;
+  if (typeof token !== "string" || token.length === 0) {
+    throw new Error("Infisical login response carried no usable accessToken");
   }
   return token;
 }
@@ -74,9 +77,18 @@ export async function listSecretsRaw({ siteUrl, token, projectId, environment, s
     throw new Error(`Infisical secrets list failed: HTTP ${res.status}`);
   }
   const body = await res.json();
+  // A list response without a `secrets` array is contract drift: throw so the
+  // caller reports it through its ::warning:: surface instead of treating it
+  // as an empty vault.
+  if (body === null || typeof body !== "object" || !Array.isArray(body.secrets)) {
+    throw new Error("Infisical secrets list response carried no secrets array");
+  }
   const values = new Map();
-  for (const s of body?.secrets ?? []) {
-    if (s && s.secretKey && s.secretValue) {
+  for (const s of body.secrets) {
+    // Only string keys and non-empty string values are usable.  An empty
+    // value is skipped on purpose so the GH_FALLBACK_<NAME> step env var
+    // still applies; any other shape is dropped rather than coerced.
+    if (s !== null && typeof s === "object" && typeof s.secretKey === "string" && s.secretKey.length > 0 && typeof s.secretValue === "string" && s.secretValue.length > 0) {
       values.set(s.secretKey, s.secretValue);
     }
   }

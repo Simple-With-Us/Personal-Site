@@ -47,7 +47,7 @@ export const Route = createRootRoute({
       { rel: "canonical", href: `https://${site.domain}/` },
       {
         rel: "icon",
-        href: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23141417'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='Lato,system-ui' font-size='16' font-weight='600' fill='%23fafafa'%3EJ%3C/text%3E%3C/svg%3E",
+        href: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23141417'/%3E%3Ctext x='16' y='20' text-anchor='middle' font-family='Lato,system-ui' font-size='10.5' font-weight='700'%3E%3Ctspan fill='%2336C6F4'%3ES%3C/tspan%3E%3Ctspan fill='%236A6A69'%3EW%3C/tspan%3E%3Ctspan fill='%2336C6F4'%3EU%3C/tspan%3E%3C/text%3E%3C/svg%3E",
       },
     ],
   }),

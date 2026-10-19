@@ -118,13 +118,13 @@ for (const path of [
   "../site/public/app-icons/usage-client.png",
   "../site/public/app-icons/usage-local.png",
   "../site/public/app-icons/ck.svg",
-  "../site/public/brand/simple-with-us-wide.png",
+  "../site/public/brand/swu-wordmark-light.webp",
   "../site/public/brand/simple-with-us-square.png",
 ]) {
   await access(new URL(path, import.meta.url));
 }
 
-if (!homeSource.includes("/brand/simple-with-us-wide.png") ||
+if (!homeSource.includes("/brand/swu-wordmark-light.webp") ||
     !siteSource.includes('icon: "/app-icons/ck.svg"') ||
     siteSource.includes("/app-icons/ck.png")) {
   throw new Error("Simple With Us and Clutch branding regressed");

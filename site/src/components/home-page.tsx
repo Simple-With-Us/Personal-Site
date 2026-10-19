@@ -232,10 +232,10 @@ export function HomePage() {
           >
             <span className="flex min-w-0 flex-col gap-3">
               <img
-                src="/brand/simple-with-us-wide.png"
+                src="/brand/swu-wordmark-light.webp"
                 alt="Simple With Us"
-                width={1920}
-                height={200}
+                width={288}
+                height={30}
                 className="h-auto w-full max-w-[400px]"
                 loading="lazy"
                 decoding="async"

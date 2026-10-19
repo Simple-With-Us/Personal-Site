@@ -34,10 +34,10 @@ export function SiteFooter() {
           className="rounded-[var(--radius-sm)] px-3 py-2 transition-opacity hover:opacity-75"
         >
           <img
-            src="/brand/simple-with-us-wide.png"
+            src="/brand/swu-wordmark-light.webp"
             alt="Simple With Us"
-            width={1920}
-            height={200}
+            width={288}
+            height={30}
             className="h-auto w-[260px] max-w-full"
             loading="lazy"
             decoding="async"

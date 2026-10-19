@@ -193,7 +193,8 @@ Browser Replay is on (masked text, blocked media).  Prod APM sample rate is
 
 ## Secrets
 
-No Infisical project yet. `~/.secrets/` is handoff-only. Never paste secrets
+No app Infisical project yet; fleet keys are in Infisical Fleet-OPS (`fleet-secrets get`;
+nothing reads `~/.secrets`, AFC-359). Never paste secrets
 into chat. Never run bare `infisical secrets`.
 
 ## Delegation & model economics (fleet rule)

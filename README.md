@@ -11,7 +11,7 @@ The portfolio shows 11 app families across coding, financial research, and every
 | `site/` | Full React / TanStack Start source (personal Vercel Hobby project) |
 | `static/` | Public assets snapshot (`app-icons`, `social-icons`) |
 | `.github/workflows/` | Fleet CI, effort-issue sync, live-site mirror |
-| `scripts/` | Fleet Slack / effort helpers |
+| `scripts/` | Effort-issue sync, Infisical fetch, Sentry CI report, deploy helper |
 
 ## Live deploy
 

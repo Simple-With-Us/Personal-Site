@@ -11,3 +11,7 @@ Branch: `codex/cts-330-direct-minimax`.  Pull request [#182](https://github.com/
 ## Verification
 
 `actionlint .github/workflows/kody-fleet-autofix.yml` passes.  GitHub CI and the required review are pending on the pull request.
+
+## Update 2026-10-21
+
+PR [#225](https://github.com/Simple-With-Us/Personal-Site/pull/225) changed the billed model id to `MiniMax-M3.1-Flash` and renamed the caller to `Kody MiniMax M3.1 Flash Fix Proposals`, so the model id and display name stated above are superseded.  See `docs/rollouts/2026-10-21-minimax-m31-flash-pin.md`.

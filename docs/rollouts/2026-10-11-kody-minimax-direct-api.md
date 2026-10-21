@@ -11,3 +11,7 @@ Branch: `codex/cts-330-direct-minimax`.  Pull request [#182](https://github.com/
 ## Verification
 
 `actionlint .github/workflows/kody-fleet-autofix.yml` passes.  GitHub CI and the required review are pending on the pull request.
+
+## Update 2026-10-21
+
+PR [#225](https://github.com/Simple-With-Us/Personal-Site/pull/225) changed the billed model id to `MiniMax-M3.1-Flash` and renamed the caller to `Kody MiniMax M3.1 Flash Fix Proposals`, so the model id and display name stated above are superseded.  The reusable workflow pin stated above is superseded as well: `.github/workflows/kody-fleet-autofix.yml` now pins `31659885f58f08e129b6dc092f3493d7cdb74a11`, whose trusted-helper checkout is `d06ac2d47bc3b9182ea43deee9f0a91ffdf33ab0`, not J/`fea7cd12...` and I/`b1503884`.  That helper disables MiniMax reasoning only for the exact `MiniMax-M3` id; the `MiniMax-M3.1-Flash` id instead sends `reasoning_split`.  That re-enables reasoning on the paid lane and re-opens the upstream answer-truncation risk the summary above records as the reason for disabling it, because `LIMITS.outputTokens` is still 16,384 and `LIMITS.modelMs` is still 240,000 ms; the risk is tracked as an open fleet item in `docs/rollouts/2026-10-21-minimax-m31-flash-pin.md`.  Only the retired `MiniMax-M3` id accepts `thinking: {type: 'disabled'}`; `MiniMax-M3.1-Flash` answers HTTP 400 to it, so the remedy for that risk is a larger output budget for the new id rather than a wider reasoning disable.

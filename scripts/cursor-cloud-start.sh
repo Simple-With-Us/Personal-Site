@@ -37,7 +37,7 @@ if [ -f "${INFISICAL_ENV_FILE}" ]; then
 fi
 
 : "${INFISICAL_DOMAIN:=https://app.infisical.com}"
-: "${INFISICAL_ENV:=dev}"
+: "${INFISICAL_ENV:=prod}"
 
 # If the dashboard did not inject the bootstrap identity, name the missing
 # keys and bail 0 — the agent should still boot in degraded mode.
@@ -53,6 +53,13 @@ if [ "${#missing[@]}" -gt 0 ]; then
   # Ensure stale values from a prior run are cleared.
   rm -f "${ENV_FILE}" "${SOURCE_FILE}"
   exit 0
+fi
+
+# Owner directive 2026-10-10: Infisical prod is the only environment (dev and
+# staging are being retired).  Refuse anything else rather than reading it.
+if [ "${INFISICAL_ENV}" != "prod" ]; then
+  echo "cursor-cloud-start: INFISICAL_ENV must be prod (dev and staging are retired); refusing to load." >&2
+  exit 1
 fi
 
 if ! command -v infisical >/dev/null 2>&1; then

@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 /**
- * Static + unit checks for Personal-Site Datadog instrumentation.
- * No secrets.  Does not call Datadog.  Safe for GitHub Actions verify.
+ * Static + unit checks for Personal-Site Datadog SERVER instrumentation.
+ * Browser RUM moved to Sentry (see verify-sentry.mjs).  No secrets.
+ * Does not call Datadog.  Safe for GitHub Actions verify.
  */
 import { execFileSync } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -28,10 +29,14 @@ function mustNotMatch(rel, pattern) {
   }
 }
 
+function mustBeGone(rel) {
+  if (existsSync(join(root, rel))) {
+    throw new Error(`${rel} should have been removed (Datadog RUM moved to Sentry)`);
+  }
+}
+
 mustExist("site/src/lib/datadog/fail-closed.ts");
 mustExist("site/src/lib/datadog/server.server.ts");
-mustExist("site/src/lib/datadog/rum.ts");
-mustExist("site/src/lib/datadog/DatadogRum.tsx");
 mustExist("static/index.html");
 mustExist("AGENTS.md");
 mustExist("docs/EFFORT-LOG.md");
@@ -39,22 +44,18 @@ mustExist("docs/EFFORT-LOG.md");
 mustMatch("static/index.html", /Earlier work included/);
 mustMatch("site/src/lib/datadog/fail-closed.ts", /Datadog fail-closed/);
 mustMatch("site/src/lib/datadog/fail-closed.ts", /DD_API_KEY/);
-mustMatch("site/src/lib/datadog/fail-closed.ts", /DD_APPLICATION_ID/);
-mustMatch("site/src/lib/datadog/fail-closed.ts", /DD_CLIENT_TOKEN/);
-mustMatch("site/src/lib/datadog/rum.ts", /@datadog\/browser-rum/);
-mustMatch("site/src/lib/datadog/rum.ts", /sessionReplaySampleRate: 0/);
-mustNotMatch("site/src/lib/datadog/rum.ts", /throw new Error\(datadogFailClosedMessage/);
 mustNotMatch("site/src/lib/datadog/fail-closed.ts", /throw new Error\(datadogFailClosedMessage/);
 mustNotMatch("site/src/lib/datadog/server.server.ts", /if \(isDatadogRequired\(\)\) throw/);
 mustMatch("site/src/lib/datadog/server.server.ts", /dd-trace/);
 mustMatch("site/src/lib/datadog/server.server.ts", /agentless/);
-mustMatch("site/src/routes/__root.tsx", /DatadogRum/);
-mustMatch("site/src/lib/error-component.tsx", /reportVisibleError/);
-mustMatch("site/src/lib/error-component.tsx", /error\.message/);
+
+// Browser RUM is gone — Sentry owns the browser now.
+mustBeGone("site/src/lib/datadog/rum.ts");
+mustBeGone("site/src/lib/datadog/DatadogRum.tsx");
+mustBeGone("site/src/lib/datadog/public-env.ts");
 
 // No invented secrets in git.
 mustNotMatch("site/src/lib/datadog/fail-closed.ts", /[a-f0-9]{32}/);
-mustNotMatch("site/src/lib/datadog/rum.ts", /pub[a-f0-9]{20,}/i);
 mustNotMatch("site/vite.config.ts", /DD_API_KEY.{0,20}["'][a-zA-Z0-9]{8,}/);
 
 const failClosed = join(root, "site/src/lib/datadog/fail-closed.ts");

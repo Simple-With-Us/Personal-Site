@@ -8,6 +8,9 @@ interface ImportMetaEnv {
   readonly DD_ENV?: string;
   readonly DD_VERSION?: string;
   readonly DD_FAIL_CLOSED?: string;
+  readonly SENTRY_DSN?: string;
+  readonly SENTRY_ENVIRONMENT?: string;
+  readonly SENTRY_RELEASE?: string;
 }
 
 interface ImportMeta {

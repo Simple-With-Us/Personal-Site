@@ -36,6 +36,9 @@ jobs:
       - name: Datadog fail-closed instrumentation
         run: node scripts/verify-datadog.mjs
 
+      - name: Sentry browser instrumentation
+        run: node scripts/verify-sentry.mjs
+
       - name: Infisical sole-source-of-truth contract
         run: node scripts/verify-infisical-sot.mjs
 

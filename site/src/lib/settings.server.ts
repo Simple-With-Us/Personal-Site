@@ -32,8 +32,9 @@
  *
  * The ONLY process.env reads for migrated keys live in this module (plus the
  * dependency-injected defaults in `datadog/fail-closed.ts`, the build-time
- * `vite.config.ts`, and the build-time `scripts/migrate.mjs` — all called
- * out in INFISICAL.md).  `scripts/verify-infisical-sot.mjs` lints this.
+ * `vite.config.ts` Sentry defines, and the build-time `scripts/migrate.mjs`
+ * — all called out in INFISICAL.md).  `scripts/verify-infisical-sot.mjs`
+ * lints this.
  *
  * No secret VALUES live in this file — key names and metadata only.
  */
@@ -191,18 +192,72 @@ export const SETTINGS_INVENTORY: readonly SettingMeta[] = [
     description:
       "\"1\" = Datadog treated as required even outside production.",
   },
+  {
+    key: "SENTRY_DSN",
+    kind: "secret",
+    required: false,
+    description:
+      "Browser DSN for the personal-site Sentry project.  Baked into the client bundle at build time (see INFISICAL.md).",
+  },
+  {
+    key: "SENTRY_AUTH_TOKEN",
+    kind: "secret",
+    required: false,
+    description:
+      "Sentry auth token with project:releases.  Build-time source-map upload only.  Never sent to the browser.",
+  },
+  {
+    key: "SENTRY_ORG",
+    kind: "env-config",
+    required: false,
+    description: "Sentry org slug.  Default simple-with-us.",
+  },
+  {
+    key: "SENTRY_PROJECT",
+    kind: "env-config",
+    required: false,
+    description: "Sentry project slug.  Default personal-site.",
+  },
+  {
+    key: "SENTRY_ENVIRONMENT",
+    kind: "env-config",
+    required: false,
+    description:
+      "Sentry environment tag.  Derived from VERCEL_ENV / NODE_ENV when unset.",
+  },
+  {
+    key: "SENTRY_RELEASE",
+    kind: "env-config",
+    required: false,
+    description:
+      "Sentry release.  Derived from VERCEL_GIT_COMMIT_SHA when unset.",
+  },
 ];
 
-/** Map the hosting environment to the Infisical environment slug. */
+/**
+ * The only Infisical environment this app reads (owner directive 2026-10-10:
+ * prod only; the `dev` and `staging` environments are being retired).
+ */
+export const INFISICAL_ENVIRONMENT = "prod";
+
+/**
+ * Resolve the Infisical environment slug.  Always `prod`, whatever the hosting
+ * environment: Vercel Preview, local development and an unset `VERCEL_ENV` all
+ * read prod.  An `INFISICAL_ENV` override with any other value is refused: it
+ * logs a warning and is ignored.  It never throws, because it runs while the
+ * settings client boots and a throw would take the server down.
+ */
 export function infisicalEnvironment(
   env: Record<string, string | undefined> = process.env,
 ): string {
-  const override = env.INFISICAL_ENV?.trim();
-  if (override) return override;
-  const vercelEnv = env.VERCEL_ENV?.trim();
-  if (vercelEnv === "production") return "prod";
-  if (vercelEnv === "preview") return "staging";
-  return "dev";
+  const requested = env.INFISICAL_ENV?.trim();
+  if (requested && requested !== INFISICAL_ENVIRONMENT) {
+    console.warn(
+      "[settings] INFISICAL_ENV is set to a non-prod value and is ignored: " +
+        "this app reads Infisical prod only.  See INFISICAL.md.",
+    );
+  }
+  return INFISICAL_ENVIRONMENT;
 }
 
 function readEnv(name: string): string | undefined {

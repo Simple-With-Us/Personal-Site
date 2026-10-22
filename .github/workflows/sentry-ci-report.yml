@@ -33,6 +33,7 @@ name: Sentry CI Report
 on:
   workflow_run:
     workflows:
+      - Vercel production catch-up
       - Backup GitHub Repositories
       - CI
       - Effort Issues Sync

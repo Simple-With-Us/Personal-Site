@@ -1,0 +1,14 @@
+{
+  "repository": "Simple-With-Us/Personal-Site",
+  "teamId": "team_l3mWAejl1E08y8ijku5DpBE6",
+  "projectId": "prj_fSC4YclV5vseHtfYSGyr8Ln5BmPV",
+  "repoId": 1331389993,
+  "rootDirectory": "site",
+  "ciWorkflows": [
+    "CI",
+    "Site CI"
+  ],
+  "watch": [
+    "site/**"
+  ]
+}

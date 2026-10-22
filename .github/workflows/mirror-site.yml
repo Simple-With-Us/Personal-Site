@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   mirror:
@@ -70,14 +71,31 @@ jobs:
                   print("preserved copy in", path)
           PY
 
-      - name: Commit if changed
+      # main is branch-protected (PR + required verify).  Pushing the
+      # snapshot to main is what reds FLEET-INFRA-DT/DV.  Open or update a
+      # dedicated PR instead.
+      - name: Open or update mirror PR
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add static/
           if git diff --staged --quiet; then
             echo "No changes to commit"
+            exit 0
+          fi
+          DATE=$(date -u +%Y-%m-%d)
+          git checkout -B mirror/live-site
+          git commit -m "chore: update static mirror of live site ${DATE}"
+          git push --force-with-lease origin mirror/live-site
+          EXISTING=$(gh pr list --head mirror/live-site --base main --state open --json number --jq '.[0].number // empty')
+          if [ -n "${EXISTING}" ]; then
+            echo "Updated existing PR #${EXISTING}"
           else
-            git commit -m "chore: update static mirror of live site $(date -u +%Y-%m-%d)"
-            git push
+            gh pr create --base main --head mirror/live-site \
+              --title "chore: update static mirror of live site ${DATE}" \
+              --body "Automated wget snapshot of https://jays.services.
+
+          Opens a pull request because main requires PRs and the verify check.  The fetch step already preserves About copy and the Doximity view URL."
           fi

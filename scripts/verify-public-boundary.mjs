@@ -34,7 +34,7 @@ const contents = Object.fromEntries(
 
 const publicSource = Object.values(contents).join("\n");
 const forbiddenPrivateDestinations = [
-  /https?:\/\/github\.com\/jaywedgeworth22\/fleet-ops/i,
+  /https?:\/\/github\.com\/(?:jaywedgeworth22|Simple-With-Us)\/fleet-ops/i,
   /https?:\/\/(?:mac|board|control)\.jays\.services/i,
 ];
 
@@ -79,7 +79,7 @@ if (/testflight\.apple\.com\/join/i.test(publicSource)) {
   throw new Error("portfolio source contains a duplicated TestFlight invite");
 }
 
-if (publicSource.includes("https://jaywedgeworth22.github.io/ai-fleet-coordinator")) {
+if (publicSource.includes("https://simple-with-us.github.io/ai-fleet-coordinator")) {
   throw new Error("portfolio source contains the case-sensitive digest URL variant");
 }
 

@@ -1,7 +1,7 @@
 name: Backup GitHub Repositories
 
 # Fleet-wide GitHub artifact backup and Google Drive backup moved to
-# jaywedgeworth22/ai-fleet-coordinator:
+# Simple-With-Us/AI-Fleet-Coordinator:
 #   - Drive (canonical): Mac launchd com.jay.fleet-gdrive-backup
 #     scripts/backup-fleet-to-gdrive.py
 #   - GitHub artifacts (90 days): .github/workflows/backup-repos.yml there
@@ -23,4 +23,4 @@ jobs:
       - name: Point at the coordinator backup
         run: |
           echo "Drive backup: Mac job com.jay.fleet-gdrive-backup"
-          echo "GitHub artifact backup: jaywedgeworth22/ai-fleet-coordinator .github/workflows/backup-repos.yml"
+          echo "GitHub artifact backup: Simple-With-Us/AI-Fleet-Coordinator .github/workflows/backup-repos.yml"

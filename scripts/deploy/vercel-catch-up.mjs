@@ -66,14 +66,20 @@ export async function request(url, token, fetchImpl = fetch) {
   must(res.ok, `Provider read failed: HTTP ${res.status}`);
   return res.json();
 }
+// The committed configuration file,  with the identifiers it does not name
+// taken from the environment.  The Vercel project, team and repository
+// identifiers can arrive through the environment,  so a public repository does
+// not have to carry them in a committed file;  a committed configuration still
+// wins when it names one.
+export function loadConfig(path = process.env.VERCEL_CONFIG_PATH || 'scripts/deploy/vercel-config.json') {
+  const config = JSON.parse(readFileSync(path, 'utf8'));
+  if (!config.teamId && process.env.VERCEL_ORG_ID) config.teamId = process.env.VERCEL_ORG_ID;
+  if (!config.projectId && process.env.VERCEL_PROJECT_ID) config.projectId = process.env.VERCEL_PROJECT_ID;
+  if (!config.repoId && process.env.VERCEL_REPO_ID) config.repoId = process.env.VERCEL_REPO_ID;
+  return config;
+}
 async function main() {
-  const config = JSON.parse(readFileSync(process.env.VERCEL_CONFIG_PATH || 'scripts/deploy/vercel-config.json', 'utf8'));
-  // The Vercel project, team and repository identifiers can arrive through the
-  // environment,  so a public repository does not have to carry them in a
-  // committed file.  A committed configuration still wins when it names one.
-  if (process.env.VERCEL_ORG_ID) config.teamId = process.env.VERCEL_ORG_ID;
-  if (process.env.VERCEL_PROJECT_ID) config.projectId = process.env.VERCEL_PROJECT_ID;
-  if (process.env.VERCEL_REPO_ID) config.repoId = process.env.VERCEL_REPO_ID;
+  const config = loadConfig();
   const target = git(['rev-parse', 'HEAD']);
   must(process.env.GITHUB_REPOSITORY === config.repository, 'Wrong repository');
   must(process.env.VERCEL_TOKEN && process.env.GH_TOKEN, 'Missing deploy/read credentials');

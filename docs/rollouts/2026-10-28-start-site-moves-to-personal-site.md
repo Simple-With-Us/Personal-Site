@@ -13,7 +13,7 @@ The RAG snapshot the start site serves moved with it.  `start/site-snapshot.json
 - `start/public/`, `start/api/`, `start/vercel.json`, `start/vercel-ignore.sh`, `start/.vercelignore` and `start/site-snapshot.json` — the site, its three serverless handlers and its deployment inputs.
 - `scripts/build-rag-snapshot.mjs` — the snapshot builder.  It writes `start/site-snapshot.json` now, and `SNAPSHOT_OUT` overrides the destination.
 - `scripts/sync-logos.mjs` — the brand-asset sync, now writing `start/public/logos`.
-- `scripts/deploy/vercel-config.start.json` — the deploy configuration for the start project.  The main site's configuration beside it is unchanged.
+- `scripts/deploy/vercel-config.start.json` — the deploy configuration for the start project.  The project, team and repository identifiers were taken out of it,  so it now names only the paths.  The main site's configuration beside it is unchanged.
 - `tests/deployment-boundary.test.cjs`, `tests/rag-hits.test.mjs`, `tests/admin-api.test.cjs`, `tests/quota-groups.test.cjs` and `tests/start-site-identity.test.cjs` — the site's boundary, handler and snapshot tests.
 - `site/tests/start-e2e/` with `site/playwright.start.config.ts` — the dashboard specs and their committed screenshot baselines.
 
@@ -27,10 +27,12 @@ Both catch-up workflows run their test job and skip the deploy, because the `VER
 
 - `node --test scripts/deploy/vercel-catch-up.test.mjs` passes (13 tests).
 - The start site's own tests pass (27 tests):  the deployment boundary, the RAG snapshot shape, the admin handler, the quota panel and the start page identity.
-- The Vercel project reports the expected root directory, a GitHub link to this repository, Git deployments enabled, and the deployment protection and environment it carried before the relink.  The project and repository identifiers stay out of this public repository; they live in the Vercel project settings and in the deploy configuration beside it.
+- The Vercel project reports the expected root directory, a GitHub link to this repository, Git deployments enabled, and the deployment protection and environment it carried before the relink.  The project and repository identifiers stay out of this public repository;  they live in the Vercel project settings and in this repository's Actions variables and secrets,  and the committed deploy configuration beside it names only the paths.
 - `https://start.jays.services/` answers with a redirect to `vercel.com/sso-api`, which is the Vercel Authentication gate.  That protection was not rebuilt or reconfigured; it belongs to the project and travelled with the relink.
 
 ## Open Items
 
 - The Vercel team is on the Hobby plan, which cannot link a private repository owned by an organization.  That is why the old link to `Fleet-OPS` stopped being valid the moment the repository moved into the organization, and why the start site is served from a public repository.  A private start site would need a paid plan or a different host.
 - The catch-up publisher cannot run while Vercel's Git integration is enabled:  the gate refuses with "Disable competing Git publisher before activation".  That is the intended safety behaviour, and it is why the gate is left as it is rather than relaxed.
+- The catch-up deploy job needs four repository settings that CI never exercises while `VERCEL_CATCH_UP_ENABLED` is unset:  the `VERCEL_START_ORG_ID`, `VERCEL_START_PROJECT_ID` and `VERCEL_START_REPO_ID` variables and the `VERCEL_TOKEN` secret.  All four are set.  A missing one would only surface the first time the gate is enabled.
+- The main site's own catch-up still carries its identifiers in `scripts/deploy/vercel-config.json` and hardcodes `VERCEL_ORG_ID` in `.github/workflows/vercel-catch-up.yml`.  That is pre-existing on `main` and outside this move;  the same scrub applies there when it is worth doing.

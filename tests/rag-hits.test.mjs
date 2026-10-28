@@ -14,7 +14,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { attachHits, slugify, COMPONENTS } from "../scripts/build-rag-snapshot.mjs";
+import { attachHits, slugify, COMPONENTS, cfHeaders } from "../scripts/build-rag-snapshot.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -120,4 +120,26 @@ test("the committed snapshot carries the fields the components card reads", () =
     JSON.parse(fs.readFileSync(path.join(root, "start/site-snapshot.json"), "utf8")),
   );
   assert.ok(snap.components.length > 0, "the snapshot must carry at least one component");
+});
+test("a missing corpus credential is named, not downgraded to a warning", () => {
+  const saved = { ...process.env };
+  try {
+    delete process.env.CF_ACCESS_CLIENT_ID;
+    delete process.env.CF_ACCESS_CLIENT_SECRET;
+    delete process.env.RECALL_API_TOKEN;
+    assert.throws(() => cfHeaders(), (err) => {
+      for (const name of ["CF_ACCESS_CLIENT_ID", "CF_ACCESS_CLIENT_SECRET", "RECALL_API_TOKEN"]) {
+        assert.ok(
+          err.message.includes(name),
+          `the error must name ${name}, not the downstream failure: ${err.message}`,
+        );
+      }
+      return true;
+    });
+  } finally {
+    for (const key of ["CF_ACCESS_CLIENT_ID", "CF_ACCESS_CLIENT_SECRET", "RECALL_API_TOKEN"]) {
+      if (saved[key] === undefined) delete process.env[key];
+      else process.env[key] = saved[key];
+    }
+  }
 });

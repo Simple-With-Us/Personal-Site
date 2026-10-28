@@ -353,6 +353,13 @@ async function build() {
     if (!existsSync(RECALL_CLI)) {
       throw new Error(`--from-local needs the recall CLI at ${RECALL_CLI}; set RECALL_CLI to override`);
     }
+  } else {
+    // Validate the corpus credentials once,  before the first read.  The read
+    // loop downgrades a failure to a warning,  so a missing credential would
+    // otherwise be reported once per query and then surface as a misleading
+    // "no corpus data" fatal at the end.  This throws first,  naming every
+    // variable that is missing.
+    cfHeaders();
   }
 
   try {
@@ -418,4 +425,4 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
   });
 }
 
-export { attachHits, slugify, COMPONENTS };
+export { attachHits, slugify, COMPONENTS, cfHeaders };

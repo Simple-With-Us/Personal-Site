@@ -1,4 +1,13 @@
 # Upload only web inputs; static serving is restricted separately by outputDirectory.
+#
+# Vercel reads this file relative to the repository root in some configurations
+# and relative to the project root in others,  and the project root here is
+# `start/`.  The two layouts are listed one after the other,  so the same file
+# allows the same set of inputs either way:  the block that does not match the
+# layout in force is simply a no-op.
+#
+# The first block is the project-root layout;  the second is the repository-root
+# layout.
 /*
 !/public
 !/api
@@ -12,3 +21,17 @@
 !/site-snapshot.json
 !/vercel.json
 !/vercel-ignore.sh
+!/start
+/start/*
+!/start/public
+!/start/api
+/start/api/*
+!/start/api/quota.js
+!/start/api/rag-snapshot.js
+!/start/api/admin.js
+!/start/api/_admin
+/start/api/_admin/*
+!/start/api/_admin/worker.mjs
+!/start/site-snapshot.json
+!/start/vercel.json
+!/start/vercel-ignore.sh

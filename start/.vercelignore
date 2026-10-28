@@ -18,7 +18,7 @@
 !/api/_admin
 /api/_admin/*
 !/api/_admin/worker.mjs
-!/site-snapshot.json
+!/site-roster.json
 !/vercel.json
 !/vercel-ignore.sh
 !/start
@@ -32,6 +32,6 @@
 !/start/api/_admin
 /start/api/_admin/*
 !/start/api/_admin/worker.mjs
-!/start/site-snapshot.json
+!/start/site-roster.json
 !/start/vercel.json
 !/start/vercel-ignore.sh

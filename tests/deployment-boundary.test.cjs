@@ -44,17 +44,17 @@ test('static output contains only intended web assets and no repository data', (
   assert.match(fs.readFileSync(path.join(root, 'start/public/index.html'), 'utf8'), /\/api\/quota/);
   assert.ok(config.functions['api/quota.js']);
   assert.ok(config.functions['api/admin.js']);
-  assert.equal(config.functions['api/rag-snapshot.js'].includeFiles, 'site-snapshot.json');
+  assert.equal(config.functions['api/rag-snapshot.js'].includeFiles, 'site-roster.json');
 });
 
-test('every logo the page or the snapshot names is a file that ships', () => {
+test('every logo the page or the roster names is a file that ships', () => {
   // The allowlist above says what may be served; this says what is actually
   // asked for.  A mark or icon that is renamed in the table without being
   // re-synced is a 404 the page silently degrades from — an app icon falls
   // back to a monogram tile, a provider mark falls back to no mark — so the
   // two lists have to agree in both directions.
   const referenced = new Set();
-  for (const rel of ['start/public/index.html', 'scripts/build-rag-snapshot.mjs']) {
+  for (const rel of ['start/public/index.html', 'start/site-roster.json']) {
     const text = fs.readFileSync(path.join(root, rel), 'utf8');
     for (const [, name] of text.matchAll(/["']([A-Za-z0-9._-]+\.(?:png|svg))["']/g)) {
       referenced.add(name);
@@ -75,11 +75,11 @@ test('every component acronym the roster uses still has a palette colour', () =>
   // colorFor() paints the monogram tile when a component has no icon.  A
   // renamed acronym that misses this map does not fail — it silently falls back
   // to grey, which is the exact thing renaming AFL to AFC nearly did.
-  const roster = fs.readFileSync(path.join(root, 'scripts/build-rag-snapshot.mjs'), 'utf8');
+  const roster = JSON.parse(fs.readFileSync(path.join(root, 'start/site-roster.json'), 'utf8'));
   const page = fs.readFileSync(path.join(root, 'start/public/index.html'), 'utf8');
   const palette = page.slice(page.indexOf('const palette = {'), page.indexOf('const palette = {') + 800);
   const keys = new Set([...palette.matchAll(/([A-Z]{2,4}):\s*"#[0-9A-Fa-f]{6}"/g)].map((m) => m[1]));
-  const acronyms = [...roster.slice(0, roster.indexOf('const SEATS')).matchAll(/acronym:\s*"([A-Z]{2,4})"/g)].map((m) => m[1]);
+  const acronyms = (roster.components || []).map((c) => c.acronym);
   assert.ok(acronyms.length >= 10, `expected to read the roster, found ${acronyms.length}`);
   for (const acr of acronyms) {
     assert.ok(keys.has(acr), `${acr} is a component but has no palette colour`);
@@ -95,7 +95,7 @@ test('deployment input allowlist rejects private documents and future unknown fi
     const allowed = [
       'public/index.html', 'public/robots.txt', 'public/admin/index.html', 'public/admin/muse-assist.png',
       ...LOGO_FILES.map((f) => `public/${f}`),
-      'api/quota.js', 'api/rag-snapshot.js', 'api/admin.js', 'api/_admin/worker.mjs', 'site-snapshot.json', 'vercel.json', 'vercel-ignore.sh',
+      'api/quota.js', 'api/rag-snapshot.js', 'api/admin.js', 'api/_admin/worker.mjs', 'site-roster.json', 'vercel.json', 'vercel-ignore.sh',
     ];
     const denied = ['site/index.html', 'site/src/app.ts', 'docs/rollouts/2026-01-01-note.md', 'static/app-icons/ar.png', 'scripts/infisical-fetch.mjs', 'scripts/build-rag-snapshot.mjs', 'AGENTS.md', 'CLAUDE.md', 'README.md', 'api/new-private-helper.js', 'api/_admin/notes.md', '.env', 'new-inventory.json'];
     for (const name of [...allowed, ...denied]) {
@@ -109,18 +109,26 @@ test('deployment input allowlist rejects private documents and future unknown fi
   }
 });
 
-test('snapshot API can read explicit bundled data without serving it statically', async () => {
-  const handler = require('../start/api/rag-snapshot.js');
-  const previous = process.cwd();
-  const res = { headers: {}, setHeader(k, v) { this.headers[k] = v; }, status(n) { this.code = n; return this; }, send(s) { this.body = s; }, json(s) { this.body = JSON.stringify(s); } };
-  try {
-    process.chdir(root);
-    await handler({}, res);
-  } finally { process.chdir(previous); }
-  assert.equal(res.code, 200);
-  assert.equal(res.headers["Cache-Control"], "private, no-store");
-  assert.deepEqual(JSON.parse(res.body), JSON.parse(fs.readFileSync(path.join(root, 'start/site-snapshot.json'))));
+test('the panel reads the fleet live and no snapshot is published', async () => {
+  // The panel used to serve start/site-snapshot.json, a file committed to this
+  // public repository.  It held the fleet's board item titles, so the
+  // repository published them whatever the site's gate did.  The file is gone
+  // and the function reads the corpus and the board at request time instead;
+  // the roster is the only thing left in the repository.
+  assert.equal(fs.existsSync(path.join(root, 'start/site-snapshot.json')), false);
   assert.equal(fs.existsSync(path.join(root, 'start/public/site-snapshot.json')), false);
+  assert.equal(fs.existsSync(path.join(root, 'scripts/build-rag-snapshot.mjs')), false);
+  assert.equal(fs.existsSync(path.join(root, '.github/workflows/refresh-rag-snapshot.yml')), false);
+
+  const roster = JSON.parse(fs.readFileSync(path.join(root, 'start/site-roster.json'), 'utf8'));
+  assert.equal(roster.recentChanges, undefined, 'the roster must carry no board rows');
+  assert.equal(roster.corpus, undefined, 'the roster must carry no corpus counters');
+
+  // The function must not read a bundled snapshot:  the only JSON it loads is
+  // the roster, which is a deployment input it is given on purpose.
+  const source = fs.readFileSync(path.join(root, 'start/api/rag-snapshot.js'), 'utf8');
+  const loaded = [...source.matchAll(/require\(\s*["']([^"']+\.json)["']\s*\)/g)].map((m) => m[1]);
+  assert.deepEqual(loaded, ['../site-roster.json'], `unexpected bundled data: ${loaded.join(', ')}`);
 });
 
 test('the deployed tree carries no documentation, inventory or source outside its allowlist', () => {

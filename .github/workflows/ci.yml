@@ -31,8 +31,7 @@ jobs:
           test -f .github/workflows/effort-issues-sync.yml
           test -f start/vercel.json
           test -f start/api/rag-snapshot.js
-          test -f start/site-snapshot.json
-          test -f scripts/build-rag-snapshot.mjs
+          test -f start/site-roster.json
 
       - name: About copy uses past tense
         run: grep -F "Earlier work included" static/index.html

@@ -13,8 +13,8 @@ const LIVE_MASK = [
   "#zone",
   "#central",
   "#quota-meta", // "live · <relative> ago"
-  "#rag-meta", // "snapshot · <relative> ago · <n> pts"
-  "#rag-snap-date", // hour-precision snapshot date
+  "#rag-meta", // "live · <relative> ago · <n> pts"
+  "#rag-snap-date", // hour-precision reading time
   "#quotas-body .quota-status", // "in <relative>" reset countdowns
 ];
 

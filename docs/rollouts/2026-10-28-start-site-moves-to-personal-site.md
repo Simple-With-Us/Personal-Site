@@ -1,5 +1,7 @@
 # 2026-10-28 — The Start Site Moves to Personal-Site
 
+> **Superseded the same day.**  The snapshot this document describes — `start/site-snapshot.json`, `scripts/build-rag-snapshot.mjs` and `.github/workflows/refresh-rag-snapshot.yml` — was deleted later on Oct 28, 2026, and the panel now reads the board and the corpus live from the private services.  See `2026-10-28-start-site-reads-the-fleet-live.md`.  The move itself, and everything else below it, still stands.
+
 ## Summary
 
 `start.jays.services` now lives in this repository instead of the private `Fleet-OPS` repository.  The source sits under `start/`, the Vercel project that serves it is relinked to `Simple-With-Us/Personal-Site` with root directory `start`, and the deployment protection stays exactly as it was.

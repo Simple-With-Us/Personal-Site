@@ -109,12 +109,20 @@ UI changes must be covered by automated visual verification where feasible: Play
   site `start.jays.services`, a static tree with three serverless handlers,
   served by its own Vercel project from root directory `start`.  It moved here
   from the private `Fleet-OPS`
-  repository on Oct 28, 2026, together with the RAG snapshot it serves
-  (`start/site-snapshot.json`, refreshed daily by
-  `.github/workflows/refresh-rag-snapshot.yml`).  Its deployment protection is
+  repository on Oct 28, 2026.  Its deployment protection is
   Vercel Authentication, and it must stay on.  Its own specs live in
-  `site/tests/start-e2e/`; its boundary, handler and snapshot tests live in
+  `site/tests/start-e2e/`; its boundary, handler and panel tests live in
   `tests/`.
+- The start site's RAG panel reads the fleet's live data, not a committed
+  snapshot.  `start/api/rag-snapshot.js` fetches the board from Linear with the
+  fleet's OAuth app and the corpus counters from recall behind Cloudflare
+  Access, and answers in the shape the page already read.  Only the roster
+  (`start/site-roster.json` — the app list and the seat list) is committed.
+  A committed snapshot of the board is **not** allowed:  this repository is
+  public, so any board title in it is published.  The credentials the function
+  reads are Vercel project environment variables (`RECALL_API_TOKEN`,
+  `CF_ACCESS_CLIENT_ID`, `CF_ACCESS_CLIENT_SECRET`, `LINEAR_CLIENT_ID`,
+  `LINEAR_CLIENT_SECRET`), not repository secrets.
 - `static/` is a wget snapshot of the published site (HTML + hashed assets).
 - Production host is the owner's **personal Vercel Hobby team** "Jay's
   Services" (`jayw`, `team_l3mWAejl1E08y8ijku5DpBE6`), same team as DealDex.

@@ -216,14 +216,14 @@ test("panel meta lines report age, never the countdown's 'resetting'", async ({ 
   const quotaMeta = page.locator("#quota-meta");
   const ragMeta = page.locator("#rag-meta");
   await expect(quotaMeta).toContainText("live ·");
-  await expect(ragMeta).toContainText("snapshot ·");
+  await expect(ragMeta).toContainText("live ·");
   await expect(quotaMeta).not.toContainText("resetting");
   await expect(ragMeta).not.toContainText("resetting");
-  // Age of a 45s / 90s old snapshot.  Patterns, not literals: the clock ticks
+  // Age of a 45s / 90s old reading.  Patterns, not literals: the clock ticks
   // while the page boots, and 90s sits on the 1m/2m boundary.  What matters is
   // the shape (a relative age) and the absence of "resetting".
   await expect(quotaMeta).toHaveText(/^live · \d+s$/);
-  await expect(ragMeta).toHaveText(/^snapshot · [12]m · 55,627 pts$/);
+  await expect(ragMeta).toHaveText(/^live · [12]m · 55,627 pts$/);
 });
 
 test("RAG panel renders mocked components, changes, and seats", async ({ page }) => {

@@ -4,4 +4,6 @@ site/node_modules
 site/.vercel
 site/.tanstack
 site/.output
+site/test-results
+site/playwright-report
 *.log

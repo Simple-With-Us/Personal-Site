@@ -241,6 +241,30 @@ test("a missing credential is named, not downgraded to a warning", async () => {
   );
 });
 
+test("an upstream that never answers is abandoned, not waited on", async () => {
+  // A hung upstream must reach the catch,  where the stale answer can be
+  // served,  rather than sitting there until the platform's own timeout.
+  // The stub honours the abort signal the function passes,  the way a real
+  // fetch does.
+  const hang = async (url, options = {}) => {
+    const signal = options.signal;
+    if (!signal) return new Promise(() => {});
+    return new Promise((_, reject) => {
+      signal.addEventListener("abort", () => {
+        const error = new Error("The operation was aborted");
+        error.name = "AbortError";
+        reject(error);
+      });
+    });
+  };
+  const { status, body } = await callPanel({
+    env: { ...FULL_ENV, RAG_UPSTREAM_TIMEOUT_MS: "60" },
+    fetchStub: hang,
+  });
+  assert.equal(status, 502);
+  assert.ok(body.error, "the answer must say what went wrong");
+});
+
 test("the panel is served privately", async () => {
   const { headers } = await callPanel({ env: FULL_ENV });
   assert.equal(headers["cache-control"], "private, no-store");

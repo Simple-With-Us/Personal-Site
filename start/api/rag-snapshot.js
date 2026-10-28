@@ -25,6 +25,9 @@
 //   CF_ACCESS_CLIENT_SECRET  Cloudflare Access service token secret
 //   LINEAR_CLIENT_ID         Linear OAuth client id (the fleet app)
 //   LINEAR_CLIENT_SECRET     Linear OAuth client secret
+//   RAG_UPSTREAM_TIMEOUT_MS  Optional.  How long an upstream may take, in
+//                            milliseconds.  Defaults to 4000;  the tests set it
+//                            low so the suite does not wait.
 
 const ROSTER = require("../site-roster.json");
 
@@ -51,9 +54,21 @@ const CACHE_MS = 60_000;
 const STALE_MS = 30 * 60_000;
 // A Linear token is good for hours; minting one costs a round trip.
 const TOKEN_MS = 15 * 60_000;
+// How long an upstream may take before the call is abandoned.  The function
+// has ten seconds,  and the board's token call and the board query are
+// sequential,  so two calls of four seconds still leave room for the stale
+// answer to be served instead of the request running into the platform's own
+// timeout.  A hung upstream must reach the catch,  not sit there.
+const UPSTREAM_TIMEOUT_MS = Number(process.env.RAG_UPSTREAM_TIMEOUT_MS || 4000);
 
 let cached = null; // { payload, at }
 let tokenCache = null; // { token, at }
+
+/** The signal that abandons a call to an upstream that stopped answering. */
+function timeoutSignal(ms) {
+  if (typeof AbortSignal === "undefined" || typeof AbortSignal.timeout !== "function") return undefined;
+  return AbortSignal.timeout(ms);
+}
 
 /** One uppercase tag out of a fleet seat label, or null. */
 function seatFromLabels(labels) {
@@ -104,6 +119,7 @@ async function recallStats() {
       Authorization: `Bearer ${token}`,
       "User-Agent": "start-jays-services/1.0 (+fleet-ops)",
     },
+    signal: timeoutSignal(UPSTREAM_TIMEOUT_MS),
     body: JSON.stringify({
       jsonrpc: "2.0",
       id: Date.now(),
@@ -139,6 +155,7 @@ async function linearToken() {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": USER_AGENT },
     body,
+    signal: timeoutSignal(UPSTREAM_TIMEOUT_MS),
   });
   if (!r.ok) throw new Error("board token HTTP " + r.status);
   const js = await r.json();
@@ -170,6 +187,7 @@ async function boardRows() {
       Authorization: `Bearer ${token}`,
       "User-Agent": USER_AGENT,
     },
+    signal: timeoutSignal(UPSTREAM_TIMEOUT_MS),
     body: JSON.stringify({ query: BOARD_QUERY, variables: { n: BOARD_FETCH } }),
   });
   if (!r.ok) throw new Error("board HTTP " + r.status);

@@ -96,7 +96,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add start/site-snapshot.json
-          git commit -m "chore(rag): refresh fleet-rag snapshot [skip ci]"
+          git commit -m "chore(rag): refresh fleet-rag snapshot"
           # The branch ruleset requires every change to main to arrive through
           # a pull request, so a direct push is rejected (GH013).  Land the
           # machine-generated snapshot through a self-merged PR instead: the
@@ -106,8 +106,8 @@ jobs:
           git push --force origin "HEAD:$BRANCH"
           if ! gh pr view "$BRANCH" --json number -q .number >/dev/null 2>&1; then
             gh pr create --head "$BRANCH" --base main \
-              --title "chore(rag): refresh fleet-rag snapshot [skip ci]" \
-              --body "Automated refresh of the machine-generated fleet RAG snapshot.  Validated in the workflow run before this PR was opened.  [skip ci]"
+              --title "chore(rag): refresh fleet-rag snapshot" \
+              --body "Automated refresh of the machine-generated fleet RAG snapshot.  Validated in the workflow run before this PR was opened."
           fi
           for i in $(seq 1 12); do
             if [ "$(gh pr view "$BRANCH" --json mergeable -q .mergeable 2>/dev/null)" = "MERGEABLE" ]; then

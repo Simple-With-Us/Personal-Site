@@ -21,7 +21,7 @@ Reading live removes both failure modes.  There is nothing to refresh, nothing t
 - `start/.vercelignore` — the allowlist names `site-roster.json` in both the project-root and repository-root layouts, in place of the snapshot.
 - `.github/workflows/ci.yml` — the required-files check names `start/site-roster.json`.
 - `.github/workflows/sentry-ci-report.yml` — `refresh-rag-snapshot` is out of the observed workflow list and the mirrored cron map.  `scripts/verify-sentry-ci-report.py` fails CI when a named workflow no longer exists, so this was mandatory, not tidying.
-- `tests/rag-hits.test.mjs` — rewritten around a stubbed `fetch`.  Eleven tests:  the shape, the corpus slug each app is counted under, the seat each row is attributed to, rows that are still in flight, rows with no seat, the seat counts, the private cache header, the 502 on a dead upstream, the named missing credential, and the guard that the repository carries no board titles.
+- `tests/rag-hits.test.mjs` — rewritten around a stubbed `fetch`.  Eighteen tests:  the shape, the corpus slug each app is counted under, the seat each row is attributed to, rows that are still in flight, rows with no seat, the day a row was finished rather than the day it was last touched, one spelling for a seat however it arrives, the seats ranked by their count, the fourteen-day window the board is asked for, the counts covering the whole window and not only the rows on screen, an event stream read as well as JSON, two readers sharing one trip, the private cache header, the 502 on a dead upstream, a missing credential reported without naming it, a refused credential reported as a masked preview, and the guard that the repository carries no board titles.
 - `tests/deployment-boundary.test.cjs` — the deployment allowlist fixture names `site-roster.json`, and the old "the snapshot API can read explicit bundled data" test is now "the panel reads the fleet live and no snapshot is published".
 
 ## The Credentials
@@ -30,27 +30,38 @@ The function reads five environment variables, and they are Vercel **project** e
 
 | Variable | What it is |
 | --- | --- |
-| `RECALL_API_TOKEN` | Bearer for the recall corpus |
-| `CF_ACCESS_CLIENT_ID` | Cloudflare Access service token id for `recall.jays.services` |
+| `RECALL_API_BASE` | The address of the corpus service |
+| `RECALL_API_TOKEN` | Bearer for the corpus |
+| `CF_ACCESS_CLIENT_ID` | Cloudflare Access service token id for the corpus |
 | `CF_ACCESS_CLIENT_SECRET` | Cloudflare Access service token secret |
 | `LINEAR_CLIENT_ID` | Linear OAuth client id, the fleet app |
 | `LINEAR_CLIENT_SECRET` | Linear OAuth client secret |
+
+The address of the corpus is in the environment and not in this repository, for the same reason the credentials are:  a public repository publishes what it holds.  The function has no default address, so a project without one answers `502` and says so in its log.
 
 The Linear scope string is a constant in the function:  `read,write,app:assignable,app:mentionable`, the board CLI's own scope.  Asking Linear for a token with a different scope revokes every token that app holds, so it is never read from the environment.
 
 ## How It Behaves
 
+- The board is asked for the items finished in the last fourteen days, and a row is dated by the day it was finished.  An item finished three weeks ago and touched yesterday is not a change of yesterday.
+- The seat counts cover that same fourteen days, not only the rows on screen, and the seats come back ranked by the count.  That is what the panel's "Top Seats (14d)" heading claims, so it is what the function measures.
+- A seat is credited under one spelling however it arrives.  Minimax is called both things and they are the same seat, so the alias maps one onto the other before anything is counted.
 - A good answer is cached for sixty seconds, and a Linear token for fifteen minutes.
+- Two readers arriving on a cold cache share one trip:  the second one waits for the first one's answer instead of making a second one.
+- Each outbound call carries an abort signal of four seconds.  A hung upstream must reach the catch, where the stale answer lives, rather than sit there until the platform's own timeout.
+- The corpus may answer with JSON or with an event stream, and both are read.
 - When an upstream fails and the last good answer is under thirty minutes old, that answer is served with an `X-Rag-Stale` header that says how old it is.  A good answer beats an error page.
-- When there is nothing to fall back on, the function answers `502` with the reason.  An upstream that is down for good must not look like a board with no work on it.
+- When there is nothing to fall back on, the function answers `502`.  An upstream that is down for good must not look like a board with no work on it.
+- The body of a failure names nothing secret.  A refused credential is reported as a masked preview, the first eight and the last four characters, which is enough to tell two keys apart and useless to anyone else.  The upstream's own words and the names of the missing variables stay in the function's log, where the owner reads them.
 - The answer is served `private, no-store`, and the CORS origin is `https://start.jays.services` or `https://home.jays.services`.
 
 ## Verification
 
-- `node --test tests/rag-hits.test.mjs` passes (11 tests).
+- `node --test tests/rag-hits.test.mjs` passes (18 tests).
 - `node --test tests/deployment-boundary.test.cjs` passes (6 tests).
 - `python3 scripts/verify-sentry-ci-report.py` passes:  eight observed workflows and four cron schedules match the live workflows.
-- A live read was measured before the code was written:  recall's stats answer in about 0.35 seconds and the board in about a second, so both fit inside the function's ten-second budget.  The corpus's semantic board search takes two to four and a half seconds per query and is deliberately not on the per-request path.
+- A live read was measured before the code was written:  the corpus's stats answer in about 0.35 seconds and the board in about a second, so both fit inside the function's ten-second budget.  The corpus's semantic board search takes two to four and a half seconds per query and is deliberately not on the per-request path.
+- A live read of the finished function answers `200` in about a second, with twelve rows dated by the day they were finished and the seat counts for the fortnight.
 - `https://start.jays.services/api/rag-snapshot` answers with live rows and live corpus counters.
 
 ## Open Items

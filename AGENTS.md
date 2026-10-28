@@ -120,9 +120,9 @@ UI changes must be covered by automated visual verification where feasible: Play
   (`start/site-roster.json` — the app list and the seat list) is committed.
   A committed snapshot of the board is **not** allowed:  this repository is
   public, so any board title in it is published.  The credentials the function
-  reads are Vercel project environment variables (`RECALL_API_TOKEN`,
-  `CF_ACCESS_CLIENT_ID`, `CF_ACCESS_CLIENT_SECRET`, `LINEAR_CLIENT_ID`,
-  `LINEAR_CLIENT_SECRET`), not repository secrets.
+  reads are Vercel project environment variables (`RECALL_API_BASE`,
+  `RECALL_API_TOKEN`, `CF_ACCESS_CLIENT_ID`, `CF_ACCESS_CLIENT_SECRET`,
+  `LINEAR_CLIENT_ID`, `LINEAR_CLIENT_SECRET`), not repository secrets.
 - `static/` is a wget snapshot of the published site (HTML + hashed assets).
 - Production host is the owner's **personal Vercel Hobby team** "Jay's
   Services" (`jayw`, `team_l3mWAejl1E08y8ijku5DpBE6`), same team as DealDex.

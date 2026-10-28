@@ -150,7 +150,7 @@ const COMPONENTS = [
   { acronym: "BF",  name: "BotFleet",                 tagline: "Pick a platform per bot",      url: "https://botfleet.app",         icon: "app-bf.png",     slug: "botfleet" },
   { acronym: "DD",  name: "DealDex",                  tagline: "Pokemon listing desk",         url: "https://dealdex.net",           icon: "app-dd.png",     slug: "dealdex" },
   { acronym: "CL",  name: "ContactLogo",              tagline: "Brand icons for contacts",     url: "https://contactlogo.com",       icon: "app-cl.png",     slug: "contactlogo" },
-  { acronym: "AR",  name: "Autorotate",               tagline: "Zero-plaintext secret rotation", url: "https://autorotate.codes",    icon: "app-ar.png",     slug: "autorotate" },
+  { acronym: "AR",  name: "Autorotate",               tagline: "Zero-plaintext secret rotation", url: "https://autorotate.vercel.app",    icon: "app-ar.png",     slug: "autorotate" },
   { acronym: "CTS", name: "congress-trading-shared", tagline: "Shared TS contracts",          url: null,                          icon: null,            slug: "congress-trading-shared" },
   // AFC, not AFL: owner ruling 2026-10-11.  AFL is a retired coordinator alias.
   // Filed under "fleet": the corpus attributes coordinator and general fleet

@@ -60,7 +60,7 @@
       "acronym": "AR",
       "name": "Autorotate",
       "tagline": "Zero-plaintext secret rotation",
-      "url": "https://autorotate.codes",
+      "url": "https://autorotate.vercel.app",
       "icon": "app-ar.png",
       "slug": "autorotate",
       "hits": 929

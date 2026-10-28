@@ -8,6 +8,11 @@
 #   - production at most once per 3 hours (stops agent spam even when they keep
 #     touching CSS/copy)
 # Manual: VERCEL_FORCE_DEPLOY=1, or Dashboard Redeploy with Ignore Build Step unchecked.
+#
+# Vercel runs this step with a working directory that is not always the project
+# root,  so vercel.json looks for this script by repository-root path first and
+# falls back to the plain name.  The script finds itself through BASH_SOURCE,
+# so it watches the right folder either way.
 set -euo pipefail
 
 if [[ "${VERCEL_FORCE_DEPLOY:-}" == "1" ]]; then

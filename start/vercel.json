@@ -10,7 +10,7 @@
   },
   "cleanUrls": true,
   "trailingSlash": false,
-  "ignoreCommand": "bash vercel-ignore.sh",
+  "ignoreCommand": "for p in \"$(git rev-parse --show-toplevel 2>/dev/null)/start/vercel-ignore.sh\" \"$PWD/start/vercel-ignore.sh\" vercel-ignore.sh; do [ -f \"$p\" ] && exec bash \"$p\"; done; echo 'vercel-ignore.sh not found' >&2; exit 127",
   "functions": {
     "api/quota.js": {
       "maxDuration": 10

@@ -235,6 +235,30 @@ function missing(env, ...names) {
   return names.filter((n) => !env[n]);
 }
 
+// The recall search route's query,  validated at the boundary before it
+// reaches the corpus.  The page size is part of that payload,  not a number
+// coerced at the call site:  a query string carries text,  so "12abc",  "3.5"
+// and "-4" must never become a corpus request.  An absent limit takes the
+// default;  a present one must be a whole number inside the allowed range.
+const RECALL_LIMIT_MAX = 25;
+function parseRecallQuery(url) {
+  const q = (url.searchParams.get('q') || '').trim();
+  if (!q) return { ok: false, error: 'Add a query.' };
+  const raw = url.searchParams.get('limit');
+  if (raw === null || raw.trim() === '') {
+    return { ok: true, q, limit: RECALL_SEARCH_LIMIT };
+  }
+  const asked = raw.trim();
+  if (!/^[0-9]+$/.test(asked)) {
+    return { ok: false, error: 'The limit must be a whole number.' };
+  }
+  const limit = Number(asked);
+  if (limit < 1 || limit > RECALL_LIMIT_MAX) {
+    return { ok: false, error: `The limit must be between 1 and ${RECALL_LIMIT_MAX}.` };
+  }
+  return { ok: true, q, limit };
+}
+
 function accessHeaders(env) {
   return {
     'CF-Access-Client-Id': env.CF_ACCESS_CLIENT_ID,
@@ -1060,14 +1084,13 @@ export default {
     }
 
     if (url.pathname === '/api/recall/search') {
-      const q = (url.searchParams.get('q') || '').trim();
-      if (!q) return jsonResponse({ ok: false, error: 'Add a query.', hits: [] }, 400);
+      const query = parseRecallQuery(url);
+      if (!query.ok) return jsonResponse({ ok: false, error: query.error, hits: [] }, 400);
+      const { q, limit } = query;
       const gaps = missing(env, 'RECALL_API_TOKEN', 'CF_ACCESS_CLIENT_ID', 'CF_ACCESS_CLIENT_SECRET');
       if (gaps.length) {
         return jsonResponse({ ok: false, error: 'Not configured', hits: [] }, 503);
       }
-      const asked = Number(url.searchParams.get('limit'));
-      const limit = Math.min(Number.isFinite(asked) && asked > 0 ? asked : RECALL_SEARCH_LIMIT, 25);
       try {
         // recallSearch returns { hits, mode } — hand the array to the page, not
         // the wrapper, or every search renders as "no hits".

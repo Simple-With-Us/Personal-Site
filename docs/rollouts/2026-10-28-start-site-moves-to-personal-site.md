@@ -2,7 +2,7 @@
 
 ## Summary
 
-`start.jays.services` now lives in this repository instead of the private `Fleet-OPS` repository.  The source sits under `start/`, the Vercel project `prj_mb1aSPLMPQyZFNXOnQI92wjyub5l` is relinked to `Simple-With-Us/Personal-Site` with root directory `start`, and the deployment protection stays exactly as it was.
+`start.jays.services` now lives in this repository instead of the private `Fleet-OPS` repository.  The source sits under `start/`, the Vercel project that serves it is relinked to `Simple-With-Us/Personal-Site` with root directory `start`, and the deployment protection stays exactly as it was.
 
 The move happened because `Fleet-OPS` was a repository on the owner's personal GitHub account, and that account's Actions minutes were exhausted:  every workflow run in it failed in about two seconds without starting a single step.  The repository was transferred into the `Simple-With-Us` organization as a private repository, which ends the personal-account quota as the billing pool, and the shared workflows it carried moved to public repositories, where Actions minutes are not drawn from that pool at all.
 
@@ -27,7 +27,7 @@ Both catch-up workflows run their test job and skip the deploy, because the `VER
 
 - `node --test scripts/deploy/vercel-catch-up.test.mjs` passes (13 tests).
 - The start site's own tests pass (27 tests):  the deployment boundary, the RAG snapshot shape, the admin handler, the quota panel and the start page identity.
-- The Vercel project reports `rootDirectory` `start`, a GitHub link to `Personal-Site` with repository id `1331389993`, production branch `main`, Git deployments enabled, `ssoProtection.deploymentType` `all`, and all twelve project environment variables intact.
+- The Vercel project reports the expected root directory, a GitHub link to this repository, Git deployments enabled, and the deployment protection and environment it carried before the relink.  The project and repository identifiers stay out of this public repository; they live in the Vercel project settings and in the deploy configuration beside it.
 - `https://start.jays.services/` answers with a redirect to `vercel.com/sso-api`, which is the Vercel Authentication gate.  That protection was not rebuilt or reconfigured; it belongs to the project and travelled with the relink.
 
 ## Open Items

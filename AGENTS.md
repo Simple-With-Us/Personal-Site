@@ -107,8 +107,8 @@ UI changes must be covered by automated visual verification where feasible: Play
 - `site/` is the live TanStack Start / Vite app (Nitro `vercel` preset).
 - `start/` is the second application in this repository:  the operator start
   site `start.jays.services`, a static tree with three serverless handlers,
-  served by its own Vercel project (`prj_mb1aSPLMPQyZFNXOnQI92wjyub5l`) from
-  root directory `start`.  It moved here from the private `Fleet-OPS`
+  served by its own Vercel project from root directory `start`.  It moved here
+  from the private `Fleet-OPS`
   repository on Oct 28, 2026, together with the RAG snapshot it serves
   (`start/site-snapshot.json`, refreshed daily by
   `.github/workflows/refresh-rag-snapshot.yml`).  Its deployment protection is

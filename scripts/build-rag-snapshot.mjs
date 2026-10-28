@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Build the Fleet RAG snapshot that powers https://home.jays.services.
+// Build the Fleet RAG snapshot that powers https://start.jays.services.
 //
 // Usage:
 //   node scripts/build-rag-snapshot.mjs                    # read the corpus over HTTP (needs RECALL_API_TOKEN + CF Access headers)
@@ -63,7 +63,20 @@ const CHANGE_LIMIT = Number(process.env.SNAPSHOT_CHANGE_LIMIT || 12);
 function cfHeaders() {
   const id = process.env.CF_ACCESS_CLIENT_ID;
   const secret = process.env.CF_ACCESS_CLIENT_SECRET;
-  if (!id || !secret) return null;
+  // The corpus sits behind Cloudflare Access,  so a missing credential is a
+  // configuration fault,  not a reason to try unauthenticated and let the
+  // Cloudflare login page look like a corpus answer later on.  Name the
+  // variables that are missing instead of failing with an opaque 302.
+  const missing = [];
+  if (!id) missing.push("CF_ACCESS_CLIENT_ID");
+  if (!secret) missing.push("CF_ACCESS_CLIENT_SECRET");
+  if (!process.env.RECALL_API_TOKEN) missing.push("RECALL_API_TOKEN");
+  if (missing.length) {
+    throw new Error(
+      "missing corpus credentials: " + missing.join(", ") +
+        ".  The corpus is behind Cloudflare Access,  so the snapshot build needs all three."
+    );
+  }
   return { "CF-Access-Client-Id": id, "CF-Access-Client-Secret": secret };
 }
 
@@ -71,9 +84,9 @@ async function callMcp(method, params) {
   const headers = {
     "Content-Type": "application/json",
     Accept: "application/json, text/event-stream",
-    ...(cfHeaders() || {}),
+    ...cfHeaders(),
   };
-  if (process.env.RECALL_API_TOKEN) headers.Authorization = `Bearer ${process.env.RECALL_API_TOKEN}`;
+  headers.Authorization = `Bearer ${process.env.RECALL_API_TOKEN}`;
   const r = await fetch(`${RECALL_API_BASE}/mcp`, {
     method: "POST",
     headers,

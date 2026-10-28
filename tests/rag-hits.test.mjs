@@ -72,8 +72,39 @@ test("an unresolvable slug reports 0 without inventing a number", () => {
   assert.equal(rows[0].hits, 0);
 });
 
+// The committed snapshot is decoded and then checked,  not trusted:  a
+// snapshot whose shape drifted must fail here with the field named,  rather
+// than pass because the assertion below happened to read nothing.
+function validateSnapshot(snap) {
+  assert.ok(snap && typeof snap === "object" && !Array.isArray(snap), "the snapshot must be an object");
+  assert.ok(Array.isArray(snap.components), "the snapshot must carry a components array");
+  for (const c of snap.components) {
+    assert.ok(c && typeof c === "object" && !Array.isArray(c), "every component must be an object");
+    for (const field of ["acronym", "name", "tagline", "slug"]) {
+      assert.equal(typeof c[field], "string", `component ${c.acronym ?? "?"} must carry a string ${field}`);
+      assert.ok(c[field].length > 0, `component ${c.acronym ?? "?"} must carry a non-empty ${field}`);
+    }
+    // An internal component with no public site carries a null url,  and one
+    // with no brand mark carries a null icon.  Every other component names
+    // both.
+    for (const field of ["url", "icon"]) {
+      if (c[field] === null) continue;
+      assert.equal(typeof c[field], "string", `component ${c.acronym} must carry a string ${field}`);
+      assert.ok(c[field].length > 0, `component ${c.acronym} must carry a non-empty ${field}`);
+    }
+    assert.equal(typeof c.hits, "number", `component ${c.acronym} must carry a numeric hits count`);
+    assert.ok(
+      Number.isInteger(c.hits) && c.hits >= 0,
+      `component ${c.acronym} must carry a non-negative whole hits count`,
+    );
+  }
+  return snap;
+}
+
 test("the committed snapshot has no component sitting at zero", () => {
-  const snap = JSON.parse(fs.readFileSync(path.join(root, "start/site-snapshot.json"), "utf8"));
+  const snap = validateSnapshot(
+    JSON.parse(fs.readFileSync(path.join(root, "start/site-snapshot.json"), "utf8")),
+  );
   const zeroes = (snap.components || [])
     .filter(c => !c.hits)
     .map(c => `${c.acronym} (${c.name})`);
@@ -82,4 +113,11 @@ test("the committed snapshot has no component sitting at zero", () => {
     `site-snapshot.json reports zero for ${zeroes.join(", ")}; ` +
     "rebuild it with `node scripts/build-rag-snapshot.mjs` after the slug fix",
   );
+});
+
+test("the committed snapshot carries the fields the components card reads", () => {
+  const snap = validateSnapshot(
+    JSON.parse(fs.readFileSync(path.join(root, "start/site-snapshot.json"), "utf8")),
+  );
+  assert.ok(snap.components.length > 0, "the snapshot must carry at least one component");
 });

@@ -48,8 +48,10 @@ jobs:
     timeout-minutes: 45
     env:
       GH_TOKEN: ${{ github.token }}
-      VERCEL_ORG_ID: team_l3mWAejl1E08y8ijku5DpBE6
-      VERCEL_PROJECT_ID: prj_mb1aSPLMPQyZFNXOnQI92wjyub5l
+      VERCEL_ORG_ID: ${{ vars.VERCEL_START_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ vars.VERCEL_START_PROJECT_ID }}
+      VERCEL_REPO_ID: ${{ vars.VERCEL_START_REPO_ID }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       VERCEL_TELEMETRY_DISABLED: '1'
       VERCEL_CONFIG_PATH: scripts/deploy/vercel-config.start.json
     steps:
@@ -61,16 +63,17 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: '24'
-      - name: Load deploy token from shared Fleet-OPS secret scope
-        env:
-          INFISICAL_PROJECT_ID: 8dae6d03-8f12-48b2-adf3-e5c1b881c8c5
-          INFISICAL_ENVIRONMENT: prod
-          INFISICAL_SECRET_PATH: /
-          INFISICAL_NAMES: VERCEL_TOKEN
-          INFISICAL_REQUIRED: VERCEL_TOKEN
-          INFISICAL_CLIENT_ID: ${{ secrets.INFISICAL_AUTOMATION_CLIENT_ID }}
-          INFISICAL_CLIENT_SECRET: ${{ secrets.INFISICAL_AUTOMATION_CLIENT_SECRET }}
-        run: node scripts/infisical-fetch.mjs
+      - name: Require the deploy token
+        # The deploy token comes from this repository's own Actions secret,  and
+        # the environment is the approved source for it.  A missing token fails
+        # here with the variable named,  before the gate and the build run,  so
+        # the workflow never reaches a build that cannot authenticate.
+        run: |
+          set -euo pipefail
+          if [ -z "${VERCEL_TOKEN:-}" ]; then
+            echo "::error::VERCEL_TOKEN is not set;  the catch-up needs the VERCEL_TOKEN repository secret"
+            exit 1
+          fi
       - name: Check binding, deployed SHA, cooldown and exact-main CI
         id: gate
         run: node scripts/deploy/vercel-catch-up.mjs prepare

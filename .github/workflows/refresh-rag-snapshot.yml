@@ -1,0 +1,136 @@
+name: refresh-rag-snapshot
+
+# Refresh the Fleet RAG snapshot that powers the visualizations on
+# https://start.jays.services. Runs daily at 11:00 UTC (06:00 CT).
+# Can also be invoked manually via the Actions tab (`workflow_dispatch`).
+#
+# Required secrets (set at Simple-With-Us/Personal-Site → Settings → Secrets →
+# Actions):
+#   CF_ACCESS_CLIENT_ID     Cloudflare Access service token id (created for agents.jays.services)
+#   CF_ACCESS_CLIENT_SECRET Cloudflare Access service token secret
+#   RECALL_API_TOKEN        recall REST bearer (Infisical shared/prod)
+# These come from Cloudflare Zero Trust → Access → Service Auth, and Infisical.
+#
+# WHY ALL THREE MATTER.  This workflow ran 12 consecutive times (2026-09-22 to
+# 2026-10-03) with the first two unset and RECALL_API_TOKEN never passed at all.
+# Without them Cloudflare answered with a 302 to its HTML login page, the build
+# script tried to parse that as JSON, and the validate step killed the run — so
+# the committed snapshot froze at 2026-09-28 while the corpus grew by thousands
+# of points.  All three are wired now.
+#
+# The build targets recall.jays.services (the Hetzner hop, which survives this
+# Mac sleeping), not the agents.jays.services seat hop, which 401s without
+# SEAT_MCP_TOKEN.  The identical build also runs on the Mac with
+# `node scripts/build-rag-snapshot.mjs --from-local` in this repository, which
+# needs no credential.
+#
+# The snapshot is written to start/site-snapshot.json, beside the site that
+# serves it:  the start site's api/rag-snapshot.js bundles that one file into
+# its serverless function, so the snapshot and its consumer live together.
+
+on:
+  schedule:
+    - cron: "0 11 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+# The bot pushes to a single fixed branch; never let two runs race each other.
+concurrency:
+  group: refresh-rag-snapshot
+  cancel-in-progress: true
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node 20
+        uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+
+      - name: Build snapshot
+        env:
+          CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
+          CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
+          RECALL_API_TOKEN: ${{ secrets.RECALL_API_TOKEN }}
+        run: node scripts/build-rag-snapshot.mjs
+
+      # The build refuses to overwrite a good snapshot with an empty one.  This
+      # step independently rejects a snapshot that is fully populated but stale:
+      # every field present, newest feed row weeks old.  That is the shape the
+      # card was actually showing, and no presence check catches it.
+      - name: Validate snapshot
+        run: |
+          node -e "
+            const s = require('./start/site-snapshot.json');
+            if (!s.corpus || !s.corpus.points) { console.error('snapshot has no corpus data'); process.exit(1); }
+            if (!s.recentChanges || s.recentChanges.length === 0) { console.error('snapshot has no recent changes'); process.exit(1); }
+            const newest = s.recentChanges[0].date;
+            const ageDays = Math.floor((Date.now() - Date.parse(newest + 'T00:00:00Z')) / 86400000);
+            if (!(ageDays >= 0) || ageDays > 10) {
+              console.error('newest change row is ' + newest + ' (' + ageDays + 'd old) — feed is stale, refusing to publish');
+              process.exit(1);
+            }
+            console.log('snapshot OK:', s.corpus.points, 'points,', s.recentChanges.length, 'changes, newest', newest, '(' + ageDays + 'd)');
+          "
+
+      - name: Commit the refreshed snapshot
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if git diff --quiet start/site-snapshot.json; then
+            echo "[refresh-rag-snapshot] no changes"
+            exit 0
+          fi
+          # Attribute the commit to the GitHub Actions bot.  The branch
+          # ruleset demands extra approval for changes from authors it cannot
+          # attribute to a GitHub user, and fleet-rag-bot <ops@fleet.local> is
+          # not one.
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add start/site-snapshot.json
+          git commit -m "chore(rag): refresh fleet-rag snapshot [skip ci]"
+          # The branch ruleset requires every change to main to arrive through
+          # a pull request, so a direct push is rejected (GH013).  Land the
+          # machine-generated snapshot through a self-merged PR instead: the
+          # ruleset asks for zero approving reviews and no status checks, so
+          # the merge goes through as soon as the PR is mergeable.
+          BRANCH="ops/refresh-rag-snapshot"
+          git push --force origin "HEAD:$BRANCH"
+          if ! gh pr view "$BRANCH" --json number -q .number >/dev/null 2>&1; then
+            gh pr create --head "$BRANCH" --base main \
+              --title "chore(rag): refresh fleet-rag snapshot [skip ci]" \
+              --body "Automated refresh of the machine-generated fleet RAG snapshot.  Validated in the workflow run before this PR was opened.  [skip ci]"
+          fi
+          for i in $(seq 1 12); do
+            if [ "$(gh pr view "$BRANCH" --json mergeable -q .mergeable 2>/dev/null)" = "MERGEABLE" ]; then
+              break
+            fi
+            sleep 10
+          done
+          if gh pr merge "$BRANCH" --squash --delete-branch; then
+            echo "[refresh-rag-snapshot] snapshot merged to main"
+            exit 0
+          fi
+          # Direct merge failed (usually mergeability not computed yet).  Fall
+          # back to auto-merge, but do NOT trust its exit code: it returns as
+          # soon as auto-merge is enabled, not when the merge lands.  Poll
+          # until the PR is actually merged, and fail loudly if it never is.
+          echo "[refresh-rag-snapshot] direct merge failed; enabling auto-merge and waiting"
+          gh pr merge "$BRANCH" --squash --delete-branch --auto
+          for i in $(seq 1 18); do
+            if [ "$(gh pr view "$BRANCH" --json state -q .state 2>/dev/null)" = "MERGED" ]; then
+              echo "[refresh-rag-snapshot] snapshot merged to main (via auto-merge)"
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "[refresh-rag-snapshot] ERROR: PR did not merge in time" >&2
+          exit 1

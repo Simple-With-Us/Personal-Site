@@ -1,0 +1,267 @@
+{
+  "generatedAt": "2026-10-12T04:09:22.745Z",
+  "schema": 2,
+  "components": [
+    {
+      "acronym": "ST",
+      "name": "Socratic.Trade",
+      "tagline": "Agentic trading console",
+      "url": "https://socratictrade.com",
+      "icon": "app-st.png",
+      "slug": "socratic-trade",
+      "hits": 22564
+    },
+    {
+      "acronym": "CT",
+      "name": "Congress.Trade",
+      "tagline": "Public STOCK Act disclosures",
+      "url": "https://congress.trade",
+      "icon": "app-ct.png",
+      "slug": "congress-trade",
+      "hits": 8488
+    },
+    {
+      "acronym": "UM",
+      "name": "Usage Monitor",
+      "tagline": "API + agent quota + spend",
+      "url": "https://usage.jays.services",
+      "icon": "app-um.png",
+      "slug": "usage-monitor",
+      "hits": 4754
+    },
+    {
+      "acronym": "BF",
+      "name": "BotFleet",
+      "tagline": "Pick a platform per bot",
+      "url": "https://botfleet.app",
+      "icon": "app-bf.png",
+      "slug": "botfleet",
+      "hits": 11703
+    },
+    {
+      "acronym": "DD",
+      "name": "DealDex",
+      "tagline": "Pokemon listing desk",
+      "url": "https://dealdex.net",
+      "icon": "app-dd.png",
+      "slug": "dealdex",
+      "hits": 1700
+    },
+    {
+      "acronym": "CL",
+      "name": "ContactLogo",
+      "tagline": "Brand icons for contacts",
+      "url": "https://contactlogo.com",
+      "icon": "app-cl.png",
+      "slug": "contactlogo",
+      "hits": 832
+    },
+    {
+      "acronym": "AR",
+      "name": "Autorotate",
+      "tagline": "Zero-plaintext secret rotation",
+      "url": "https://autorotate.vercel.app",
+      "icon": "app-ar.png",
+      "slug": "autorotate",
+      "hits": 929
+    },
+    {
+      "acronym": "CTS",
+      "name": "congress-trading-shared",
+      "tagline": "Shared TS contracts",
+      "url": null,
+      "icon": null,
+      "slug": "congress-trading-shared",
+      "hits": 588
+    },
+    {
+      "acronym": "AFC",
+      "name": "ai-fleet-coordinator",
+      "tagline": "Fleet coordination",
+      "url": null,
+      "icon": "app-afc.png",
+      "slug": "fleet",
+      "hits": 7667
+    },
+    {
+      "acronym": "OPS",
+      "name": "fleet-ops",
+      "tagline": "Private ops inventory",
+      "url": null,
+      "icon": null,
+      "slug": "fleet-ops",
+      "hits": 637
+    },
+    {
+      "acronym": "PS",
+      "name": "Personal-Site",
+      "tagline": "jays.services portfolio",
+      "url": "https://jays.services",
+      "icon": "app-ps.png",
+      "slug": "personal-site",
+      "hits": 424
+    }
+  ],
+  "seats": [
+    {
+      "tag": "AG",
+      "fullName": "Antigravity / Gemini",
+      "color": "#4285F4",
+      "mark": "gemini-color.png",
+      "recentCount": 14
+    },
+    {
+      "tag": "CLAUDE",
+      "fullName": "Claude / Anthropic",
+      "color": "#D97757",
+      "mark": "claude-color.png",
+      "recentCount": 8
+    },
+    {
+      "tag": "GROK",
+      "fullName": "xAI Grok",
+      "color": "#1F1F1F",
+      "mark": "grok-color.png",
+      "recentCount": 5
+    },
+    {
+      "tag": "CODEX",
+      "fullName": "OpenAI Codex",
+      "color": "#10A37F",
+      "mark": "openai-color.png",
+      "recentCount": 5
+    },
+    {
+      "tag": "MM",
+      "fullName": "Mavis (MM)",
+      "color": "#FF6B35",
+      "mark": "minimax.png",
+      "recentCount": 2
+    },
+    {
+      "tag": "CURSOR",
+      "fullName": "Cursor",
+      "color": "#7C3AED",
+      "mark": "cursor-color.png",
+      "recentCount": 1
+    },
+    {
+      "tag": "MONET",
+      "fullName": "Monet",
+      "color": "#0EA5E9",
+      "mark": "monet.svg",
+      "recentCount": 0
+    },
+    {
+      "tag": "FX",
+      "fullName": "Firefox fleet seat",
+      "color": "#8B5CF6",
+      "mark": null,
+      "recentCount": 0
+    }
+  ],
+  "recentChanges": [
+    {
+      "date": "2026-10-10",
+      "seat": "CLAUDE",
+      "app": "fleet",
+      "title": "Infisical prod-only: repoint Congress.Trade, Socratic-Trade and congress-trading-shared env selection to prod with a …"
+    },
+    {
+      "date": "2026-10-10",
+      "seat": "CLAUDE",
+      "app": "congress-trade",
+      "title": "2026-10-10 — CLAUDE — COMPLETED #2683 (b1c32183, Coolify rebuilt, /api/health secrets enabled + cacheReady) — Infisic…"
+    },
+    {
+      "date": "2026-10-10",
+      "seat": "CLAUDE",
+      "app": "fleet",
+      "title": "Infisical prod-only consolidation"
+    },
+    {
+      "date": "2026-10-10",
+      "seat": "CLAUDE",
+      "app": "socratic-trade",
+      "title": "2026-10-10 - CLAUDE - COMPLETED #4431 (a9606f76, Coolify deploy started 7:45am) - Infisical prod-only: wrapper defaul…"
+    },
+    {
+      "date": "2026-10-08",
+      "seat": "AG",
+      "app": "botfleet",
+      "title": "2026-09-11 — AG — COMPLETED / DEPLOYED — Quota telemetry countdowns, rates table cleanup, MiniMax & Custom Engines in…"
+    },
+    {
+      "date": "2026-10-08",
+      "seat": "AG",
+      "app": "botfleet",
+      "title": "2026-09-11 — AG — COMPLETED / DEPLOYED — Quota telemetry countdowns, rates table cleanup, MiniMax & Custom Engines in…"
+    },
+    {
+      "date": "2026-10-08",
+      "seat": "GROK",
+      "app": "botfleet",
+      "title": "2026-09-01 — GROK — COMPLETED — Sentry production deploy records (sentry-cli releases deploys new -e production) (bra…"
+    },
+    {
+      "date": "2026-10-08",
+      "seat": "AG",
+      "app": "botfleet",
+      "title": "2026-09-09 — AG — COMPLETED / DEPLOYED — Scope PATCH /api/instances to affected engine and fix settings lock stall (P…"
+    },
+    {
+      "date": "2026-10-08",
+      "seat": "AG",
+      "app": "botfleet",
+      "title": "2026-09-11 — AG — COMPLETED / DEPLOYED — Infisical timeout handling and full write-through sync (PR #309 squash 2246f…"
+    },
+    {
+      "date": "2026-10-08",
+      "seat": "AG",
+      "app": "botfleet",
+      "title": "2026-09-19 — AG — COMPLETED (PR #492 merged d4acd2c5) — Autocomplete (@ Bots, # Apps/Channels) & Mention Highlighting…"
+    },
+    {
+      "date": "2026-10-08",
+      "seat": "CODEX",
+      "app": "botfleet",
+      "title": "2026-09-11 — CODEX — COMPLETED — Provider request isolation (#278/#279, PR #314, boards a board item / a board item)."
+    },
+    {
+      "date": "2026-10-07",
+      "seat": "CODEX",
+      "app": "personal-site",
+      "title": "2026-09-26 — CODEX — COMPLETED/DEPLOYED — Public portfolio boundary, selected..."
+    }
+  ],
+  "corpus": {
+    "collection": "fleet-agents",
+    "status": "green",
+    "points": 62858,
+    "bySource": {
+      "board": 26677,
+      "effort-log": 3339,
+      "apple-note": 2625,
+      "doc": 26356,
+      "skill": 778,
+      "memory": 865,
+      "chat-log": 0,
+      "agent-contribution": 2217
+    },
+    "byApp": {
+      "fleet": 7667,
+      "socratic-trade": 22564,
+      "congress-trade": 8488,
+      "congress-trading-shared": 588,
+      "usage-monitor": 4754,
+      "dealdex": 1700,
+      "botfleet": 11703,
+      "personal-site": 424,
+      "fleet-ops": 637,
+      "autorotate": 929,
+      "contactlogo": 832,
+      "clutch": 84,
+      "other": 2488
+    }
+  }
+}

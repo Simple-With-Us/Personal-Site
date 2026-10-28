@@ -1,0 +1,11 @@
+{
+  "repository": "Simple-With-Us/Personal-Site",
+  "rootDirectory": "start",
+  "ciWorkflows": [
+    "CI",
+    "Site CI"
+  ],
+  "watch": [
+    "start/**"
+  ]
+}

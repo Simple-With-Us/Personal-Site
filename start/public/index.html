@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161617" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-title" content="Start">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20180%20180%22%3E%3Crect%20width%3D%22180%22%20height%3D%22180%22%20rx%3D%2236%22%20fill%3D%22%23111827%22%2F%3E%3Ctext%20x%3D%2290%22%20y%3D%22118%22%20text-anchor%3D%22middle%22%20font-family%3D%22-apple-system%2CBlinkMacSystemFont%2Csystem-ui%2Csans-serif%22%20font-size%3D%2296%22%20font-weight%3D%22700%22%20fill%3D%22%23f5f5f7%22%3EJ%3C%2Ftext%3E%3C%2Fsvg%3E">
+
+<meta name="color-scheme" content="light dark">
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="Home page for jays.services fleet — agent quotas from Usage Monitor, Fleet RAG components + recent changes, plus the safari-start search grid.">
+<title>Fleet operations · jays.services</title>
+<link rel="icon" href="data:,">
+<style>
+  :root {
+    --bg: #f5f5f7;
+    --card: #ffffff;
+    --text: #1d1d1f;
+    --muted: #6e6e73;
+    --faint: #a1a1a6;
+    --line: rgba(0, 0, 0, .07);
+    --hover: rgba(0, 0, 0, .045);
+    --ring: #0a84ff;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .04), 0 8px 24px rgba(0, 0, 0, .05);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #161617;
+      --card: #1f1f21;
+      --text: #f5f5f7;
+      --muted: #a1a1a6;
+      --faint: #7c7c81;
+      --line: rgba(255, 255, 255, .08);
+      --hover: rgba(255, 255, 255, .06);
+      --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px rgba(0, 0, 0, .35);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #161617;
+    --card: #1f1f21;
+    --text: #f5f5f7;
+    --muted: #a1a1a6;
+    --faint: #7c7c81;
+    --line: rgba(255, 255, 255, .08);
+    --hover: rgba(255, 255, 255, .06);
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px rgba(0, 0, 0, .35);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font: 15px/1.45 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 64px 32px 48px; }
+
+  header { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; }
+  h1 { margin: 0; font-size: 30px; font-weight: 700; letter-spacing: -.02em; }
+  .date { margin: 6px 0 0; color: var(--muted); font-size: 16px; }
+  .clock { text-align: right; }
+  .time { font-size: 46px; font-weight: 600; letter-spacing: -.03em; line-height: 1; font-variant-numeric: tabular-nums; }
+  .time small { font-size: 17px; font-weight: 500; color: var(--muted); margin-left: 8px; letter-spacing: 0; }
+  .zone { margin-top: 8px; color: var(--muted); font-size: 14px; }
+  .utc { margin-top: 6px; color: var(--faint); font-size: 13px; font-variant-numeric: tabular-nums; }
+  #central:not([hidden])::after { content: " \00b7\00a0"; }
+
+  form { margin: 36px 0 10px; position: relative; }
+  .search {
+    width: 100%; height: 54px; padding: 0 18px 0 50px; border-radius: 14px;
+    border: 1px solid var(--line); background: var(--card); color: var(--text);
+    font: inherit; font-size: 18px; box-shadow: var(--shadow); outline: none;
+    -webkit-appearance: none; appearance: none;
+  }
+  .search::placeholder { color: var(--faint); }
+  .search:focus { border-color: var(--ring); box-shadow: 0 0 0 4px rgba(10, 132, 255, .18), var(--shadow); }
+  .mag { position: absolute; left: 18px; top: 50%; width: 20px; height: 20px; margin-top: -10px; color: var(--faint); pointer-events: none; }
+  .hint { color: var(--faint); font-size: 12.5px; margin: 0 0 32px 4px; }
+  .hint kbd {
+    font: 500 11.5px/1 "SF Mono", Menlo, monospace; color: var(--muted);
+    padding: 3px 6px; border: 1px solid var(--line); border-radius: 5px; background: var(--card);
+  }
+  .hint span { margin-right: 14px; white-space: nowrap; }
+
+  .grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+  section.wide { grid-column: span 2; }
+  section.wide ul { columns: 2; column-gap: 8px; }
+  li { break-inside: avoid; -webkit-column-break-inside: avoid; }
+  section { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 12px 8px; box-shadow: var(--shadow); }
+  h2 { margin: 4px 10px 8px; font-size: 13px; font-weight: 600; color: var(--muted); }
+  ul { list-style: none; margin: 0; padding: 0; }
+  li a { display: flex; align-items: center; gap: 11px; padding: 7px 10px; border-radius: 10px; color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+  li a:hover, li a:active { background: var(--hover); }
+  li a:focus-visible { outline: 2px solid var(--ring); outline-offset: -2px; }
+  .mono {
+    flex: none; width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center;
+    color: #fff; font-size: 11px; font-weight: 700; letter-spacing: .03em;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .14);
+  }
+  .mono img { display: block; width: 16px; height: 16px; }
+  .mono.app { background: none; box-shadow: none; }
+  .mono.app img { width: 30px; height: 30px; border-radius: 8px; outline: 1px solid var(--line); outline-offset: -1px; }
+  .txt { min-width: 0; display: block; }
+  .name { display: block; font-weight: 500; font-size: 14.5px; line-height: 1.2; }
+  .sub { display: block; color: var(--faint); font-size: 12px; line-height: 1.2; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  footer { margin-top: 32px; color: var(--faint); font-size: 12px; text-align: center; }
+  footer code { font-family: "SF Mono", Menlo, monospace; font-size: 11.5px; }
+
+  @media (max-width: 900px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  /* iPhone */
+  @media (max-width: 560px) {
+    .wrap { padding: calc(28px + env(safe-area-inset-top)) 16px calc(28px + env(safe-area-inset-bottom)); }
+    header { flex-direction: column; align-items: flex-start; gap: 14px; }
+    h1 { font-size: 26px; }
+    .date { font-size: 15px; }
+    .clock { text-align: left; }
+    .time { font-size: 40px; }
+    .zone { font-size: 13.5px; }
+    form { margin: 24px 0 8px; }
+    .search { height: 50px; font-size: 17px; border-radius: 13px; padding-left: 46px; }
+    .mag { left: 16px; }
+    .hint { margin-bottom: 20px; }
+    .hint .kb { display: none; }
+    .grid { grid-template-columns: 1fr; gap: 12px; }
+    section { padding: 10px 6px; border-radius: 14px; }
+    section.wide { grid-column: auto; }
+    section.wide ul { columns: 1; }
+    li a { padding: 8px 10px; gap: 12px; }
+    .mono { width: 36px; height: 36px; border-radius: 9px; font-size: 12px; }
+    .mono img { width: 18px; height: 18px; }
+    .mono.app img { width: 36px; height: 36px; border-radius: 9px; }
+    .name { font-size: 16px; }
+    .sub { font-size: 12.5px; }
+    footer { display: none; }
+  }
+
+  :root[data-theme="light"] {
+    --bg: #f5f5f7;
+    --card: #ffffff;
+    --text: #1d1d1f;
+    --muted: #6e6e73;
+    --faint: #a1a1a6;
+    --line: rgba(0, 0, 0, .07);
+    --hover: rgba(0, 0, 0, .045);
+    --shadow: 0 1px 2px rgba(0, 0, 0, .04), 0 8px 24px rgba(0, 0, 0, .05);
+  }
+  .hdr-actions { display: flex; align-items: flex-start; gap: 16px; }
+  .portal-nav {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(0, 0, 0, .05);
+    border: 1px solid var(--line);
+    border-radius: 980px;
+    padding: 3px;
+    gap: 2px;
+    margin-top: 4px;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, .03);
+  }
+  :root[data-theme="dark"] .portal-nav {
+    background: rgba(255, 255, 255, .08);
+  }
+  .portal-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 14px;
+    border-radius: 980px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    text-decoration: none;
+    transition: all .15s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .portal-pill:hover {
+    color: var(--text);
+    background: var(--hover);
+  }
+  .portal-pill:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  .portal-pill.active {
+    background: var(--card);
+    color: var(--text);
+    font-weight: 600;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .08), var(--shadow);
+    cursor: default;
+  }
+  .gear {
+    flex: none; width: 40px; height: 40px; margin-top: 4px; border: 1px solid var(--line);
+    border-radius: 12px; background: var(--card); color: var(--muted); box-shadow: var(--shadow);
+    display: grid; place-items: center; cursor: pointer; -webkit-appearance: none; appearance: none;
+  }
+  .gear:hover, .gear:active { background: var(--hover); color: var(--text); }
+  .gear:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+  .gear svg { width: 20px; height: 20px; }
+  .sheet {
+    display: none; position: fixed; inset: 0; z-index: 40; background: rgba(0,0,0,.28);
+    padding: max(24px, env(safe-area-inset-top)) 16px max(24px, env(safe-area-inset-bottom));
+    overflow: auto;
+  }
+  .sheet.open { display: grid; place-items: start center; }
+  .panel {
+    width: min(560px, 100%); margin: 8vh auto; background: var(--card); color: var(--text);
+    border-radius: 18px; border: 1px solid var(--line); box-shadow: var(--shadow); padding: 20px 20px 16px;
+  }
+  .panel h2 { margin: 0 0 4px; font-size: 20px; font-weight: 700; color: var(--text); }
+  .panel .lede { margin: 0 0 18px; color: var(--muted); font-size: 14px; }
+  .panel h3 { margin: 18px 0 8px; font-size: 13px; font-weight: 600; color: var(--muted); }
+  .seg { display: flex; gap: 6px; flex-wrap: wrap; }
+  .seg button {
+    border: 1px solid var(--line); background: transparent; color: var(--text); border-radius: 10px;
+    padding: 8px 12px; font: inherit; font-size: 14px; font-weight: 500; cursor: pointer;
+  }
+  .seg button[aria-pressed="true"] { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .checks { display: grid; gap: 4px; }
+  .checks label { display: flex; align-items: center; gap: 10px; padding: 6px 4px; font-size: 14.5px; }
+  .checks input { width: 16px; height: 16px; accent-color: var(--ring); }
+  .add { display: grid; gap: 8px; }
+  .add input, .add select {
+    height: 42px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg);
+    color: var(--text); padding: 0 12px; font: inherit;
+  }
+  .row-btns { display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px; flex-wrap: wrap; }
+  .row-btns button {
+    height: 40px; padding: 0 14px; border-radius: 10px; font: inherit; font-size: 14px; font-weight: 600;
+    cursor: pointer; border: 1px solid var(--line); background: var(--card); color: var(--text);
+  }
+  .row-btns .primary { background: var(--text); color: var(--bg); border-color: var(--text); }
+  @media (max-width: 560px) {
+    .hdr-actions { width: 100%; justify-content: space-between; align-items: flex-end; }
+    .gear { margin-top: 0; }
+    .panel { margin: 4vh auto; }
+  }
+
+  /* ---- Quotas + Fleet panels ---- */
+  .panels { display: grid; grid-template-columns: 1fr; gap: 14px; margin: 24px 0 28px; }
+  .panel-card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 16px 18px; box-shadow: var(--shadow); }
+  .panel-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+  .panel-head h2 { margin: 0; font-size: 13px; font-weight: 600; color: var(--muted); }
+  .panel-head .meta { font-size: 11.5px; color: var(--faint); font-variant-numeric: tabular-nums; }
+  .panel-head .live { display: inline-flex; align-items: center; gap: 6px; }
+  .live-dot { width: 8px; height: 8px; border-radius: 50%; background: #16A34A; box-shadow: 0 0 0 0 rgba(22, 163, 74, .6); animation: pulse 2s ease-out infinite; }
+  .live-dot.stale { background: #A1A1A6; animation: none; }
+  .live-dot.err { background: #DC2626; animation: none; }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(22, 163, 74, .6); } 100% { box-shadow: 0 0 0 8px rgba(22, 163, 74, 0); } }
+
+  /* Quotas */
+  .quota-row { display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; padding: 10px 4px; border-top: 1px solid var(--line); align-items: center; }
+  .quota-row:first-of-type { border-top: none; }
+  .quota-name { font-size: 14px; font-weight: 500; }
+  .quota-name small { display: block; color: var(--faint); font-weight: 400; font-size: 11.5px; margin-top: 2px; }
+  .quota-bar { grid-column: 1 / -1; height: 8px; background: rgba(0,0,0,.05); border-radius: 4px; overflow: hidden; position: relative; }
+  :root[data-theme="dark"] .quota-bar { background: rgba(255,255,255,.08); }
+  .quota-fill { height: 100%; border-radius: 4px; transition: width .4s ease; }
+  .quota-fill.ok    { background: linear-gradient(90deg, #16A34A, #22C55E); }
+  .quota-fill.warn  { background: linear-gradient(90deg, #D97706, #F59E0B); }
+  .quota-fill.low   { background: linear-gradient(90deg, #DC2626, #EF4444); }
+  .quota-fill.na    { background: var(--faint); }
+  .quota-val { font-size: 12.5px; font-variant-numeric: tabular-nums; color: var(--muted); white-space: nowrap; }
+  .quota-val b { color: var(--text); font-weight: 600; }
+  .quota-status { font-size: 11px; padding: 2px 8px; border-radius: 999px; background: rgba(0,0,0,.05); color: var(--muted); margin-left: 6px; }
+  :root[data-theme="dark"] .quota-status { background: rgba(255,255,255,.08); }
+  .quota-status.exh { background: rgba(220,38,38,.12); color: #B91C1C; }
+  .quota-status.low { background: rgba(217,119,6,.12); color: #B45309; }
+  /* An aged-out reading: real, but no longer current. Muted rather than green
+     or red so it never reads as a live quota verdict. */
+  .quota-status.old { background: rgba(0,0,0,.05); color: var(--faint); }
+  :root[data-theme="dark"] .quota-status.old { background: rgba(255,255,255,.08); }
+  .quota-group { display: block; margin-top: 10px; }
+  /* Provider identity heads a run of window rows.  The mark and label appear
+     once per provider; each quota window then reads as its own bar underneath,
+     so a provider with a 5h and a 7d budget is not flattened into one number.
+
+     The divider keys off the WRAPPER, not the header.  Every .quota-provider is
+     the first child of its own .quota-provider-block, so `:first-child` on the
+     header would match all of them and strip every divider in the panel. */
+  .quota-provider { display: flex; align-items: baseline; gap: 8px; padding: 2px 4px 4px; }
+  .quota-provider-block + .quota-provider-block .quota-provider { padding-top: 12px; border-top: 1px solid var(--line); }
+  .quota-provider small { margin-left: auto; color: var(--faint); font-size: 11.5px; }
+  .quota-row.sub { padding: 6px 4px 8px 26px; border-top: none; }
+  .quota-row.sub .win { font-size: 12.5px; color: var(--muted); font-weight: 500; }
+  .quota-degraded { margin-top: 12px; padding: 8px 10px; border-radius: 8px; font-size: 11.5px; line-height: 1.45; color: var(--muted); background: rgba(217,119,6,.10); }
+  :root[data-theme="dark"] .quota-degraded { background: rgba(217,119,6,.14); }
+
+  /* Provider identity — mark + human label, in place of the raw upstream slug.
+     Both marks paint in `currentColor` so they follow the system theme: the
+     source assets are hardcoded black and would vanish on the dark panel. */
+  .quota-id { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .quota-id .n { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  /* A mark is now an <img> of the brand asset, not an inline recoloured path:
+     one owner (CodeCaps) for every mark, in the colours it actually ships. */
+  .pmark { flex: none; width: 17px; height: 17px; object-fit: contain; opacity: .82; }
+  .pmark svg { display: block; width: 100%; height: 100%; }
+  .pmark-sm { width: 12px; height: 12px; opacity: .7; display: inline-block; vertical-align: -1px; margin-right: 5px; }
+  /* Only the one inlined mark (DeepSeek, which CodeCaps does not ship) is a
+     painted span, so it is the only one that still takes the text colour. */
+  .quota-name .pmark { color: var(--text); }
+
+  /* Fleet RAG */
+  .rag-grid { display: grid; grid-template-columns: 1.2fr 1.4fr 1fr; gap: 14px; }
+  @media (max-width: 900px) { .rag-grid { grid-template-columns: 1fr; } }
+  .rag-col h3 { margin: 0 0 8px; font-size: 12px; font-weight: 600; color: var(--muted); letter-spacing: .02em; }
+  .comp-card { display: grid; grid-template-columns: 36px 1fr auto; gap: 10px; padding: 8px 4px; align-items: center; border-top: 1px solid var(--line); }
+  .comp-card:first-of-type { border-top: none; }
+  .comp-acr { width: 36px; height: 36px; border-radius: 9px; display: grid; place-items: center; color: #fff; font-weight: 700; font-size: 11px; box-shadow: inset 0 0 0 1px rgba(255,255,255,.14); }
+  .comp-meta { min-width: 0; }
+  .comp-meta .n { font-size: 13.5px; font-weight: 500; }
+  .comp-meta .s { font-size: 11.5px; color: var(--faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .comp-hits { font-size: 11.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .changes-list { list-style: none; padding: 0; margin: 0; }
+  /* max-content on the date column so "2026-10-04" can never wrap to
+     "2026-10-" / "04" regardless of font metrics or locale. */
+  .changes-list li { padding: 8px 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: max-content 74px 1fr; gap: 8px; align-items: baseline; }
+  .changes-list li:first-child { border-top: none; }
+  .changes-list .d { font-size: 11px; color: var(--faint); font-variant-numeric: tabular-nums; }
+  .changes-list .seat { font-size: 10.5px; font-weight: 700; letter-spacing: .04em; padding: 2px 6px; border-radius: 4px; color: #fff; text-align: center; }
+  .changes-list .t { font-size: 13px; line-height: 1.3; color: var(--text); }
+  .seat-bar { display: grid; grid-template-columns: 78px 1fr 36px; gap: 8px; align-items: center; padding: 4px 0; }
+  .seat-bar .lbl { font-size: 12px; font-weight: 600; letter-spacing: .03em; display: flex; align-items: center; gap: 6px; }
+  .seat-bar .trk { height: 8px; background: rgba(0,0,0,.05); border-radius: 4px; overflow: hidden; }
+  :root[data-theme="dark"] .seat-bar .trk { background: rgba(255,255,255,.08); }
+  .seat-bar .fl { height: 100%; border-radius: 4px; }
+  .seat-bar .n { font-size: 11.5px; color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; }
+
+  /* Seat marks + app icons in the Fleet RAG card.
+     Both are real shipped assets synced by scripts/sync-logos.mjs — provider
+     marks from CodeCaps, app icons from the owner's curated set — not generated
+     art: grok-color.png is the Grok logo rather than the Grok Web/iOS app icon,
+     and Grok Bot carries its own mark.  See docs/provider-marks.md. */
+  .seat-mark { flex: none; width: 15px; height: 15px; object-fit: contain; opacity: .9; }
+  .seat-bar .lbl .seat-mark { width: 14px; height: 14px; }
+  .changes-list .seat { display: flex; align-items: center; justify-content: center; gap: 5px; }
+  /* A brand mark carries its own colour, so on the seat's coloured chip it has
+     to sit on a light plate to stay legible on both themes — the same treatment
+     AI-Fleet-Coordinator's site gives .repo-with-icon. */
+  .changes-list .seat .seat-mark {
+    width: 13px; height: 13px;
+    background: #fff;
+    border-radius: 3px;
+    padding: 1px;
+    opacity: 1;
+  }
+  .comp-acr { overflow: hidden; }
+  .comp-acr .app-icon { width: 100%; height: 100%; object-fit: cover; display: block; }
+  /* A monogram tile is a fallback, not the design: apps that ship an icon show
+     it, apps that do not (a TS library, a private repo) keep the tile. */
+  .comp-acr.mono { display: grid; place-items: center; color: #fff; font-weight: 700; font-size: 11px; }
+  .comp-acr:has(.app-icon) { box-shadow: inset 0 0 0 1px rgba(0,0,0,.10); border-radius: 9px; }
+  .panel-empty { color: var(--faint); font-size: 13px; padding: 14px 4px; text-align: center; }
+  .panel-foot { margin-top: 10px; font-size: 11.5px; color: var(--faint); text-align: right; }
+  .panel-foot a { color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1 id="greeting">Hello, Jay.</h1>
+      <p class="date" id="date"></p>
+    </div>
+    <div class="hdr-actions">
+      <nav class="portal-nav" aria-label="Portals">
+        <a href="https://start.jays.services/" class="portal-pill active" aria-current="page">Start</a>
+        <a href="https://admin.jays.services/" class="portal-pill">Admin</a>
+      </nav>
+      <div class="clock">
+        <div class="time"><span id="time"></span><small id="meridiem"></small></div>
+        <div class="zone" id="zone" hidden></div>
+        <div class="utc"><span id="central" hidden></span><span id="utc"></span></div>
+      </div>
+      <button type="button" class="gear" id="open-settings" aria-label="Settings" title="Settings">
+        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path d="M11.5 1.6a1.6 1.6 0 0 0-3 0l-.2 1.1a6.6 6.6 0 0 0-1.6.7L5.6 2.6a1.6 1.6 0 0 0-2.2.7L2.2 5.6a1.6 1.6 0 0 0 .7 2.2l1 .5a6.6 6.6 0 0 0 0 1.4l-1 .5a1.6 1.6 0 0 0-.7 2.2l1.2 2.3a1.6 1.6 0 0 0 2.2.7l1.1-.7c.5.3 1 .5 1.6.7l.2 1.1a1.6 1.6 0 0 0 3 0l.2-1.1c.6-.2 1.1-.4 1.6-.7l1.1.7a1.6 1.6 0 0 0 2.2-.7l1.2-2.3a1.6 1.6 0 0 0-.7-2.2l-1-.5a6.6 6.6 0 0 0 0-1.4l1-.5a1.6 1.6 0 0 0 .7-2.2L16.6 3.3a1.6 1.6 0 0 0-2.2-.7l-1.1.8a6.6 6.6 0 0 0-1.6-.7l-.2-1.1ZM10 12.2A2.2 2.2 0 1 1 10 7.8a2.2 2.2 0 0 1 0 4.4Z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <form id="search" action="https://www.google.com/search" method="get" autocomplete="off">
+    <svg class="mag" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+      <circle cx="8.5" cy="8.5" r="5.5"></circle><path d="M13 13l4.5 4.5"></path>
+    </svg>
+    <input class="search" id="q" name="q" type="text" placeholder="Search or type a URL" spellcheck="false" aria-label="Search">
+  </form>
+  <p class="hint">
+    <span><kbd>gh</kbd> GitHub</span>
+    <span><kbd>b</kbd> THE BOARD</span>
+    <span><kbd>w</kbd> Wikipedia</span>
+    <span><kbd>yt</kbd> YouTube</span>
+    <span class="kb"><kbd>/</kbd> focus search</span>
+  </p>
+
+  <section class="panels">
+    <div class="panel-card" id="quotas-card">
+      <div class="panel-head">
+        <h2>Agent Quotas</h2>
+        <div class="meta"><span class="live"><span class="live-dot" id="quota-dot"></span><span id="quota-meta">Loading…</span></span></div>
+      </div>
+      <div id="quotas-body" class="quota-group"></div>
+      <div class="panel-foot"><a href="https://usage.jays.services/agents" target="_blank" rel="noopener">Open Usage Monitor /agents</a></div>
+    </div>
+
+    <div class="panel-card" id="rag-card">
+      <div class="panel-head">
+        <h2>Fleet RAG</h2>
+        <div class="meta" id="rag-meta">Loading…</div>
+      </div>
+      <div class="rag-grid">
+        <div class="rag-col">
+          <h3>Components</h3>
+          <div id="rag-components"></div>
+        </div>
+        <div class="rag-col">
+          <h3>Recent Changes</h3>
+          <ul class="changes-list" id="rag-changes"></ul>
+        </div>
+        <div class="rag-col">
+          <h3>Top Seats (14d)</h3>
+          <div id="rag-seats"></div>
+        </div>
+      </div>
+      <div class="panel-foot">Snapshot from <code id="rag-snap-date"></code> · <a href="https://mac.jays.services/board" target="_blank" rel="noopener">THE BOARD</a> · <a href="https://activity.jays.services/" target="_blank" rel="noopener">Fleet Activity</a></div>
+    </div>
+  </section>
+
+  <main class="grid" id="grid"></main>
+
+
+<div class="sheet" id="settings" hidden>
+  <div class="panel" role="dialog" aria-labelledby="settings-title" aria-modal="true">
+    <h2 id="settings-title">Settings</h2>
+    <p class="lede">Choose the theme and which links show on this Start Page.  Changes stay on this device.</p>
+    <h3>Theme</h3>
+    <div class="seg" id="theme-seg">
+      <button type="button" data-theme="light">Light</button>
+      <button type="button" data-theme="dark">Dark</button>
+      <button type="button" data-theme="system">System</button>
+    </div>
+    <h3>Links</h3>
+    <div class="checks" id="link-checks"></div>
+    <h3>Add A Link</h3>
+    <form class="add" id="add-link">
+      <input id="add-name" placeholder="Name" maxlength="40" required>
+      <input id="add-url" placeholder="https://" type="url" required>
+      <input id="add-sub" placeholder="Subtitle (optional)" maxlength="60">
+      <select id="add-section" aria-label="Section"></select>
+      <div class="row-btns" style="margin-top:0;justify-content:flex-start">
+        <button type="submit" class="primary">Add Link</button>
+      </div>
+    </form>
+    <div class="row-btns">
+      <button type="button" id="reset-settings">Reset To Defaults</button>
+      <button type="button" class="primary" id="close-settings">Done</button>
+    </div>
+  </div>
+</div>
+
+  <footer>Source: <code>ai-fleet-coordinator/scripts/safari-start</code></footer>
+</div>
+
+<script>
+  const NAME = "Jay";
+  // Inside another page (an iframe), open everything in a new tab instead of navigating the frame.
+  const FRAMED = (() => { try { return window.top !== window.self; } catch (e) { return true; } })();
+  const go = url => { if (FRAMED) window.open(url, "_blank", "noopener"); else location.href = url; };
+  const CENTRAL = "America/Chicago";
+  // Every IANA zone that is US Central time.  Anywhere else counts as away.
+  const CENTRAL_ZONES = new Set([CENTRAL, "US/Central", "CST6CDT", "America/Indiana/Knox", "America/Indiana/Tell_City",
+    "America/Menominee", "America/North_Dakota/Center", "America/North_Dakota/New_Salem", "America/North_Dakota/Beulah"]);
+  const LOCAL = (() => { try { return Intl.DateTimeFormat().resolvedOptions().timeZone || CENTRAL; } catch (e) { return CENTRAL; } })();
+  const AWAY = !CENTRAL_ZONES.has(LOCAL);
+  const HERE = AWAY ? LOCAL : CENTRAL;   // the zone the big clock, the date, and the greeting follow
+
+  // Badge artwork: fleet app icons from public/logos/ (synced by
+  // scripts/sync-logos.mjs from the owner's curated set), white brand marks from
+  // Simple Icons, white Octicons from Primer.
+  //
+  // App icons are referenced by file rather than inlined as base64.  Inlining
+  // froze a copy of each icon into this page at whatever moment it was written,
+  // so the grid drifted from the synced files: every app icon here had diverged
+  // from logos/ and Socratic.Trade was showing a stale 96px ST wordmark instead
+  // of the canonical candlestick mark.  The Fleet RAG card already read
+  // logos/ at runtime; both cards now read the same synced source.
+  // Absolute, not document-relative: the start page is served from more than one
+  // path, and "logos/app-st.png" resolves against whatever the current route is
+  // rather than against the site root.
+  const LOGO_BASE = "/logos/";
+  const LOGO_FILE = file => LOGO_BASE + file;
+
+  const ICONS = {
+    "app-st": LOGO_FILE("app-st.png"),
+    "app-ct": LOGO_FILE("app-ct.png"),
+    "app-um": LOGO_FILE("app-um.png"),
+    "app-dd": LOGO_FILE("app-dd.png"),
+    "app-ps": LOGO_FILE("app-ps.png"),
+    "app-ar": LOGO_FILE("app-ar.png"),
+    "app-cl": LOGO_FILE("app-cl.png"),
+    "oc-bell-16": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjZmZmIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDE2IDE2Ij48cGF0aCBkPSJNOCAxNmEyIDIgMCAwIDAgMS45ODUtMS43NWMuMDE3LS4xMzctLjA5Ny0uMjUtLjIzNS0uMjVoLTMuNWMtLjEzOCAwLS4yNTIuMTEzLS4yMzUuMjVBMiAyIDAgMCAwIDggMTZaTTMgNWE1IDUgMCAwIDEgMTAgMHYyLjk0N2MwIC4wNS4wMTUuMDk4LjA0Mi4xMzlsMS43MDMgMi41NTVBMS41MTkgMS41MTkgMCAwIDEgMTMuNDgyIDEzSDIuNTE4YTEuNTE2IDEuNTE2IDAgMCAxLTEuMjYzLTIuMzZsMS43MDMtMi41NTRBLjI1NS4yNTUgMCAwIDAgMyA3Ljk0N1ptNS0zLjVBMy41IDMuNSAwIDAgMCA0LjUgNXYyLjk0N2MwIC4zNDYtLjEwMi42ODMtLjI5NC45N2wtMS43MDMgMi41NTZhLjAxNy4wMTcgMCAwIDAtLjAwMy4wMWwuMDAxLjAwNmMwIC4wMDIuMDAyLjAwNC4wMDQuMDA2bC4wMDYuMDA0LjAwNy4wMDFoMTAuOTY0bC4wMDctLjAwMS4wMDYtLjAwNC4wMDQtLjAwNi4wMDEtLjAwN2EuMDE3LjAxNyAwIDAgMC0uMDAzLS4wMWwtMS43MDMtMi41NTRhMS43NDUgMS43NDUgMCAwIDEtLjI5NC0uOTdWNUEzLjUgMy41IDAgMCAwIDggMS41WiIvPjwvc3ZnPg==",
+    "oc-code-review-16": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjZmZmIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDE2IDE2Ij48cGF0aCBkPSJNMS43NSAxaDEyLjVjLjk2NiAwIDEuNzUuNzg0IDEuNzUgMS43NXY4LjVBMS43NSAxLjc1IDAgMCAxIDE0LjI1IDEzSDguMDYxbC0yLjU3NCAyLjU3M0ExLjQ1OCAxLjQ1OCAwIDAgMSAzIDE0LjU0M1YxM0gxLjc1QTEuNzUgMS43NSAwIDAgMSAwIDExLjI1di04LjVDMCAxLjc4NC43ODQgMSAxLjc1IDFaTTEuNSAyLjc1djguNWMwIC4xMzguMTEyLjI1LjI1LjI1aDJhLjc1Ljc1IDAgMCAxIC43NS43NXYyLjE5bDIuNzItMi43MmEuNzQ5Ljc0OSAwIDAgMSAuNTMtLjIyaDYuNWEuMjUuMjUgMCAwIDAgLjI1LS4yNXYtOC41YS4yNS4yNSAwIDAgMC0uMjUtLjI1SDEuNzVhLjI1LjI1IDAgMCAwLS4yNS4yNVptNS4yOCAxLjcyYS43NS43NSAwIDAgMSAwIDEuMDZMNS4zMSA3bDEuNDcgMS40N2EuNzUxLjc1MSAwIDAgMS0uMDE4IDEuMDQyLjc1MS43NTEgMCAwIDEtMS4wNDIuMDE4bC0yLTJhLjc1Ljc1IDAgMCAxIDAtMS4wNmwyLTJhLjc1Ljc1IDAgMCAxIDEuMDYgMFptMi40NCAwYS43NS43NSAwIDAgMSAxLjA2IDBsMiAyYS43NS43NSAwIDAgMSAwIDEuMDZsLTIgMmEuNzUxLjc1MSAwIDAgMS0xLjA0Mi0uMDE4Ljc1MS43NTEgMCAwIDEtLjAxOC0xLjA0MkwxMC42OSA3IDkuMjIgNS41M2EuNzUuNzUgMCAwIDEgMC0xLjA2WiIvPjwvc3ZnPg==",
+    "oc-git-pull-request-16": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjZmZmIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDE2IDE2Ij48cGF0aCBkPSJNMS41IDMuMjVhMi4yNSAyLjI1IDAgMSAxIDMgMi4xMjJ2NS4yNTZhMi4yNTEgMi4yNTEgMCAxIDEtMS41IDBWNS4zNzJBMi4yNSAyLjI1IDAgMCAxIDEuNSAzLjI1Wm01LjY3Ny0uMTc3TDkuNTczLjY3N0EuMjUuMjUgMCAwIDEgMTAgLjg1NFYyLjVoMUEyLjUgMi41IDAgMCAxIDEzLjUgNXY1LjYyOGEyLjI1MSAyLjI1MSAwIDEgMS0xLjUgMFY1YTEgMSAwIDAgMC0xLTFoLTF2MS42NDZhLjI1LjI1IDAgMCAxLS40MjcuMTc3TDcuMTc3IDMuNDI3YS4yNS4yNSAwIDAgMSAwLS4zNTRaTTMuNzUgMi41YS43NS43NSAwIDEgMCAwIDEuNS43NS43NSAwIDAgMCAwLTEuNVptMCA5LjVhLjc1Ljc1IDAgMSAwIDAgMS41Ljc1Ljc1IDAgMCAwIDAtMS41Wm04LjI1Ljc1YS43NS43NSAwIDEgMCAxLjUgMCAuNzUuNzUgMCAwIDAtMS41IDBaIi8+PC9zdmc+",
+    "oc-mark-github-16": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjZmZmIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDE2IDE2Ij48cGF0aCBkPSJNOCAwYzQuNDIgMCA4IDMuNTggOCA4YTguMDEzIDguMDEzIDAgMCAxLTUuNDUgNy41OWMtLjQuMDgtLjU1LS4xNy0uNTUtLjM4IDAtLjI3LjAxLTEuMTMuMDEtMi4yIDAtLjc1LS4yNS0xLjIzLS41NC0xLjQ4IDEuNzgtLjIgMy42NS0uODggMy42NS0zLjk1IDAtLjg4LS4zMS0xLjU5LS44Mi0yLjE1LjA4LS4yLjM2LTEuMDItLjA4LTIuMTIgMCAwLS42Ny0uMjItMi4yLjgyLS42NC0uMTgtMS4zMi0uMjctMi0uMjctLjY4IDAtMS4zNi4wOS0yIC4yNy0xLjUzLTEuMDMtMi4yLS44Mi0yLjItLjgyLS40NCAxLjEtLjE2IDEuOTItLjA4IDIuMTItLjUxLjU2LS44MiAxLjI4LS44MiAyLjE1IDAgMy4wNiAxLjg2IDMuNzUgMy42NCAzLjk1LS4yMy4yLS40NC41NS0uNTEgMS4wNy0uNDYuMjEtMS42MS41NS0yLjMzLS42Ni0uMTUtLjI0LS42LS44My0xLjIzLS44Mi0uNjcuMDEtLjI3LjM4LjAxLjUzLjM0LjE5LjczLjkuODIgMS4xMy4xNi40NS42OCAxLjMxIDIuNjkuOTQgMCAuNjcuMDEgMS4zLjAxIDEuNDkgMCAuMjEtLjE1LjQ1LS41NS4zOEE3Ljk5NSA3Ljk5NSAwIDAgMSAwIDhjMC00LjQyIDMuNTgtOCA4LThaIi8+PC9zdmc+",
+    "oc-pulse-16": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjZmZmIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDE2IDE2Ij48cGF0aCBkPSJNNiAyYy4zMDYgMCAuNTgyLjE4Ny42OTYuNDcxTDEwIDEwLjczMWwxLjMwNC0zLjI2QS43NTEuNzUxIDAgMCAxIDEyIDdoMy4yNWEuNzUuNzUgMCAwIDEgMCAxLjVoLTIuNzQybC0xLjgxMiA0LjUyOGEuNzUxLjc1MSAwIDAgMS0xLjM5MiAwTDYgNC43NyA0LjY5NiA4LjAzQS43NS43NSAwIDAgMSA0IDguNUguNzVhLjc1Ljc1IDAgMCAxIDAtMS41aDIuNzQybDEuODEyLTQuNTI5QS43NTEuNzUxIDAgMCAxIDYgMloiLz48L3N2Zz4=",
+    "oc-repo-16": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjZmZmIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDE2IDE2Ij48cGF0aCBkPSJNMiAyLjVBMi41IDIuNSAwIDAgMSA0LjUgMGg4Ljc1YS43NS43NSAwIDAgMSAuNzUuNzV2MTIuNWEuNzUuNzUgMCAwIDEtLjc1Ljc1aC0yLjVhLjc1Ljc1IDAgMCAxIDAtMS41aDEuNzV2LTJoLThhMSAxIDAgMCAwLS43MTQgMS43Ljc1Ljc1IDAgMSAxLTEuMDcyIDEuMDVBMi40OTUgMi40OTUgMCAwIDEgMiAxMS41Wm0xMC41LTFoLThhMSAxIDAgMCAwLTEgMXY2LjcwOEEyLjQ4NiAyLjQ4NiAwIDAgMSA0LjUgOWg4Wk01IDEyLjI1YS4yNS4yNSAwIDAgMSAuMjUtLjI1aDMuNWEuMjUuMjUgMCAwIDEgLjI1LjI1djMuMjVhLjI1LjI1IDAgMCAxLS40LjJsLTEuNDUtMS4wODdhLjI0OS4yNDkgMCAwIDAtLjMgMEw1LjQgMTUuN2EuMjUuMjUgMCAwIDEtLjQtLjJaIi8+PC9zdmc+",
+    "oc-table-16": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjZmZmIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDE2IDE2Ij48cGF0aCBkPSJNMCAxLjc1QzAgLjc4NC43ODQgMCAxLjc1IDBoMTIuNUMxNS4yMTYgMCAxNiAuNzg0IDE2IDEuNzV2MTIuNUExLjc1IDEuNzUgMCAwIDEgMTQuMjUgMTZIMS43NUExLjc1IDEuNzUgMCAwIDEgMCAxNC4yNVpNNi41IDYuNXY4aDcuNzVhLjI1LjI1IDAgMCAwIC4yNS0uMjVWNi41Wm04LTEuNVYxLjc1YS4yNS4yNSAwIDAgMC0uMjUtLjI1SDYuNVY1Wm0tMTMgMS41djcuNzVjMCAuMTM4LjExMi4yNS4yNS4yNUg1di04Wk01IDVWMS41SDEuNzVhLjI1LjI1IDAgMCAwLS4yNS4yNVY1WiIvPjwvc3ZnPg==",
+    "si-appstore": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjZmZmZmZmIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+QXBwIFN0b3JlPC90aXRsZT48cGF0aCBkPSJNOC44MDg2IDE0LjkxOTRsNi4xMTA3LTExLjAzNjhjLjA4MzctLjE1MTMuMTY4Mi0uMzAyLjI0MzctLjQ1ODQuMDY4NS0uMTQyLjEyNjctLjI4NTQuMTY0Ni0uNDQwMy4wODAzLS4zMjU5LjA1ODgtLjY2NTYtLjA2Ni0uOTc2Ny0uMTIzOC0uMzA5NS0uMzQxNy0uNTY3OC0uNjIwMS0uNzM1NWExLjQxNzUgMS40MTc1IDAgMCAwLS45MjEtLjE5MjRjLS4zMjA3LjA0My0uNjEzNS4xOTM1LS44NDQzLjQyODgtLjEwOTQuMTExOC0uMTk5Ni4yMzYxLS4yODMyLjM2OS0uMDkyLjE0NjMtLjE3NS4yOTc5LS4yNTkuNDQ5MmwtLjM4NjQuNjk3OS0uMzg2NS0uNjk3OWMtLjA4MzctLjE1MTUtLjE2NjctLjMwMy0uMjU4Ny0uNDQ5Mi0uMDgzNy0uMTMyOS0uMTczOS0uMjU3Mi0uMjgzNS0uMzY5LS4yMzA1LS4yMzUzLS41MjMzLS4zODU3LS44NDQtLjQyOWExLjQxODEgMS40MTgxIDAgMCAwLS45MjEuMTkyNmMtLjI3ODQuMTY3Ny0uNDk2NC40MjYtLjYyMDMuNzM1NS0uMTI0Ni4zMTEtLjE0NjEuNjUwOC0uMDY2Ljk3NjcuMDM4LjE1NS4wOTYyLjI5ODQuMTY0OC40NDAzLjA3NTMuMTU2NC4xNTk4LjMwNy4yNDM3LjQ1ODRsMS4yNDggMi4yNTQzLTQuODYyNSA4Ljc4MjVIMi4wMjk1Yy0uMTY3NiAwLS4zMzUxLS4wMDA3LS41MDI2LjAwOTItLjE1MjIuMDA5LS4zMDA0LjAyODQtLjQ0OC4wNzE0LS4zMTA4LjA5MDYtLjU4MjIuMjc5OC0uNzc4My41NDgtLjE5NS4yNjY1LS4zMDA2LjU5MjktLjMwMDYuOTI3OSAwIC4zMzUyLjEwNTcuNjYxMi4zMDA2LjkyNzcuMTk2LjI2ODMuNDY3NS40NTc1Ljc3ODIuNTQ4LjE0NzcuMDQzLjI5Ni4wNjIzLjQ0ODEuMDcxNS4xNjc1LjAxLjMzNS4wMDkuNTAyNi4wMDloMTMuMDk3NGMuMDE3MS0uMDM1Ny4wNTktLjEyOTQuMS0uMjY5Ny40MTUtMS40MTUxLS42MTU2LTIuODQzLTIuMDM0Ny0yLjg0M3pNMy4xMTMgMTguNTQxOGwtLjc5MjIgMS41MDA4Yy0uMDgxOC4xNTUzLS4xNjQ0LjMxLS4yMzg0LjQ3MDUtLjA2Ny4xNDU4LS4xMjQuMjkzLS4xNjExLjQ1Mi0uMDc4NS4zMzQ2LS4wNTc2LjY4MzQuMDY0NSAxLjAwMjkuMTIxMi4zMTc1LjMzNDYuNTgzLjYwNy43NTQ5LjI3MjcuMTcyLjU4OTEuMjQxNi45MDEzLjE5NzUuMzEzOS0uMDQ0LjYwMDUtLjE5ODYuODI2My0uNDQwMi4xMDcyLS4xMTQ4LjE5NTQtLjI0MjQuMjc3Mi0uMzc4Ny4wOTAyLS4xNTAzLjE3MTQtLjMwNTkuMjUzNS0uNDYxMkw2IDE5LjQ2MzZjLS4wODk2LS4xNDktLjk0NzMtMS40NzA0LTIuODg3LS45MjE4bTIwLjU4NjEtMy4wMDU2YTEuNDcwNyAxLjQ3MDcgMCAwIDAtLjc3OS0uNTQwN2MtLjE0NzYtLjA0MjUtLjI5NjEtLjA2MTYtLjQ0ODMtLjA3MDUtLjE2NzgtLjAwOTktLjMzNTItLjAwOTEtLjUwMy0uMDA5MUgxOC42NDhsLTQuMzg5MS03LjgxN2MtLjY2NTUuNzAwNS0uOTYzMiAxLjQ4NS0xLjA3NzMgMi4xOTc2LS4xNjU1IDEuMDMzMy4wMzY3IDIuMDkzNC41NDYgMy4wMDA0bDUuMjc0MSA5LjM5MzNjLjA4NC4xNDk0LjE2Ny4yOTkuMjU5MS40NDM1LjA4MzcuMTMxLjE3MzkuMjUzNy4yODM2LjM2NC4yMzEuMjMyMy41MjM4LjM4MDkuODQ0OS40MjMyLjMxOTIuMDQyNC42NDMtLjAyNDQuOTIxNy0uMTg5OS4yNzg0LS4xNjUzLjQ5NjgtLjQyMDQuNjIxLS43MjU3LjEyNDYtLjMwNzIuMTQ2LS42NDI1LjA2NTgtLjk2NDEtLjAzODEtLjE1MjktLjA5NjItLjI5NDUtLjE2NS0uNDM0Ni0uMDc1My0uMTU0My0uMTU5OC0uMzAzLS4yNDM4LS40NTI0bC0xLjIxNi0yLjE2NjJoMS41OTZjLjE2NzcgMCAuMzM1MS4wMDA5LjUwMjktLjAwOS4xNTIyLS4wMDkuMzAwNy0uMDI4LjQ0ODMtLjA3MDVhMS40NzA3IDEuNDcwNyAwIDAgMCAuNzc5LS41NDA3QTEuNTM4NiAxLjUzODYgMCAwIDAgMjQgMTYuNDUyYTEuNTM5IDEuNTM5IDAgMCAwLS4zMDA5LS45MTU4WiIvPjwvc3ZnPg==",
+    "si-claude": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjZmZmZmZmIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+Q2xhdWRlPC90aXRsZT48cGF0aCBkPSJtNC43MTQ0IDE1Ljk1NTUgNC43MTc0LTIuNjQ3MS4wNzktLjIzMDctLjA3OS0uMTI3NWgtLjIzMDdsLS43ODkzLS4wNDg2LTIuNjk1Ni0uMDcyOS0yLjMzNzUtLjA5NzEtMi4yNjQ2LS4xMjE0LS41NzA3LS4xMjE1LS41MzQzLS43MDQyLjA1NDYtLjM1MjIuNDc5Ny0uMzIxOC42ODYuMDYwOCAxLjUxNzkuMTAzMiAyLjI3NjcuMTU3OCAxLjY1MTQuMDk3MiAyLjQ0NjguMjU1aC4zODg2bC4wNTQ2LS4xNTc5LS4xMzM2LS4wOTcxLS4xMDMyLS4wOTcyTDYuOTczIDkuODM1NmwtMi41NS0xLjY4NzktMS4zMzU2LS45NzE0LS43MjI1LS40OTE4LS4zNjQzLS40NjE0LS4xNTc4LTEuMDA3OC42NTU3LS43MjI1Ljg4MDMuMDYwNy4yMjQ2LjA2MDcuODkyNS42ODYgMS45MDY0IDEuNDc1NCAyLjQ4OTMgMS44MzM2LjM2NDMuMzAzNS4xNDU3LS4xMDMyLjAxODItLjA3MjgtLjE2NC0uMjczMy0xLjM1MzktMi40NDY3LTEuNDQ1LTIuNDg5My0uNjQzNS0xLjAzMi0uMTctLjYxOTRjLS4wNjA3LS4yNTUtLjEwMzItLjQ2NzQtLjEwMzItLjcyODVMNi4yODcuMTMzNSA2LjY5OTcgMGwuOTk1Ny4xMzM2LjQxOS4zNjQyLjYxOTIgMS40MTQ3IDEuMDAxOCAyLjIyODIgMS41NTQzIDMuMDI5Ni40NTUzLjg5ODUuMjQyOS44MzE4LjA5MS4yNTVoLjE1Nzl2LS4xNDU3bC4xMjc1LTEuNzA2LjIzNjgtMi4wOTQ3LjIzMDctMi42OTU3LjA3ODktLjc1ODkuMzc2NC0uOTEwNy43NDY4LS40OTE4LjU4MjguMjc5My40Nzk3LjY4Ni0uMDY2OC40NDMzLS4yODUzIDEuODUxNy0uNTU4NiAyLjkwMjEtLjM2NDMgMS45NDI5aC4yMTI1bC4yNDI5LS4yNDI5Ljk4MzUtMS4zMDUzIDEuNjUxNC0yLjA2NDMuNzI4Ni0uODE5Ni44NS0uOTA0Ni41NDY0LS40MzExaDEuMDMyMWwuNzU5IDEuMTI5My0uMzQgMS4xNjU3LTEuMDYyNSAxLjM0NzgtLjg4MDQgMS4xNDE0LTEuMjYyOCAxLjctLjc4OTMgMS4zNi4wNzI5LjEwOTMuMTg4Mi0uMDE4MyAyLjg1MzUtLjYwNyAxLjU0MjEtLjI3OTQgMS44Mzk2LS4zMTU3LjgzMTguMzg4Ni4wOTEuMzk0Ni0uMzI3OC44MDc1LTEuOTY3LjQ4NTctMi4zMDcyLjQ2MTQtMy40MzY0LjgxMzYtLjA0MjUuMDMwNC4wNDg2LjA2MDcgMS41NDgyLjE0NTcuNjYxOC4wMzY0aDEuNjIxbDMuMDE3NS4yMjQ3Ljc4OTIuNTIyLjQ3MzYuNjM3Ni0uMDc5LjQ4NTctMS4yMTQyLjYxOTMtMS42MzkzLS4zODg2LTMuODI1LS45MTA3LTEuMzExMy0uMzI3OWgtLjE4MjJ2LjEwOTNsMS4wOTI5IDEuMDY4NiAyLjAwMzUgMS44MDkyIDIuNTA3NSAyLjMzMTQuMTI3NS41NzY4LS4zMjE4LjQ1NTQtLjM0LS4wNDg2LTIuMjAzOS0xLjY1NzUtLjg1LS43NDY4LTEuOTI0Ni0xLjYyMWgtLjEyNzV2LjE3bC40NDMyLjY0OTYgMi4zNDM2IDMuNTIxNC4xMjE0IDEuMDgwNy0uMTcuMzUyMS0uNjA3MS4yMTI1LS42Njc5LS4xMjE0LTEuMzcyMS0xLjkyNDZMMTQuMzggMTcuOTU5bC0xLjE0MTQtMS45NDI4LS4xMzk3LjA3OS0uNjc0IDcuMjU1Mi0uMzE1Ni4zNzAzLS43Mjg2LjI3OTMtLjYwNzEtLjQ2MTQtLjMyMTgtLjc0NjguMzIxOC0xLjQ3NTMuMzg4Ni0xLjkyNDYuMzE1Ny0xLjUzLjI4NTMtMS45MDA0LjE3LS42MzE0LS4wMTIxLS4wNDI1LS4xMzk3LjAxODItMS40MzI4IDEuOTY3Mi0yLjE3OTYgMi45NDQ2LTEuNzI0MyAxLjg0NTYtLjQxMjguMTY0LS43MTY0LS4zNzA0LjA2NjctLjY2MTguNDAwOC0uNTg4OSAyLjM4Ni0zLjAzNTcgMS40Mzg5LTEuODgyLjkyOS0xLjA4NjgtLjAwNjItLjE1NzloLS4wNTQ2bC02LjMzODUgNC4xMTY0LTEuMTI5My4xNDU3LS40ODU3LS40NTU0LjA2MDgtLjc0NjcuMjMwNy0uMjQyOSAxLjkwNjQtMS4zMTE0WiIvPjwvc3ZnPg==",
+    "si-cloudflare": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjZmZmZmZmIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+Q2xvdWRmbGFyZTwvdGl0bGU+PHBhdGggZD0iTTE2LjUwODggMTYuODQ0N2MuMTQ3NS0uNTA2OC4wOTA4LS45NzA3LS4xNTUzLTEuMzE1NC0uMjI0Ni0uMzE2NC0uNjA0NS0uNDk5LTEuMDYxNS0uNTIwNWwtOC42NTkyLS4xMTIzYS4xNTU5LjE1NTkgMCAwIDEtLjEzMzMtLjA3MTNjLS4wMjgzLS4wNDItLjAzNTEtLjA5ODYtLjAyMS0uMTU1My4wMjc4LS4wODQuMTEyMy0uMTQ4NC4yMDM2LS4xNTYybDguNzM1OS0uMTEyM2MxLjAzNTEtLjA0ODkgMi4xNjAxLS44ODY4IDIuNTUzNy0xLjkxMzZsLjQ5OS0xLjMwMTNjLjAyMTUtLjA1NjEuMDI5My0uMTEyOC4wMTQ3LS4xNjgtLjU2MjUtMi41NDYzLTIuODM1LTQuNDQ1My01LjU0OTktNC40NDUzLTIuNTAzOSAwLTQuNjI4NCAxLjYxNzctNS4zODc2IDMuODYxNC0uNDkyNy0uMzY1OC0xLjExODctLjU2MjUtMS43OTQtLjQ5OS0xLjIwMjYuMTE5LTIuMTY2NSAxLjA4My0yLjI4NjEgMi4yODU2LS4wMjgzLjMxLS4wMDY5LjYxMjguMDYzNS44OTRDMS41NjgzIDEzLjE3MSAwIDE0Ljc3NTQgMCAxNi43NTJjMCAuMTc0OC4wMTQyLjM1MTUuMDM1Mi41MjczLjAxNDEuMDgzLjA4NDQuMTQ3NS4xNjg5LjE0NzVoMTUuOTgxNGMuMDkwOSAwIC4xNzU4LS4wNjQ1LjIwMzItLjE1NTNsLjEyLS40MjY4em0yLjc1NjgtNS41NjM0Yy0uMDc3MSAwLS4xNjExIDAtLjIzODMuMDExMi0uMDU2NiAwLS4xMDU0LjA0MTUtLjEyNy4wOTc2bC0uMzM3OCAxLjE3NDRjLS4xNDc1LjUwNjgtLjA5MTguOTcwNy4xNTQzIDEuMzE2NC4yMjU2LjMxNjQuNjA1NS40OTggMS4wNjI1LjUxOTVsMS44NDM3LjExMzNjLjA1NTcgMCAuMTA1NS4wMjYzLjEzMjkuMDcwMy4wMjgzLjA0My4wMzUxLjEwNzQuMDIxNC4xNTYyLS4wMjgzLjA4NC0uMTEzMi4xNDg1LS4yMDQuMTU1M2wtMS45MjEuMTEyM2MtMS4wNDEuMDQ4OC0yLjE1ODIuODg2Ny0yLjU1MjcgMS45MTRsLS4xNDA2LjM1ODVjLS4wMjgzLjA3MTMuMDIxNS4xNDE2LjA5ODYuMTQxNmg2LjU5NzdjLjA3NzEgMCAuMTQ3NC0uMDQ4OS4xNjktLjEyNi4xMTIyLS40MDgyLjE3NTctLjgzNy4xNzU3LTEuMjgwMyAwLTIuNjAyNS0yLjEyNS00LjcyNy00LjczNDQtNC43MjciLz48L3N2Zz4=",
+    "si-coolify": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjZmZmZmZmIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+Q29vbGlmeTwvdGl0bGU+PHBhdGggZD0iTTQuMzY0IDQuMzY0VjBoMTcuNDU0djQuMzY0em0wIDEzLjA5SDBWNC4zNjVoNC4zNjR6bTAgMGgxNy40NTR2NC4zNjRINC4zNjRaTTYuNTQ1IDYuNTQ2di0xLjdIMjIuM1YyLjE4MkgyNHY0LjM2M3ptMCAwdjEwLjRoLTEuN3YtMTAuNFpNMy44ODIgMTcuOTM2djEuN2gtMS43di0xLjdaTTI0IDI0SDYuNTQ1di0xLjdIMjIuM3YtMi42NjRIMjRaIi8+PC9zdmc+",
+    "si-datadog": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjZmZmZmZmIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+RGF0YWRvZzwvdGl0bGU+PHBhdGggZD0iTTE5LjU3IDE3LjA0bC0xLjk5Ny0xLjMxNi0xLjY2NSAyLjc4Mi0xLjkzNy0uNTY3LTEuNzA2IDIuNjA0LjA4Ny44MiA5LjI3NC0xLjcxLS41MzgtNS43OTR6bS04LjY0OS0yLjQ5OGwxLjQ4OC0uMjA0Yy4yNDEuMTA4LjQwOS4xNS42OTcuMjIzLjQ1LjExNy45Ny4yMyAxLjc0MS0uMTYuMTgtLjA4OC41NTMtLjQzLjcwNC0uNjI1bDYuMDk2LTEuMTA2LjYyMiA3LjUyNy0xMC40NDQgMS44ODJ6bTExLjMyNS0yLjcxMmwtLjYwMi4xMTVMMjAuNDg4IDAgLjc4OSAyLjI4NWwyLjQyNyAxOS42OTMgMi4zMDYtLjMzNGMtLjE4NC0uMjYzLS40NzEtLjU4MS0uOTYtLjk4OS0uNjgtLjU2NC0uNDQtMS41MjItLjAzOS0yLjEyNy41My0xLjAyMiAzLjI2LTIuMzIyIDMuMTA2LTMuOTU2LS4wNTYtLjU5NC0uMTUtMS4zNjgtLjcwMi0xLjg5OC0uMDIuMjIuMDE3LjQzMi4wMTcuNDMycy0uMjI3LS4yODktLjM0LS42ODNjLS4xMTItLjE1LS4yLS4xOTktLjMxOS0uNC0uMDg1LjIzMy0uMDczLjUwMy0uMDczLjUwM3MtLjE4Ni0uNDM3LS4yMTYtLjgwN2MtLjExLjE2Ni0uMTM3LjQ4LS4xMzcuNDhzLS4yNDEtLjY5LS4xODYtMS4wNjJjLS4xMS0uMzIzLS40MzYtLjk2NS0uMzQzLTIuNDI0LjYuNDIxIDEuOTI0LjMyMSAyLjQ0LS40MzkuMTcxLS4yNTEuMjg4LS45MzktLjA4Ni0yLjI5My0uMjQtLjg2OC0uODM1LTIuMTYtMS4wNjYtMi42NTFsLS4wMjguMDJjLjEyMi4zOTUuMzc0IDEuMjIzLjQ3IDEuNjI1LjI5MyAxLjIxOC4zNzIgMS42NDIuMjM0IDIuMjA0LS4xMTYuNDg4LS4zOTcuODA4LTEuMTA3IDEuMTY1LS43MS4zNTgtMS42NTMtLjUxNC0xLjcxMy0uNTYyLS42OS0uNTUtMS4yMjQtMS40NDctMS4yODQtMS44ODMtLjA2Mi0uNDc3LjI3NS0uNzYzLjQ0NS0xLjE1My0uMjQzLjA3LS41MTQuMTkyLS41MTQuMTkycy4zMjMtLjMzNC43MjItLjYyNGMuMTY1LS4xMDkuMjYyLS4xNzguNDM2LS4zMjNhOS43NjIgOS43NjIgMCAwIDAtLjQ1Ni4wMDNzLjQyLS4yMjcuODU1LS4zOTJjLS4zMTgtLjAxNC0uNjIzLS4wMDMtLjYyMy0uMDAzcy45MzctLjQxOSAxLjY3OC0uNzI3Yy41MDktLjIwOCAxLjAwNi0uMTQ3IDEuMjg2LjI1Ny4zNjcuNTMuNzUyLjgxNyAxLjU2OS45OTYuNTAxLS4yMjMuNjUzLS4zMzcgMS4yODQtLjUwOS41NTQtLjYxLjk5LS42ODguOTktLjY4OHMtLjIxNi4xOTgtLjI3NC41MWMuMzE0LS4yNDkuNjYtLjQ1NS42Ni0uNDU1cy0uMTM0LjE2NC0uMjU5LjQyNmwuMDMuMDQzYy4zNjYtLjIyLjc5Ny0uMzk0Ljc5Ny0uMzk0cy0uMTIzLjE1Ni0uMjY4LjM1OGMuMjc3LS4wMDIuODM4LjAxMiAxLjA1Ni4wMzcgMS4yODUuMDI4IDEuNTUyLTEuMzc0IDIuMDQ1LTEuNTUuNjE4LS4yMi44OTQtLjM1MyAxLjk0Ny42OC45MDMuODg4IDEuNjA5IDIuNDc3IDEuMjU5IDIuODMzLS4yOTQuMjk1LS44NzQtLjExNS0xLjUxNi0uOTE2YTMuNDY2IDMuNDY2IDAgMCAxLS43MTYtMS41NjIgMS41MzMgMS41MzMgMCAwIDAtLjQ5Ny0uODVzLjIzLjUxLjIzLjk2YzAgLjI0Ni4wMyAxLjE2NS40MjQgMS42OC0uMDM5LjA3Ni0uMDU3LjM3NC0uMS40My0uNDU4LS41NTQtMS40NDMtLjk1LTEuNjA0LTEuMDY3LjU0NC40NDUgMS43OTMgMS40NjggMi4yNzMgMi40NDkuNDUzLjkyNy4xODYgMS43NzcuNDE2IDEuOTk3LjA2NS4wNjMuOTc2IDEuMTk3IDEuMTUgMS43NjcuMzA2Ljk5NC4wMTkgMi4wMzgtLjM4MSAyLjY4NWwtMS4xMTcuMTc0Yy0uMTYzLS4wNDUtLjI3My0uMDY4LS40Mi0uMTUzLjA4LS4xNDMuMjQxLS41LjI0My0uNTcybC0uMDYzLS4xMTFjLS4zNDguNDkyLS45My45Ny0xLjQxNCAxLjI0NS0uNjMzLjM1OS0xLjM2My4zMDQtMS44MzguMTU2LTEuMzQ4LS40MTUtMi42MjMtMS4zMjctMi45My0xLjU2NiAwIDAtLjAxLjE5MS4wNDguMjM0LjM0LjM4MyAxLjExOSAxLjA3NyAxLjg3MiAxLjU2bC0xLjYwNS4xNzcuNzU5IDUuOTA4Yy0uMzM3LjA0OC0uMzkuMDcxLS43NTcuMTI0LS4zMjUtMS4xNDctLjk0Ni0xLjg5NS0xLjYyNC0yLjMzMi0uNTk5LS4zODQtMS40MjQtLjQ3LTIuMjE0LS4zMTRsLS4wNS4wNTlhMi44NTEgMi44NTEgMCAwIDEgMS44NjMuNDQ0Yy42NTQuNDEzIDEuMTgxIDEuNDgxIDEuMzc1IDIuMTI0LjI0OC44MjIuNDIgMS43LS4yNDggMi42MzItLjQ3Ni42NjItMS44NjQgMS4wMjgtMi45ODYuMjM3LjMuNDgxLjcwNS44NzYgMS4yNS45NS44MDkuMTEgMS41NzctLjAzIDIuMTA2LS41NzQuNDUyLS40NjQuNjktMS40MzQuNjI4LTIuNDU2bC43MTQtLjEwNC4yNTggMS44MzQgMTEuODI3LTEuNDI0ek0xNS4wNSA2Ljg0OGMtLjAzNC4wNzUtLjA4NS4xMjUtLjAwNy4zN2wuMDA0LjAxNC4wMTMuMDMyLjAzMi4wNzNjLjE0LjI4Ny4yOTUuNTU4LjU1Mi42OTYuMDY3LS4wMTEuMTM2LS4wMTkuMjA3LS4wMjMuMjQyLS4wMS4zOTUuMDI4LjQ5Mi4wOC4wMDktLjA0OC4wMS0uMTE5LjAwNS0uMjIyLS4wMTgtLjM2NC4wNzItLjk4Mi0uNjI2LTEuMzA4LS4yNjQtLjEyMi0uNjM0LS4wODQtLjc1Ny4wNjhhLjMwMi4zMDIgMCAwIDEgLjA1OC4wMTNjLjE4Ni4wNjYuMDYuMTMuMDI3LjIwN20xLjk1OCAzLjM5MmMtLjA5Mi0uMDUtLjUyLS4wMy0uODIxLjAwNS0uNTc0LjA2OC0xLjE5My4yNjctMS4zMjguMzcyLS4yNDcuMTkxLS4xMzUuNTIzLjA0Ny42Ni41MTEuMzgyLjk2LjYzOCAxLjQzMi41NzUuMjktLjAzOC41NDYtLjQ5Ny43MjgtLjkxNC4xMjQtLjI4OC4xMjQtLjU5OC0uMDU4LS42OThtLTUuMDc3LTIuOTQyYy4xNjItLjE1NC0uODA1LS4zNTUtMS41NTYuMTU2LS41NTQuMzc4LS41NzEgMS4xODctLjA0MSAxLjY0Ni4wNTMuMDQ2LjA5Ni4wNzguMTM3LjEwNGE0Ljc3IDQuNzcgMCAwIDEgMS4zOTYtLjQxMmMuMTEzLS4xMjUuMjQzLS4zNDUuMjEtLjc0NS0uMDQ0LS41NDItLjQ1NS0uNDU2LS4xNDYtLjc0OSIvPjwvc3ZnPg==",
+    "si-github": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjZmZmZmZmIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+R2l0SHViPC90aXRsZT48cGF0aCBkPSJNMTIgLjI5N2MtNi42MyAwLTEyIDUuMzczLTEyIDEyIDAgNS4zMDMgMy40MzggOS44IDguMjA1IDExLjM4NS42LjExMy44Mi0uMjU4LjgyLS41NzcgMC0uMjg1LS4wMS0xLjA0LS4wMTUtMi4wNC0zLjMzOC43MjQtNC4wNDItMS42MS00LjA0Mi0xLjYxQzQuNDIyIDE4LjA3IDMuNjMzIDE3LjcgMy42MzMgMTcuN2MtMS4wODctLjc0NC4wODQtLjcyOS4wODQtLjcyOSAxLjIwNS4wODQgMS44MzggMS4yMzYgMS44MzggMS4yMzYgMS4wNyAxLjgzNSAyLjgwOSAxLjMwNSAzLjQ5NS45OTguMTA4LS43NzYuNDE3LTEuMzA1Ljc2LTEuNjA1LTIuNjY1LS4zLTUuNDY2LTEuMzMyLTUuNDY2LTUuOTMgMC0xLjMxLjQ2NS0yLjM4IDEuMjM1LTMuMjItLjEzNS0uMzAzLS41NC0xLjUyMy4xMDUtMy4xNzYgMCAwIDEuMDA1LS4zMjIgMy4zIDEuMjMuOTYtLjI2NyAxLjk4LS4zOTkgMy0uNDA1IDEuMDIuMDA2IDIuMDQuMTM4IDMgLjQwNSAyLjI4LTEuNTUyIDMuMjg1LTEuMjMgMy4yODUtMS4yMy42NDUgMS42NTMuMjQgMi44NzMuMTIgMy4xNzYuNzY1Ljg0IDEuMjMgMS45MSAxLjIzIDMuMjIgMCA0LjYxLTIuODA1IDUuNjI1LTUuNDc1IDUuOTIuNDIuMzYuODEgMS4wOTYuODEgMi4yMiAwIDEuNjA2LS4wMTUgMi44OTYtLjAxNSAzLjI4NiAwIC4zMTUuMjEuNjkuODI1LjU3QzIwLjU2NSAyMi4wOTIgMjQgMTcuNTkyIDI0IDEyLjI5N2MwLTYuNjI3LTUuMzczLTEyLTEyLTEyIi8+PC9zdmc+",
+    "si-hetzner": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjZmZmZmZmIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+SGV0em5lcjwvdGl0bGU+PHBhdGggZD0iTTAgMHYyNGgyNFYwSDB6bTQuNjAyIDQuMDI1aDIuMjQ0Yy41MDkgMCAuNzE2LjIxNS43MTYuNzE3djUuNjRoOC44ODN2LTUuNjRjMC0uNTA5LjIxNS0uNzE3LjcxNy0uNzE3aDIuMjI5Yy41IDAgLjcxLjIzLjcyNC43MTd2MTQuNTE2YzAgLjUwOS0uMjE1LjcxNy0uNzE3LjcxN2gtMi4yM2MtLjUxIDAtLjcxNy0uMjE1LS43MTctLjcxN3YtNS43MzVINy41NjJ2NS43MzVjMCAuNTE2LS4yMTUuNzE3LS43MTYuNzE3SDQuNjAyYy0uNTEgMC0uNzE3LS4yMDgtLjcxNy0uNzE3VjQuNzQyYzAtLjUwOS4yMDctLjcxNy43MTctLjcxN3oiLz48L3N2Zz4=",
+    "si-pagerduty": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjZmZmZmZmIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+UGFnZXJEdXR5PC90aXRsZT48cGF0aCBkPSJNMTYuOTY1IDEuMThDMTUuMDg1LjE2NCAxMy43NjkgMCAxMC42ODMgMEgzLjczdjE0LjU1aDYuOTI2YzIuNzQzIDAgNC44LS4xNjQgNi42MS0xLjM3IDEuOTc1LTEuMzAzIDMuMDA0LTMuNDg0IDMuMDA0LTYuMDA3IDAtMi43MTYtMS4yNjItNC44OTYtMy4zMDUtNS45OTR6bS01LjUgMTAuMzI2aC00LjIxVjMuMTEzbDMuOTc3LS4wMjdjMy42Mi0uMDI4IDUuNDMgMS4yMzQgNS40MyA0LjEyOCAwIDMuMTEzLTIuMjQ4IDQuMjkyLTUuMTk3IDQuMjkyek0zLjczIDE3LjYxaDMuNTI1VjI0SDMuNzNaIi8+PC9zdmc+",
+    "si-sentry": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjZmZmZmZmIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+U2VudHJ5PC90aXRsZT48cGF0aCBkPSJNMTMuOTEgMi41MDVjLS44NzMtMS40NDgtMi45NzItMS40NDgtMy44NDQgMEw2LjkwNCA3LjkyYTE1LjQ3OCAxNS40NzggMCAwIDEgOC41MyAxMi44MTFoLTIuMjIxQTEzLjMwMSAxMy4zMDEgMCAwIDAgNS43ODQgOS44MTRsLTIuOTI2IDUuMDZhNy42NSA3LjY1IDAgMCAxIDQuNDM1IDUuODQ4SDIuMTk0YS4zNjUuMzY1IDAgMCAxLS4yOTgtLjUzNGwxLjQxMy0yLjQwMmE1LjE2IDUuMTYgMCAwIDAtMS42MTQtLjkxM0wuMjk2IDE5LjI3NWEyLjE4MiAyLjE4MiAwIDAgMCAuODEyIDIuOTk5IDIuMjQgMi4yNCAwIDAgMCAxLjA4Ni4yODhoNi45ODNhOS4zMjIgOS4zMjIgMCAwIDAtMy44NDUtOC4zMThsMS4xMS0xLjkyMmExMS40NyAxMS40NyAwIDAgMSA0Ljk1IDEwLjI0aDUuOTE1YTE3LjI0MiAxNy4yNDIgMCAwIDAtNy44ODUtMTUuMjhsMi4yNDQtMy44NDVhLjM3LjM3IDAgMCAxIC41MDQtLjEzYy4yNTUuMTQgOS43NSAxNi43MDggOS45MjggMTYuOWEuMzY1LjM2NSAwIDAgMS0uMzI3LjU0M2gtMi4yODdjLjAyOS42MTIuMDI5IDEuMjIzIDAgMS44MzFoMi4yOTdhMi4yMDYgMi4yMDYgMCAwIDAgMS45MjItMy4zMXoiLz48L3N2Zz4=",
+    "si-tailscale": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjZmZmZmZmIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+VGFpbHNjYWxlPC90aXRsZT48cGF0aCBkPSJNMjQgMTJhMyAzIDAgMSAxLTYgMCAzIDMgMCAwIDEgNiAwem0tOSA5YTMgMyAwIDEgMS02IDAgMyAzIDAgMCAxIDYgMHptMC05YTMgMyAwIDEgMS02IDAgMyAzIDAgMCAxIDYgMHptNi02YTMgMyAwIDEgMSAwLTYgMyAzIDAgMCAxIDAgNnptMC0uNWEyLjUgMi41IDAgMSAwIDAtNSAyLjUgMi41IDAgMCAwIDAgNXpNMyAyNGEzIDMgMCAxIDEgMC02IDMgMyAwIDAgMSAwIDZ6bTAtLjVhMi41IDIuNSAwIDEgMCAwLTUgMi41IDIuNSAwIDAgMCAwIDV6bTE4IC41YTMgMyAwIDEgMSAwLTYgMyAzIDAgMCAxIDAgNnptMC0uNWEyLjUgMi41IDAgMSAwIDAtNSAyLjUgMi41IDAgMCAwIDAgNXpNNiAxMmEzIDMgMCAxIDEtNiAwIDMgMyAwIDAgMSA2IDB6bTktOWEzIDMgMCAxIDEtNiAwIDMgMyAwIDAgMSA2IDB6bS0zIDIuNWEyLjUgMi41IDAgMSAwIDAtNSAyLjUgMi41IDAgMCAwIDAgNXpNNiAzYTMgMyAwIDEgMS02IDAgMyAzIDAgMCAxIDYgMHpNMyA1LjVhMi41IDIuNSAwIDEgMCAwLTUgMi41IDIuNSAwIDAgMCAwIDV6Ii8+PC9zdmc+",
+    "si-vercel": "data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjZmZmZmZmIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+VmVyY2VsPC90aXRsZT48cGF0aCBkPSJtMTIgMS42MDggMTIgMjAuNzg0SDBaIi8+PC9zdmc+"
+  };
+
+  // One place to edit.  Each link: name, sub (shown small), url, mono (badge letters), color (badge background).
+  const SECTIONS = [
+    { title: "Fleet", links: [
+      { name: "THE BOARD",            sub: "mac.jays.services/board",        url: "https://mac.jays.services/board",                          mono: "TB", color: "#4F46E5", glyph: ICONS["oc-table-16"] },
+      { name: "#Work-In-Progress",          sub: "Zulip · #Work-In-Progress",          url: "https://fleetlink.online/zulip/zulip-fleet-guide.md",    mono: "#", color: "#6141A5" },
+      { name: "Fleet Apps Registry",  sub: "Google Sheet",                   url: "https://docs.google.com/spreadsheets/d/1fyp76U-GnlRbm5GeevnPY5WxPekxualMiZW5M-5VlSY/edit?usp=sharing", mono: "GS", color: "#0F9D58" },
+      { name: "Fleet Activity",       sub: "activity.jays.services",         url: "https://activity.jays.services/",  mono: "FA", color: "#2563EB", glyph: ICONS["oc-pulse-16"] },
+      { name: "AI Fleet Coordinator", sub: "GitHub repo",                    url: "https://github.com/Simple-With-Us/ai-fleet-coordinator",  mono: "AF", color: "#111827", glyph: ICONS["oc-repo-16"] },
+      { name: "Fleet Ops",            sub: "GitHub repo",                    url: "https://github.com/Simple-With-Us/fleet-ops",             mono: "OP", color: "#374151", glyph: ICONS["oc-repo-16"] },
+    ]},
+    { title: "Apps", links: [
+      { name: "Socratic.Trade",       sub: "socratictrade.com",              url: "https://socratictrade.com",                                mono: "ST", color: "#0F766E", icon: ICONS["app-st"] },
+      { name: "Congress.Trade",       sub: "congress.trade",                 url: "https://congress.trade",                                   mono: "CT", color: "#1E3A8A", icon: ICONS["app-ct"] },
+      { name: "Usage Monitor",        sub: "usage.jays.services",            url: "https://usage.jays.services",                              mono: "UM", color: "#EA580C", icon: ICONS["app-um"] },
+      { name: "DealDex",              sub: "dealdex.net",                    url: "https://dealdex.net",                                      mono: "DD", color: "#15803D", icon: LOGO_FILE("app-dd.png") },
+      { name: "BotFleet",             sub: "botfleet.app",                   url: "https://botfleet.app",                                     mono: "BF", color: "#7C3AED", icon: LOGO_FILE("app-bf.png") },
+      { name: "FleetLink",            sub: "fleetlink.online",               url: "https://fleetlink.online",                                 mono: "FL", color: "#2563EB", icon: LOGO_FILE("app-fl.png") },
+      { name: "Personal Site",        sub: "jays.services",                  url: "https://jays.services",                                    mono: "PS", color: "#0369A1", icon: LOGO_FILE("app-ps.png") },
+      { name: "Autorotate.Codes",     sub: "autorotate.codes",               url: "https://autorotate.vercel.app",                            mono: "AR", color: "#B45309", icon: LOGO_FILE("app-ar.png") },
+      { name: "ContactLogo",          sub: "contactlogo.com",                url: "https://contactlogo.com",                                  mono: "CL", color: "#BE185D", icon: LOGO_FILE("app-cl.png") },
+    ]},
+    { title: "Infra & Tools", wide: true, links: [
+      { name: "Coolify",              sub: "host.jays.services",             url: "https://host.jays.services",                               mono: "CO", color: "#6B16ED", glyph: ICONS["si-coolify"] },
+      { name: "Vercel",               sub: "vercel.com",                     url: "https://vercel.com/dashboard",                             mono: "VC", color: "#000000", glyph: ICONS["si-vercel"] },
+      { name: "Cloudflare",           sub: "dash.cloudflare.com",            url: "https://dash.cloudflare.com",                              mono: "CF", color: "#F38020", glyph: ICONS["si-cloudflare"] },
+      { name: "Infisical",            sub: "app.infisical.com",              url: "https://app.infisical.com",                                mono: "IN", color: "#CA8A04" },
+      { name: "Datadog",              sub: "us5.datadoghq.com",              url: "https://us5.datadoghq.com/",                          mono: "DG", color: "#632CA6", glyph: ICONS["si-datadog"] }, // pragma: allowlist secret
+      { name: "Sentry",               sub: "simple-with-us.sentry.io",        url: "https://simple-with-us.sentry.io",                          mono: "SE", color: "#362D59", glyph: ICONS["si-sentry"] },
+      { name: "PagerDuty",            sub: "app.pagerduty.com",              url: "https://app.pagerduty.com",                                mono: "PD", color: "#06AC38", glyph: ICONS["si-pagerduty"] },
+      { name: "Hetzner Cloud",        sub: "console.hetzner.cloud",          url: "https://console.hetzner.cloud",                            mono: "HZ", color: "#D50C2D", glyph: ICONS["si-hetzner"] },
+      { name: "Tailscale",            sub: "login.tailscale.com",            url: "https://login.tailscale.com/admin/machines",               mono: "TS", color: "#4B70CC", glyph: ICONS["si-tailscale"] },
+      { name: "UptimeRobot",          sub: "uptimerobot.com",                 url: "https://dashboard.uptimerobot.com",                        mono: "UR", color: "#16A34A" },
+      { name: "Pull Requests",        sub: "github.com/pulls",               url: "https://github.com/pulls",                                 mono: "PR", color: "#8250DF", glyph: ICONS["oc-git-pull-request-16"] },
+      { name: "Review Requests",      sub: "review-requested/@me",           url: "https://github.com/pulls/review-requested/@me",            mono: "RR", color: "#1F883D", glyph: ICONS["oc-code-review-16"] },
+      { name: "Notifications",        sub: "github.com/notifications",       url: "https://github.com/notifications",                         mono: "NT", color: "#0969DA", glyph: ICONS["oc-bell-16"] },
+      { name: "Repositories",         sub: "Simple-With-Us",                  url: "https://github.com/Simple-With-Us?tab=repositories",        mono: "GH", color: "#24292F", glyph: ICONS["oc-mark-github-16"] },
+      { name: "Claude",               sub: "claude.ai",                      url: "https://claude.ai",                                        mono: "AI", color: "#D97757", glyph: ICONS["si-claude"] },
+      { name: "App Store Connect",    sub: "TestFlight and App Store",         url: "https://appstoreconnect.apple.com",                        mono: "AS", color: "#0071E3", glyph: ICONS["si-appstore"] },
+    ]},
+  ];
+
+  // Search prefixes: "gh foo" searches GitHub, "gh" alone opens it.
+  const PREFIX = {
+    gh: { home: "https://github.com",                 q: s => "https://github.com/search?q=" + enc(s) },
+    b:  { home: "https://mac.jays.services/board" },  // no query: the board reads only app/kind/status/severity from the URL
+    w:  { home: "https://en.wikipedia.org",           q: s => "https://en.wikipedia.org/w/index.php?search=" + enc(s) },
+    yt: { home: "https://www.youtube.com",            q: s => "https://www.youtube.com/results?search_query=" + enc(s) },
+  };
+  const TLDS = /\.(com|net|org|io|dev|app|ai|co|me|sh|xyz|cloud|codes|trade|services|tech|info|us|uk|ca|edu|gov)$/i;
+
+  const enc = s => encodeURIComponent(s.trim());
+  const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
+
+  const STORE = "jay-safari-start-v1";
+  const loadSettings = () => {
+    try { return JSON.parse(localStorage.getItem(STORE) || "null") || {}; } catch (e) { return {}; }
+  };
+  const saveSettings = s => { try { localStorage.setItem(STORE, JSON.stringify(s)); } catch (e) {} };
+  let settings = Object.assign({ theme: "light", hidden: {}, extras: [] }, loadSettings());
+
+  function applyTheme() {
+    const t = settings.theme || "light";
+    if (t === "system") document.documentElement.removeAttribute("data-theme");
+    else document.documentElement.setAttribute("data-theme", t);
+    document.querySelectorAll("#theme-seg button").forEach(b => {
+      b.setAttribute("aria-pressed", b.dataset.theme === t ? "true" : "false");
+    });
+  }
+
+  function visibleSections() {
+    const extras = Array.isArray(settings.extras) ? settings.extras : [];
+    return SECTIONS.map(sec => {
+      const more = extras.filter(x => x.section === sec.title);
+      const links = sec.links.concat(more.map(x => ({
+        name: x.name, sub: x.sub || hostOf(x.url), url: x.url, mono: initials(x.name), color: x.color || "#6e6e73", custom: true
+      })));
+      return Object.assign({}, sec, { links: links.filter(l => !settings.hidden[l.url]) });
+    }).filter(sec => sec.links.length);
+  }
+
+  function hostOf(url) {
+    try { return new URL(url).host.replace(/^www\./, ""); } catch (e) { return url; }
+  }
+  function initials(name) {
+    const p = String(name || "").trim().split(/\s+/).filter(Boolean);
+    if (!p.length) return "+";
+    if (p.length === 1) return p[0].slice(0, 2).toUpperCase();
+    return (p[0][0] + p[1][0]).toUpperCase();
+  }
+
+  function render() {
+    const grid = document.getElementById("grid");
+    grid.replaceChildren();
+    for (const sec of visibleSections()) {
+      const s = el("section");
+      if (sec.wide) s.classList.add("wide");
+      s.appendChild(el("h2", null, sec.title));
+      const ul = el("ul");
+      for (const l of sec.links) {
+        const a = el("a"); a.href = l.url;
+        if (FRAMED) { a.target = "_blank"; a.rel = "noopener"; }
+        const m = el("span", "mono");
+        if (l.icon) { m.classList.add("app"); const i = el("img"); i.src = l.icon; i.alt = ""; m.appendChild(i); }
+        else { m.style.background = l.color; if (l.glyph) { const i = el("img"); i.src = l.glyph; i.alt = ""; m.appendChild(i); } else m.textContent = l.mono; }
+        const tx = el("span", "txt");
+        tx.appendChild(el("span", "name", l.name));
+        tx.appendChild(el("span", "sub", l.sub));
+        a.append(m, tx);
+        const li = el("li"); li.appendChild(a); ul.appendChild(li);
+      }
+      s.appendChild(ul); grid.appendChild(s);
+    }
+  }
+
+  function paintSettings() {
+    const box = document.getElementById("link-checks");
+    box.replaceChildren();
+    const extras = Array.isArray(settings.extras) ? settings.extras : [];
+    for (const sec of SECTIONS) {
+      box.appendChild(el("h3", null, sec.title));
+      const more = extras.filter(x => x.section === sec.title);
+      const links = sec.links.concat(more.map(x => ({ name: x.name, url: x.url, custom: true })));
+      for (const l of links) {
+        const lab = el("label");
+        const cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.checked = !settings.hidden[l.url];
+        cb.addEventListener("change", () => {
+          if (cb.checked) delete settings.hidden[l.url];
+          else settings.hidden[l.url] = true;
+          saveSettings(settings);
+          render();
+        });
+        lab.append(cb, document.createTextNode(" " + l.name));
+        if (l.custom) {
+          const rm = el("button");
+          rm.type = "button";
+          rm.textContent = "Remove";
+          rm.style.marginLeft = "auto";
+          rm.style.fontSize = "12px";
+          rm.addEventListener("click", () => {
+            settings.extras = extras.filter(x => x.url !== l.url);
+            delete settings.hidden[l.url];
+            saveSettings(settings);
+            paintSettings();
+            render();
+          });
+          lab.appendChild(rm);
+        }
+        box.appendChild(lab);
+      }
+    }
+    const sel = document.getElementById("add-section");
+    sel.replaceChildren();
+    for (const sec of SECTIONS) {
+      const o = document.createElement("option");
+      o.value = sec.title; o.textContent = sec.title;
+      sel.appendChild(o);
+    }
+  }
+
+  function openSettings() {
+    const sheet = document.getElementById("settings");
+    sheet.hidden = false;
+    sheet.classList.add("open");
+    paintSettings();
+    applyTheme();
+  }
+  function closeSettings() {
+    const sheet = document.getElementById("settings");
+    sheet.classList.remove("open");
+    sheet.hidden = true;
+  }
+
+  function tick() {
+    const now = new Date();
+    const f = (zone, opts) => new Intl.DateTimeFormat("en-US", { timeZone: zone, ...opts }).format(now);
+    const clock = zone => f(zone, { hour: "numeric", minute: "2-digit" });
+    const [t, ampm] = clock(HERE).split(" ");
+    document.getElementById("time").textContent = t;
+    document.getElementById("meridiem").textContent = (ampm || "") + (AWAY ? "" : " CT");
+    document.getElementById("date").textContent = f(HERE, { weekday: "short", month: "short", day: "numeric", year: "numeric" });
+    if (AWAY) {
+      const zone = document.getElementById("zone"), central = document.getElementById("central");
+      const city = (LOCAL.split("/").pop() || LOCAL).replace(/_/g, " ");
+      zone.textContent = city + " \u00b7 " + zoneName(LOCAL, now) + " \u00b7 " + utcOffset(LOCAL, now);
+      const dayHere = f(HERE, { weekday: "short" }), dayCentral = f(CENTRAL, { weekday: "short" });
+      central.textContent = (dayHere === dayCentral ? "" : dayCentral + " ") + clock(CENTRAL) + " CT";
+      zone.hidden = false; central.hidden = false;
+    }
+    document.getElementById("utc").textContent =
+      new Intl.DateTimeFormat("en-US", { timeZone: "UTC", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(now) + " UTC";
+    const h = parseInt(f(HERE, { hour: "numeric", hourCycle: "h23" }), 10);
+    const word = h < 5 ? "Hello" : h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening";
+    document.getElementById("greeting").textContent = word + ", " + NAME + ".";
+  }
+
+  // "Gulf Standard Time" for Asia/Dubai; falls back to the zone id.
+  function zoneName(zone, now) {
+    try {
+      const p = new Intl.DateTimeFormat("en-US", { timeZone: zone, timeZoneName: "long" }).formatToParts(now).find(x => x.type === "timeZoneName");
+      return p ? p.value : zone;
+    } catch (e) { return zone; }
+  }
+
+  // "UTC+4", "UTC-5", "UTC+5:30", computed from the zone's own wall clock so it needs no newer Intl features.
+  function utcOffset(zone, now) {
+    const p = {};
+    new Intl.DateTimeFormat("en-US", { timeZone: zone, hourCycle: "h23", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit" })
+      .formatToParts(now).forEach(x => { p[x.type] = x.value; });
+    const wall = Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour % 24, +p.minute, +p.second);
+    const mins = Math.round((wall - now.getTime()) / 60000);
+    const a = Math.abs(mins);
+    return "UTC" + (mins < 0 ? "-" : "+") + Math.floor(a / 60) + (a % 60 ? ":" + String(a % 60).padStart(2, "0") : "");
+  }
+
+  function looksLikeUrl(s) {
+    if (/\s/.test(s)) return false;
+    if (/^[a-z][a-z0-9+.-]*:\/\//i.test(s)) return true;
+    if (/^localhost(:\d+)?(\/|$)/i.test(s)) return true;
+    const host = s.split(/[/?#:]/)[0];
+    if (!/^[\w-]+(\.[\w-]+)+$/.test(host)) return false;
+    return TLDS.test(host) || /[/:]/.test(s);
+  }
+
+  const input = document.getElementById("q");
+  document.getElementById("search").addEventListener("submit", e => {
+    const raw = input.value.trim();
+    if (!raw) { e.preventDefault(); return; }
+    const m = raw.match(/^(\S+)(?:\s+(.*))?$/);
+    const p = PREFIX[m[1].toLowerCase()];
+    if (p) { e.preventDefault(); go((m[2] && p.q) ? p.q(m[2]) : p.home); return; }
+    if (looksLikeUrl(raw)) { e.preventDefault(); go(/^[a-z][a-z0-9+.-]*:\/\//i.test(raw) ? raw : "https://" + raw); return; }
+    // Otherwise the form submits to Google on its own.
+  });
+
+  document.addEventListener("keydown", e => {
+    if (e.target === input) { if (e.key === "Escape") { input.value = ""; input.blur(); } return; }
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.key === "/") { e.preventDefault(); input.focus(); return; }
+  });
+
+  document.getElementById("open-settings").addEventListener("click", openSettings);
+  document.getElementById("close-settings").addEventListener("click", closeSettings);
+  document.getElementById("settings").addEventListener("click", e => { if (e.target.id === "settings") closeSettings(); });
+  document.getElementById("theme-seg").addEventListener("click", e => {
+    const b = e.target.closest("button[data-theme]");
+    if (!b) return;
+    settings.theme = b.dataset.theme;
+    saveSettings(settings);
+    applyTheme();
+  });
+  document.getElementById("reset-settings").addEventListener("click", () => {
+    settings = { theme: "light", hidden: {}, extras: [] };
+    saveSettings(settings);
+    applyTheme();
+    paintSettings();
+    render();
+  });
+  document.getElementById("add-link").addEventListener("submit", e => {
+    e.preventDefault();
+    const name = document.getElementById("add-name").value.trim();
+    let url = document.getElementById("add-url").value.trim();
+    const sub = document.getElementById("add-sub").value.trim();
+    const section = document.getElementById("add-section").value;
+    if (!name || !url) return;
+    if (!/^[a-z][a-z0-9+.-]*:\/\//i.test(url)) url = "https://" + url;
+    try { url = new URL(url).href; } catch (err) { return; }
+    if (!/^https?:/i.test(url)) return;
+    settings.extras = (settings.extras || []).filter(x => x.url !== url);
+    settings.extras.push({ name, url, sub, section });
+    delete settings.hidden[url];
+    saveSettings(settings);
+    document.getElementById("add-link").reset();
+    paintSettings();
+    render();
+  });
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape" && document.getElementById("settings").classList.contains("open")) {
+      e.preventDefault(); closeSettings();
+    }
+  });
+  applyTheme();
+
+  render();
+  tick();
+  setInterval(tick, 1000);
+  if (FRAMED) document.getElementById("search").target = "_blank";
+  // Autofocus disabled so Safari URL bar retains cursor on new tabs.
+
+  // ---- Quotas + Fleet RAG panels (home.jays.services) ----
+  const QUOTA_ENDPOINT = "/api/quota";
+  const RAG_ENDPOINT = "/api/rag-snapshot";
+  const QUOTA_POLL_MS = 60_000;
+
+  // One rendered row per provider WINDOW, not one per provider.
+  //
+  // The authoritative numbers live in `quotaGroups`, which Usage Monitor builds
+  // in src/lib/quota-groups.ts: for every (provider, windowKey) it ranks the
+  // readings by source (CodeCaps 3 > Anthropic API / Claude Code / the quota
+  // collector 2 > anything else 1), drops anything past the 48h expiry, and
+  // publishes the winner as `primary`.  CodeCaps renders exactly these.
+  //
+  // The previous version re-derived a provider number with Math.min() over the
+  // raw `windows[]` array instead.  That array holds every reading from every
+  // machine for the last 14 days, so one ancient exhausted reading from a box
+  // that is no longer reporting pinned the whole provider to 0% and dragged its
+  // reset countdown into the past — the page claimed Claude, Codex and
+  // Antigravity were all exhausted while CodeCaps showed them at 100%, 41% and
+  // 96%.  Averaging or min-ing raw rows cannot fix this; the merge has to
+  // happen upstream and its result has to be what we render.
+  function quotaRowsFromGroups(groups) {
+    const rows = [];
+    for (const group of groups) {
+      const provider = group.provider || "unknown";
+      for (const win of group.windows || []) {
+        const primary = win && win.primary;
+        if (!primary) continue;
+        const known = !primary.remainingUnknown && typeof primary.remainingPercent === "number";
+        rows.push({
+          provider,
+          // Antigravity splits Gemini and Third-Party into separate cards, so
+          // the platform title is the label when the upstream supplies one.
+          label: win.platformTitle || group.providerLabel || provider,
+          // Only a real platformTitle may override the local PROVIDERS label.
+          // Applying providerLabel as an override too would demote "cursor" to
+          // a lowercase slug and lose the local "Muse Assistant" name.
+          overrideLabel: win.platformTitle || null,
+          providerLabel: group.providerLabel || provider,
+          windowKey: win.windowKey || "",
+          windowName: win.displayName || win.windowKey || "",
+          remainingPercent: known ? primary.remainingPercent : null,
+          isExhausted: primary.isExhausted === true,
+          resetAt: primary.resetAt || null,
+          reportedAt: primary.reportedAt || null,
+          // A reading older than the upstream's fresh band is still a real
+          // number, but it is not "live" — say so instead of presenting it as
+          // a current quota.
+          freshness: primary.freshness || "fresh",
+          sourceCount: (win.sources || []).length,
+        });
+      }
+    }
+    return rows;
+  }
+
+  // Legacy shape only: an older Usage Monitor with no `quotaGroups`.  Kept so
+  // the panel degrades to "one number per provider" rather than going blank,
+  // but it is the aggregation that used to misreport, so `rows[].degraded` is
+  // surfaced in the UI instead of being passed off as authoritative.
+  function quotaRowsFromWindows(windows) {
+    const byProvider = new Map();
+    for (const w of windows) {
+      const p = w.provider || w.sourceApp || "unknown";
+      if (!byProvider.has(p)) byProvider.set(p, { provider: p, models: [] });
+      byProvider.get(p).models.push(w);
+    }
+    const rows = [];
+    for (const g of byProvider.values()) {
+      const knowns = g.models.filter(m => !m.remainingUnknown && typeof m.remainingPercent === "number");
+      const resets = g.models.map(m => m.resetAt).filter(Boolean).map(s => new Date(s).getTime());
+      const exhausted = g.models.filter(m => m.isExhausted || (m.remainingPercent === 0 && !m.remainingUnknown)).length;
+      rows.push({
+        provider: g.provider,
+        label: g.provider,
+        overrideLabel: null,
+        providerLabel: g.provider,
+        windowKey: "",
+        windowName: g.models.length + (g.models.length === 1 ? " model" : " models") +
+          (exhausted ? " · " + exhausted + " exhausted" : ""),
+        remainingPercent: knowns.length ? Math.min(...knowns.map(m => m.remainingPercent)) : null,
+        isExhausted: knowns.length > 0 && Math.min(...knowns.map(m => m.remainingPercent)) === 0,
+        resetAt: resets.length ? new Date(Math.min(...resets)).toISOString() : null,
+        reportedAt: null,
+        freshness: "unknown",
+        sourceCount: g.models.length,
+        degraded: true,
+      });
+    }
+    return rows;
+  }
+
+  // Most-constrained window first, so whatever is closest to exhausted is the
+  // row at the top of the panel.  Unknown numbers sort last, not first.
+  function sortQuotaRows(rows) {
+    return rows.slice().sort((a, b) => {
+      const ar = a.remainingPercent == null ? 101 : a.remainingPercent;
+      const br = b.remainingPercent == null ? 101 : b.remainingPercent;
+      if (ar !== br) return ar - br;
+      return String(a.label).localeCompare(String(b.label));
+    });
+  }
+
+  function quotaRows(payload) {
+    const groups = payload && Array.isArray(payload.quotaGroups) ? payload.quotaGroups : null;
+    if (groups && groups.length) {
+      const rows = quotaRowsFromGroups(groups);
+      if (rows.length) return sortQuotaRows(rows);
+    }
+    const windows = payload && Array.isArray(payload.windows) ? payload.windows : [];
+    return sortQuotaRows(quotaRowsFromWindows(windows));
+  }
+
+  // Countdown to a FUTURE instant — quota reset windows only.  Callers must
+  // pair it with a word like "in"; it has no sensible reading for a past time.
+  function relTime(iso) {
+    if (!iso) return "—";
+    const ms = new Date(iso).getTime() - Date.now();
+    if (Number.isNaN(ms)) return "—";
+    if (ms <= 0) return "resetting";
+    const s = Math.round(ms / 1000);
+    if (s < 60) return s + "s";
+    const m = Math.round(s / 60);
+    if (m < 60) return m + "m";
+    const h = Math.floor(m / 60);
+    if (h < 24) return h + "h " + (m % 60) + "m";
+    const d = Math.floor(h / 24);
+    return d + "d " + (h % 24) + "h";
+  }
+
+  // Elapsed time SINCE a past instant, for "... N ago" labels.  Kept separate
+  // from relTime() because the two measure opposite directions: passing a past
+  // timestamp to the countdown made every panel header read "resetting ago".
+  //
+  // Units floor rather than round.  Elapsed time has not completed the next unit
+  // yet, and rounding made a 90s-old snapshot claim "2m" (round(90/60) = 2) —
+  // it also made the sub-hour and sub-day cases disagree about precision.
+  function relTimeAgo(iso) {
+    if (!iso) return "—";
+    const t = new Date(iso).getTime();
+    if (Number.isNaN(t)) return "—";
+    const s = Math.floor((Date.now() - t) / 1000);
+    if (s < 5) return "just now";
+    if (s < 60) return s + "s";
+    const m = Math.floor(s / 60);
+    if (m < 60) return m + "m";
+    const h = Math.floor(m / 60);
+    if (h < 24) return h + "h " + (m % 60) + "m";
+    const d = Math.floor(h / 24);
+    return d + "d " + (h % 24) + "h";
+  }
+
+  // Every served brand asset lives under LOGO_BASE, declared once above.
+
+  // ---- Provider identity ----
+  // Keys are the raw provider slugs Usage Monitor emits from
+  // /api/quota-windows.  This mirrors the canonical key -> mark map CodeCaps
+  // ships in PlatformLogo.swift, so the web page and the native app never
+  // disagree about which platform a slug means.
+  //
+  // Every mark is the asset CodeCaps itself serves for that provider — the
+  // `<base>-color.png` its default style loads — copied into public/logos/ by
+  // scripts/sync-logos.mjs.  Owner ruling 2026-10-11: one set of marks owned by
+  // one app, rather than a second set re-derived here from yet another repo.
+  // That is what stopped this page drawing the Grok *app icon* (the black
+  // rounded-square tile, which is right for Grok Web/iOS and wrong as a logo),
+  // purple Muse app tiles in place of the Muse marks, and a MiniMax glyph that
+  // is not the MiniMax mark.
+  //
+  // DeepSeek is the single mark still inlined here, recoloured to currentColor:
+  // CodeCaps does not poll DeepSeek and ships no artwork for it, so it keeps
+  // the Usage Monitor whale rather than borrowing another brand's shape.
+  // Unknown slugs render the raw key with no mark rather than guessing at a
+  // brand — the same deliberate fallback PlatformLogo.swift makes.
+  const DEEPSEEK_MARK = "<svg fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 512 509.64\"><path fill-rule=\"nonzero\" d=\"M440.898 139.167c-4.001-1.961-5.723 1.776-8.062 3.673-.801.612-1.479 1.407-2.154 2.141-5.848 6.246-12.681 10.349-21.607 9.859-13.048-.734-24.192 3.368-34.04 13.348-2.093-12.307-9.048-19.658-19.635-24.37-5.54-2.449-11.141-4.9-15.02-10.227-2.708-3.795-3.447-8.021-4.801-12.185-.861-2.509-1.725-5.082-4.618-5.512-3.139-.49-4.372 2.142-5.601 4.349-4.925 9.002-6.833 18.921-6.647 28.962.432 22.597 9.972 40.597 28.932 53.397 2.154 1.47 2.707 2.939 2.032 5.082-1.293 4.41-2.832 8.695-4.186 13.105-.862 2.817-2.157 3.429-5.172 2.205-10.402-4.346-19.391-10.778-27.332-18.553-13.481-13.044-25.668-27.434-40.873-38.702a177.614 177.614 0 00-10.834-7.409c-15.512-15.063 2.032-27.434 6.094-28.902 4.247-1.532 1.478-6.797-12.251-6.736-13.727.061-26.285 4.653-42.288 10.777-2.34.92-4.801 1.593-7.326 2.142-14.527-2.756-29.608-3.368-45.367-1.593-29.671 3.305-53.368 17.329-70.788 41.272-20.928 28.785-25.854 61.482-19.821 95.59 6.34 35.943 24.683 65.704 52.876 88.974 29.239 24.123 62.911 35.943 101.32 33.677 23.329-1.346 49.307-4.468 78.607-29.27 7.387 3.673 15.142 5.144 28.008 6.246 9.911.92 19.452-.49 26.839-2.019 11.573-2.449 10.773-13.166 6.586-15.124-33.915-15.797-26.47-9.368-33.24-14.573 17.235-20.39 43.213-41.577 53.369-110.222.8-5.448.121-8.877 0-13.287-.061-2.692.553-3.734 3.632-4.041 8.494-.981 16.742-3.305 24.314-7.471 21.975-12.002 30.84-31.719 32.933-55.355.307-3.612-.061-7.348-3.879-9.245v-.003zM249.4 351.89c-32.872-25.838-48.814-34.352-55.4-33.984-6.155.368-5.048 7.41-3.694 12.002 1.415 4.532 3.264 7.654 5.848 11.634 1.785 2.634 3.017 6.551-1.784 9.493-10.587 6.55-28.993-2.205-29.856-2.635-21.421-12.614-39.334-29.269-51.954-52.047-12.187-21.924-19.267-45.435-20.435-70.542-.308-6.061 1.478-8.207 7.509-9.307 7.94-1.471 16.127-1.778 24.068-.615 33.547 4.9 62.108 19.902 86.054 43.66 13.666 13.531 24.007 29.699 34.658 45.496 11.326 16.778 23.514 32.761 39.026 45.865 5.479 4.592 9.848 8.083 14.035 10.656-12.62 1.407-33.673 1.714-48.075-9.676zm15.899-102.519c.521-2.111 2.421-3.658 4.722-3.658a4.74 4.74 0 011.661.305c.678.246 1.293.614 1.786 1.163.861.859 1.354 2.083 1.354 3.368 0 2.695-2.154 4.837-4.862 4.837a4.748 4.748 0 01-4.738-4.034 5.01 5.01 0 01.077-1.981zm47.208 26.915c-2.606.996-5.2 1.778-7.707 1.88-4.679.244-9.787-1.654-12.556-3.981-4.308-3.612-7.386-5.631-8.679-11.941-.554-2.695-.247-6.858.246-9.246 1.108-5.144-.124-8.451-3.754-11.451-2.954-2.449-6.711-3.122-10.834-3.122-1.539 0-2.954-.673-4.001-1.224-1.724-.856-3.139-3-1.785-5.634.432-.856 2.525-2.939 3.018-3.305 5.6-3.185 12.065-2.144 18.034.244 5.54 2.266 9.727 6.429 15.759 12.307 6.155 7.102 7.263 9.063 10.773 14.39 2.771 4.163 5.294 8.451 7.018 13.348.877 2.561.071 4.74-2.341 6.277-.981.625-2.109 1.044-3.191 1.458z\"/></svg>";
+
+  // Labels name the PRODUCT you actually hold a subscription to, matching
+  // CodeCaps — not the company behind it.  CodeCaps calls providerKey
+  // "anthropic" "Claude", "openai" "Codex", "xai" "Grok" and
+  // "google-antigravity" "Antigravity" (see QuotaCore's reader
+  // providerLabel: values and GlanceRowTests' platformTitle).  Shipping
+  // "xAI" beside the Grok mark was the tell that this table had been written
+  // from company names instead.
+  const PROVIDERS = {
+    "anthropic":            { label: "Claude",         mark: "claude-color.png" },
+    "claude":               { label: "Claude",         mark: "claude-color.png" },
+    "openai":               { label: "Codex",          mark: "openai-color.png" },
+    "codex":                { label: "Codex",          mark: "openai-color.png" },
+    "xai":                  { label: "Grok",           mark: "grok-color.png" },
+    "grok":                 { label: "Grok",           mark: "grok-color.png" },
+    "grok-cli":             { label: "Grok CLI",       mark: "grok-color.png" },
+    // Grok Bot is its own seat with its own mark; showing the plain Grok mark
+    // here made two different things look like one.
+    "grok-bot":             { label: "Grok Bot",       mark: "grok-bot-color.png" },
+    // Antigravity wears the Gemini mark — CodeCaps maps google-antigravity to
+    // gemini, and owner ruling 2026-10-11 is the same for the AG seat chip.
+    "google-antigravity":   { label: "Antigravity",    mark: "gemini-color.png" },
+    "antigravity":          { label: "Antigravity",    mark: "gemini-color.png" },
+    "gemini":               { label: "Gemini",         mark: "gemini-color.png" },
+    "gemini-cli":           { label: "Gemini CLI",     mark: "gemini-color.png" },
+    "minimax":              { label: "MiniMax",        mark: "minimax.png" },
+    "deepseek":             { label: "DeepSeek",       svg: DEEPSEEK_MARK },
+    "kimi":                 { label: "Kimi Code",      mark: null },
+    "cursor":               { label: "Cursor",         mark: "cursor-color.png" },
+    "muse":                 { label: "Muse Assistant", mark: "muse-assist-color.png" },
+    "muse-assist":          { label: "Muse Assistant", mark: "muse-assist-color.png" },
+    "muse-assistant":       { label: "Muse Assistant", mark: "muse-assist-color.png" },
+    "muse-code":            { label: "Muse Code",      mark: "muse-code-color.png" },
+  };
+
+  function providerInfo(key) {
+    const slug = String(key == null ? "" : key).trim().toLowerCase();
+    return PROVIDERS[slug] || null;
+  }
+
+  // A provider mark: the brand asset as an image, or the one inlined SVG.
+  // The adjacent text label always names the platform, so the image is
+  // decorative and a missing file degrades to a readable label, never a blank.
+  function markEl(info, extra) {
+    if (info.svg) {
+      const s = el("span", extra ? "pmark " + extra : "pmark");
+      s.innerHTML = info.svg;
+      s.setAttribute("aria-hidden", "true");
+      return s;
+    }
+    if (!info.mark) return null;
+    const m = el("img", extra ? "pmark " + extra : "pmark");
+    m.src = LOGO_BASE + info.mark;
+    m.alt = "";
+    m.loading = "lazy";
+    m.decoding = "async";
+    m.setAttribute("aria-hidden", "true");
+    return m;
+  }
+
+  // Mark + human label for a provider slug.  Falls back to the raw slug so an
+  // unrecognised provider is still readable rather than blank.
+  //
+  // `overrideLabel` carries the upstream's platformTitle when it supplies one:
+  // Antigravity reports Gemini and Third-Party as two cards under the single
+  // provider slug "google-antigravity", so the table's one-label-per-slug
+  // cannot tell those rows apart on its own.
+  function providerId(key, overrideLabel) {
+    const slug = String(key == null ? "" : key).trim().toLowerCase();
+    const info = PROVIDERS[slug];
+    const wrap = el("div", "quota-id");
+    if (!info) {
+      wrap.appendChild(el("span", "n", (overrideLabel && overrideLabel !== slug) ? overrideLabel : (slug || "unknown")));
+      return wrap;
+    }
+    const mark = markEl(info);
+    if (mark) wrap.appendChild(mark);
+    wrap.appendChild(el("span", "n", (overrideLabel && overrideLabel !== info.label) ? overrideLabel : info.label));
+    return wrap;
+  }
+
+  // Just the mark, for rows that already name the provider in text.
+  function providerMark(key) {
+    const info = PROVIDERS[String(key == null ? "" : key).trim().toLowerCase()];
+    return info ? markEl(info, "pmark-sm") : null;
+  }
+
+  function quotaClass(pct) {
+    if (pct == null) return "na";
+    if (pct === 0 || pct < 25) return "low";
+    if (pct < 60) return "warn";
+    return "ok";
+  }
+
+  function renderQuotas(payload) {
+    const body = document.getElementById("quotas-body");
+    const meta = document.getElementById("quota-meta");
+    const dot = document.getElementById("quota-dot");
+    body.replaceChildren();
+    if (!payload) {
+      body.appendChild(el("div", "panel-empty", "Quota data unavailable."));
+      meta.textContent = "stale";
+      dot.className = "live-dot stale";
+      return;
+    }
+    const rows = quotaRows(payload);
+    if (!rows.length) {
+      body.appendChild(el("div", "panel-empty", "No quota has been reported yet."));
+      meta.textContent = "stale";
+      dot.className = "live-dot stale";
+      return;
+    }
+    const left = el("div");
+    body.append(left);
+    let degraded = false;
+
+    // Rows arrive sorted most-constrained first, but they are grouped by
+    // provider so the window list sits under one identity instead of repeating
+    // the same mark four times down the card.
+    const order = [];
+    const grouped = new Map();
+    for (const r of rows) {
+      if (r.degraded) degraded = true;
+      const key = r.provider + " " + r.label;
+      if (!grouped.has(key)) {
+        // `overrideLabel` has to be carried onto the group: Antigravity's two
+        // cards share one provider slug and are told apart only by their
+        // platformTitle, and the header is the only place that title appears.
+        grouped.set(key, { provider: r.provider, label: r.label, overrideLabel: r.overrideLabel, rows: [] });
+        order.push(grouped.get(key));
+      }
+      grouped.get(key).rows.push(r);
+    }
+    // Providers, not windows, set the panel order: whichever window is closest
+    // to exhausted decides where its provider sits.
+    order.sort((a, b) => {
+      const ar = Math.min(...a.rows.map(r => (r.remainingPercent == null ? 101 : r.remainingPercent)));
+      const br = Math.min(...b.rows.map(r => (r.remainingPercent == null ? 101 : r.remainingPercent)));
+      if (ar !== br) return ar - br;
+      return String(a.label).localeCompare(String(b.label));
+    });
+
+    for (const g of order) {
+      // Each provider is a block: one header plus the window rows beneath it.
+      // The wrapper is what lets a test ask for "the rows under Antigravity"
+      // without re-implementing the grouping, and it keeps the header and its
+      // rows from being read as unrelated siblings.
+      const block = el("div", "quota-provider-block");
+      const head = el("div", "quota-provider");
+      head.append(providerId(g.provider, g.overrideLabel));
+      head.append(el("small", null, g.rows.length + (g.rows.length === 1 ? " window" : " windows")));
+      block.appendChild(head);
+      for (const r of g.rows) {
+        const row = el("div", "quota-row sub");
+        const name = el("div", "quota-name");
+        name.append(el("span", "win", r.windowName));
+        const val = el("div", "quota-val");
+        if (r.remainingPercent == null) {
+          val.appendChild(el("b", null, "n/a"));
+          val.appendChild(el("span", "quota-status", "unknown"));
+        } else if (r.remainingPercent === 0) {
+          val.appendChild(el("b", null, "0%"));
+          val.appendChild(el("span", "quota-status exh", "exhausted"));
+        } else {
+          val.appendChild(el("b", null, Math.round(r.remainingPercent) + "%"));
+          val.appendChild(el("span", "quota-status " + (r.remainingPercent < 25 ? "low" : ""), "in " + relTime(r.resetAt)));
+        }
+        // An "old" or "stale" primary is a real reading that has aged out of the
+        // upstream's fresh band.  Reporting it in the same visual voice as a
+        // fresh one is how the panel came to assert a dead quota as a live fact.
+        if (r.freshness === "old" || r.freshness === "stale") {
+          val.appendChild(el("span", "quota-status old", r.freshness === "old" ? "outdated" : "stale"));
+        }
+        const bar = el("div", "quota-bar");
+        const fill = el("div", "quota-fill " + quotaClass(r.remainingPercent));
+        fill.style.width = (r.remainingPercent == null ? 4 : Math.max(2, r.remainingPercent)) + "%";
+        bar.appendChild(fill);
+        row.append(name, val, bar);
+        block.appendChild(row);
+      }
+      left.appendChild(block);
+    }
+    meta.textContent = "live · " + relTimeAgo(payload.generatedAt);
+    dot.className = "live-dot";
+    if (degraded) {
+      const warn = el("div", "quota-degraded");
+      warn.textContent =
+        "Usage Monitor sent no merged quota groups, so these are provider averages across every reported model. Per-window detail is unavailable until it does.";
+      left.appendChild(warn);
+    }
+  }
+
+  async function pollQuotas() {
+    try {
+      const r = await fetch(QUOTA_ENDPOINT, { cache: "no-store" });
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      const data = await r.json();
+      renderQuotas(data);
+    } catch (err) {
+      const body = document.getElementById("quotas-body");
+      const meta = document.getElementById("quota-meta");
+      const dot = document.getElementById("quota-dot");
+      body.replaceChildren(el("div", "panel-empty", "Could not reach the quota proxy. " + (err && err.message ? "(" + err.message + ")" : "")));
+      meta.textContent = "error";
+      dot.className = "live-dot err";
+    }
+  }
+
+  function colorFor(key) {
+    const palette = { ST:"#0F766E", CT:"#1E3A8A", UM:"#EA580C", DD:"#15803D", BF:"#7C3AED", PS:"#0369A1", AR:"#B45309", CL:"#BE185D", AFC:"#111827", OPS:"#374151", CTS:"#475569",
+                      CLAUDE:"#D97757", CURSOR:"#7C3AED", CODEX:"#10A37F", GROK:"#1F1F1F", MONET:"#0EA5E9", AG:"#4285F4", MM:"#FF6B35", FX:"#8B5CF6",
+                      MINIMAX:"#FF6B35", GEMINI:"#4285F4", DEEPSEEK:"#4D6BFE", KIMI:"#1F1F1F", MUSE:"#9333EA", RENOIR:"#0F766E",
+                      "GROK-BOT":"#525252", "BF-DIRECTOR":"#525252", "BF-FIXER":"#525252", "BF-PLUMBER":"#525252" };
+    return palette[key] || "#6E6E73";
+  }
+
+  // ---- Fleet RAG card assets ----
+  // Rows rendered in the Components column.  The panel is a fixed-height
+  // three-column card; the overflow count is printed below the list.
+  const COMPONENT_LIMIT = 9;
+  // public/logos/ is a copy of AI-Fleet-Coordinator/agent-logos/, the fleet's
+  // canonical seat-mark + app-icon set.  Nothing here is generated or
+  // substituted art: if a seat or app has no file, it renders its text alone
+  // rather than borrowing a neighbouring brand's mark.
+
+  // Seat tag -> logo file.  Keys are upper-cased and hyphens stripped on lookup
+  // so "GROK-BOT" and "grok_bot" both resolve.
+  const SEAT_LOGOS = {
+    CLAUDE: "claude-color.png",
+    CODEX: "openai-color.png",
+    CURSOR: "cursor-color.png",
+    GROK: "grok-color.png",
+    "GROK-BOT": "grok-bot-color.png",
+    MONET: "monet.svg",
+    // Antigravity wears the Gemini logo (owner ruling 2026-10-11); there is no
+    // separate Antigravity file to drift out of sync with it.
+    AG: "gemini-color.png",
+    GEMINI: "gemini-color.png",
+    MM: "minimax.png",
+    MINIMAX: "minimax.png",
+    DEEPSEEK: "deepseek.svg",
+    KIMI: "kimi.svg",
+    MA: "muse-assist-color.png",
+    "MUSE-ASSIST": "muse-assist-color.png",
+    MUSE: "muse-assist-color.png",
+    MC: "muse-code-color.png",
+    "MUSE-CODE": "muse-code-color.png",
+    RENOIR: "renoir.svg",
+    // BotFleet's own seats borrow the Grok Bot mark, as before.
+    "BF-DIRECTOR": "grok-bot-color.png",
+    "BF-FIXER": "grok-bot-color.png",
+    "BF-PLUMBER": "grok-bot-color.png",
+  };
+
+  function seatLogoFile(tag) {
+    const key = String(tag == null ? "" : tag).trim().toUpperCase();
+    return SEAT_LOGOS[key] || SEAT_LOGOS[key.replace(/-/g, "")] || null;
+  }
+
+  // A seat mark inside a chip that already has a coloured background, so the
+  // mark needs a light plate to stay legible on both themes.
+  function seatMarkImg(tag, alt) {
+    const file = seatLogoFile(tag);
+    if (!file) return null;
+    const img = document.createElement("img");
+    img.className = "seat-mark";
+    img.src = LOGO_BASE + file;
+    img.alt = alt || "";
+    img.loading = "lazy";
+    img.decoding = "async";
+    // The seat text stays in the DOM next to it, so the image is decorative
+    // and a failed load leaves a readable tag rather than a blank chip.
+    if (!alt) img.setAttribute("aria-hidden", "true");
+    return img;
+  }
+
+  function renderRag(snap) {
+    const meta = document.getElementById("rag-meta");
+    const compEl = document.getElementById("rag-components");
+    const chgEl = document.getElementById("rag-changes");
+    const seatEl = document.getElementById("rag-seats");
+    const dateEl = document.getElementById("rag-snap-date");
+    compEl.replaceChildren(); chgEl.replaceChildren(); seatEl.replaceChildren();
+    if (!snap) {
+      meta.textContent = "unavailable";
+      compEl.appendChild(el("div", "panel-empty", "No RAG snapshot loaded."));
+      return;
+    }
+    const generatedAt = snap.generatedAt ? new Date(snap.generatedAt) : null;
+    if (dateEl && generatedAt) dateEl.textContent = generatedAt.toISOString().slice(0, 16).replace("T", " ") + "Z";
+    const corpusPoints = (snap.corpus && snap.corpus.points) || null;
+    meta.textContent = "snapshot · " + (generatedAt ? relTimeAgo(snap.generatedAt) : "—") + (corpusPoints ? " · " + corpusPoints.toLocaleString() + " pts" : "");
+
+    const maxHits = Math.max(1, ...(snap.components || []).map(c => c.hits || 0));
+    for (const c of (snap.components || []).slice(0, COMPONENT_LIMIT)) {
+      const row = el("div", "comp-card");
+      const acr = el("div", "comp-acr");
+      if (c.icon) {
+        // Real app icon from public/logos/.  If it fails to load, fall back to
+        // the monogram tile so the row is never an empty square.
+        const img = document.createElement("img");
+        img.className = "app-icon";
+        img.src = LOGO_BASE + c.icon;
+        img.alt = "";
+        img.loading = "lazy";
+        img.decoding = "async";
+        img.setAttribute("aria-hidden", "true");
+        img.addEventListener("error", () => {
+          acr.replaceChildren();
+          acr.classList.add("mono");
+          acr.style.background = colorFor(c.acronym);
+          acr.textContent = c.acronym;
+        }, { once: true });
+        acr.appendChild(img);
+      } else {
+        acr.classList.add("mono");
+        acr.style.background = colorFor(c.acronym);
+        acr.textContent = c.acronym;
+      }
+      const meta2 = el("div", "comp-meta");
+      const nm = el("div", "n"); nm.textContent = c.name;
+      const sb = el("div", "s"); sb.textContent = c.tagline || c.repo;
+      meta2.append(nm, sb);
+      const hits = el("div", "comp-hits"); hits.textContent = c.hits != null ? c.hits.toLocaleString() : "—";
+      row.append(acr, meta2, hits);
+      compEl.appendChild(row);
+    }
+    if (!compEl.children.length) compEl.appendChild(el("div", "panel-empty", "No components."));
+    // The card is a fixed three-column panel, so the row count is capped to keep
+    // the columns aligned.  Say how many are held back rather than letting the
+    // list look complete: a silently truncated roster reads as "these are all
+    // the fleet's apps" when it is not.
+    const allComps = snap.components || [];
+    if (allComps.length > COMPONENT_LIMIT) {
+      const more = allComps.length - COMPONENT_LIMIT;
+      compEl.appendChild(el(
+        "div", "panel-empty",
+        `+${more} more in the full snapshot (${allComps.length} total).`,
+      ));
+    }
+
+    for (const ch of (snap.recentChanges || []).slice(0, 9)) {
+      const li = document.createElement("li");
+      const d = el("span", "d"); d.textContent = ch.date || "";
+      const seat = el("span", "seat"); seat.style.background = colorFor(ch.seat);
+      // Mark first, then the tag text — a seat with no mark still reads.
+      const mark = seatMarkImg(ch.seat);
+      if (mark) seat.appendChild(mark);
+      seat.appendChild(document.createTextNode(ch.seat || ""));
+      const t = el("span", "t"); t.textContent = ch.title || "";
+      li.append(d, seat, t);
+      chgEl.appendChild(li);
+    }
+    if (!chgEl.children.length) chgEl.appendChild(el("div", "panel-empty", "No changes captured yet."));
+
+    const maxSeat = Math.max(1, ...(snap.seats || []).map(s => s.recentCount || 0));
+    for (const s of (snap.seats || []).slice(0, 8)) {
+      const row = el("div", "seat-bar");
+      const lbl = el("span", "lbl");
+      const mark = seatMarkImg(s.tag);
+      if (mark) lbl.appendChild(mark);
+      lbl.appendChild(document.createTextNode(s.tag));
+      const trk = el("div", "trk");
+      const fl = el("div", "fl");
+      fl.style.background = s.color || colorFor(s.tag);
+      fl.style.width = Math.max(4, Math.round(100 * (s.recentCount || 0) / maxSeat)) + "%";
+      trk.appendChild(fl);
+      const n = el("span", "n"); n.textContent = s.recentCount != null ? s.recentCount : "—";
+      row.append(lbl, trk, n);
+      seatEl.appendChild(row);
+    }
+    if (!seatEl.children.length) seatEl.appendChild(el("div", "panel-empty", "No seat activity."));
+  }
+
+  async function loadRag() {
+    try {
+      const r = await fetch(RAG_ENDPOINT, { cache: "no-store" });
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      const data = await r.json();
+      renderRag(data);
+    } catch (err) {
+      const meta = document.getElementById("rag-meta");
+      meta.textContent = "snapshot error";
+      const compEl = document.getElementById("rag-components");
+      compEl.replaceChildren(el("div", "panel-empty", "RAG snapshot unavailable. " + (err && err.message ? "(" + err.message + ")" : "")));
+    }
+  }
+
+  // Kick off live data on page load.
+  pollQuotas();
+  loadRag();
+  setInterval(pollQuotas, QUOTA_POLL_MS);
+</script>
+</body>
+</html>

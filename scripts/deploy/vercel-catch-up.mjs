@@ -67,7 +67,7 @@ export async function request(url, token, fetchImpl = fetch) {
   return res.json();
 }
 async function main() {
-  const config = JSON.parse(readFileSync('scripts/deploy/vercel-config.json', 'utf8'));
+  const config = JSON.parse(readFileSync(process.env.VERCEL_CONFIG_PATH || 'scripts/deploy/vercel-config.json', 'utf8'));
   const target = git(['rev-parse', 'HEAD']);
   must(process.env.GITHUB_REPOSITORY === config.repository, 'Wrong repository');
   must(process.env.VERCEL_TOKEN && process.env.GH_TOKEN, 'Missing deploy/read credentials');

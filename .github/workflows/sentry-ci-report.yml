@@ -23,23 +23,28 @@ name: Sentry CI Report
 #
 # workflows observed (from `ls .github/workflows/`; see each file's `name:`):
 #   Backup GitHub Repositories, CI, Effort Issues Sync, Secret scanning,
-#   Mirror live site, Site CI
+#   Mirror live site, Site CI, Vercel production catch-up (start),
+#   refresh-rag-snapshot
 #
 # Cron schedules mirrored for the check-in step (must match the source
 # workflow's `schedule:` block; keep in sync if those change):
 #   Mirror live site   -> "0 6 * * *"   (mirror-site.yml daily live-site mirror)
 #   Effort Issues Sync -> "27 6 * * *"  (effort-issues-sync.yml daily)
+#   refresh-rag-snapshot -> "0 11 * * *"  (refresh-rag-snapshot.yml daily)
+#   Vercel production catch-up (start) -> "41 * * * *"  (vercel-catch-up-start.yml hourly)
 
 on:
   workflow_run:
     workflows:
       - Vercel production catch-up
+      - Vercel production catch-up (start)
       - Backup GitHub Repositories
       - CI
       - Effort Issues Sync
       - Secret scanning
       - Mirror live site
       - Site CI
+      - refresh-rag-snapshot
     types: [requested, completed]
 
 

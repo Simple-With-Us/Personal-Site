@@ -90,8 +90,10 @@ APP = "personal-site"
 
 CRON_SCHEDULES = {
     "Vercel production catch-up": "41 * * * *",
+    "Vercel production catch-up (start)": "41 * * * *",
     "Effort Issues Sync": "27 6 * * *",
     "Mirror live site": "0 6 * * *",
+    "refresh-rag-snapshot": "0 11 * * *",
 }
 _CRON_SCHEDULES_FOLDED = {name.casefold(): expr for name, expr in CRON_SCHEDULES.items()}
 

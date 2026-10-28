@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-12T04:09:22.745Z",
+  "generatedAt": "2026-10-28T16:14:46.897Z",
   "schema": 2,
   "components": [
     {
@@ -9,7 +9,7 @@
       "url": "https://socratictrade.com",
       "icon": "app-st.png",
       "slug": "socratic-trade",
-      "hits": 22564
+      "hits": 22456
     },
     {
       "acronym": "CT",
@@ -18,7 +18,7 @@
       "url": "https://congress.trade",
       "icon": "app-ct.png",
       "slug": "congress-trade",
-      "hits": 8488
+      "hits": 8587
     },
     {
       "acronym": "UM",
@@ -27,7 +27,7 @@
       "url": "https://usage.jays.services",
       "icon": "app-um.png",
       "slug": "usage-monitor",
-      "hits": 4754
+      "hits": 4674
     },
     {
       "acronym": "BF",
@@ -36,7 +36,7 @@
       "url": "https://botfleet.app",
       "icon": "app-bf.png",
       "slug": "botfleet",
-      "hits": 11703
+      "hits": 11670
     },
     {
       "acronym": "DD",
@@ -45,7 +45,7 @@
       "url": "https://dealdex.net",
       "icon": "app-dd.png",
       "slug": "dealdex",
-      "hits": 1700
+      "hits": 1731
     },
     {
       "acronym": "CL",
@@ -54,7 +54,7 @@
       "url": "https://contactlogo.com",
       "icon": "app-cl.png",
       "slug": "contactlogo",
-      "hits": 832
+      "hits": 816
     },
     {
       "acronym": "AR",
@@ -63,7 +63,7 @@
       "url": "https://autorotate.vercel.app",
       "icon": "app-ar.png",
       "slug": "autorotate",
-      "hits": 929
+      "hits": 907
     },
     {
       "acronym": "CTS",
@@ -72,7 +72,7 @@
       "url": null,
       "icon": null,
       "slug": "congress-trading-shared",
-      "hits": 588
+      "hits": 594
     },
     {
       "acronym": "AFC",
@@ -81,7 +81,7 @@
       "url": null,
       "icon": "app-afc.png",
       "slug": "fleet",
-      "hits": 7667
+      "hits": 10341
     },
     {
       "acronym": "OPS",
@@ -90,7 +90,7 @@
       "url": null,
       "icon": null,
       "slug": "fleet-ops",
-      "hits": 637
+      "hits": 678
     },
     {
       "acronym": "PS",
@@ -99,22 +99,22 @@
       "url": "https://jays.services",
       "icon": "app-ps.png",
       "slug": "personal-site",
-      "hits": 424
+      "hits": 412
     }
   ],
   "seats": [
     {
-      "tag": "AG",
-      "fullName": "Antigravity / Gemini",
-      "color": "#4285F4",
-      "mark": "gemini-color.png",
-      "recentCount": 14
+      "tag": "MM",
+      "fullName": "Mavis (MM)",
+      "color": "#FF6B35",
+      "mark": "minimax.png",
+      "recentCount": 9
     },
     {
-      "tag": "CLAUDE",
-      "fullName": "Claude / Anthropic",
-      "color": "#D97757",
-      "mark": "claude-color.png",
+      "tag": "MONET",
+      "fullName": "Monet",
+      "color": "#0EA5E9",
+      "mark": "monet.svg",
       "recentCount": 8
     },
     {
@@ -122,34 +122,34 @@
       "fullName": "xAI Grok",
       "color": "#1F1F1F",
       "mark": "grok-color.png",
-      "recentCount": 5
+      "recentCount": 1
     },
     {
-      "tag": "CODEX",
-      "fullName": "OpenAI Codex",
-      "color": "#10A37F",
-      "mark": "openai-color.png",
-      "recentCount": 5
+      "tag": "AG",
+      "fullName": "Antigravity / Gemini",
+      "color": "#4285F4",
+      "mark": "gemini-color.png",
+      "recentCount": 1
     },
     {
-      "tag": "MM",
-      "fullName": "Mavis (MM)",
-      "color": "#FF6B35",
-      "mark": "minimax.png",
-      "recentCount": 2
+      "tag": "CLAUDE",
+      "fullName": "Claude / Anthropic",
+      "color": "#D97757",
+      "mark": "claude-color.png",
+      "recentCount": 0
     },
     {
       "tag": "CURSOR",
       "fullName": "Cursor",
       "color": "#7C3AED",
       "mark": "cursor-color.png",
-      "recentCount": 1
+      "recentCount": 0
     },
     {
-      "tag": "MONET",
-      "fullName": "Monet",
-      "color": "#0EA5E9",
-      "mark": "monet.svg",
+      "tag": "CODEX",
+      "fullName": "OpenAI Codex",
+      "color": "#10A37F",
+      "mark": "openai-color.png",
       "recentCount": 0
     },
     {
@@ -162,106 +162,106 @@
   ],
   "recentChanges": [
     {
-      "date": "2026-10-10",
-      "seat": "CLAUDE",
-      "app": "fleet",
-      "title": "Infisical prod-only: repoint Congress.Trade, Socratic-Trade and congress-trading-shared env selection to prod with a …"
+      "date": "2026-10-18",
+      "seat": "GB-COMPILER",
+      "app": "botfleet",
+      "title": "2026-10-18 - GB-COMPILER - COMPLETED - [BF][CLAUDE] Hosted Mac update can never install: ci-build-resolver refuses ev…"
     },
     {
-      "date": "2026-10-10",
-      "seat": "CLAUDE",
-      "app": "congress-trade",
-      "title": "2026-10-10 — CLAUDE — COMPLETED #2683 (b1c32183, Coolify rebuilt, /api/health secrets enabled + cacheReady) — Infisic…"
+      "date": "2026-10-18",
+      "seat": "MM",
+      "app": "botfleet",
+      "title": "2026-10-18 - MM - COMPLETED - [BF][MM] iOS chat library options: survey says build natively, not adopt."
     },
     {
-      "date": "2026-10-10",
-      "seat": "CLAUDE",
-      "app": "fleet",
-      "title": "Infisical prod-only consolidation"
+      "date": "2026-10-18",
+      "seat": "MM",
+      "app": "botfleet",
+      "title": "2026-10-18 - MM - COMPLETED - Model selector: names unreadable at narrow width, usage chip per row, engine name hidde…"
     },
     {
-      "date": "2026-10-10",
-      "seat": "CLAUDE",
+      "date": "2026-10-18",
+      "seat": "MM",
+      "app": "botfleet",
+      "title": "2026-10-18 - MM - COMPLETED - BotFleet could not update itself on any Mac: dependency gate compared a pnpm 12 lockfil…"
+    },
+    {
+      "date": "2026-10-18",
+      "seat": "GB-MONITOR",
+      "app": "botfleet",
+      "title": "2026-10-18 - GB-MONITOR - COMPLETED - Gate Renovate and packaging PRs on a pre-merge Mac packaging check (unsigned ar…"
+    },
+    {
+      "date": "2026-10-18",
+      "seat": "GB-MONITOR",
+      "app": "botfleet",
+      "title": "2026-10-18 - GB-MONITOR - COMPLETED - BotFleet PR #899: required typecheck + test (windows-latest) red — sentry-testf…"
+    },
+    {
+      "date": "2026-10-18",
+      "seat": "GB-MONITOR",
+      "app": "botfleet",
+      "title": "2026-10-18 - GB-MONITOR - COMPLETED - Gate Renovate and packaging PRs on a pre-merge Mac packaging check (unsigned ar…"
+    },
+    {
+      "date": "2026-10-18",
+      "seat": "MONET",
       "app": "socratic-trade",
-      "title": "2026-10-10 - CLAUDE - COMPLETED #4431 (a9606f76, Coolify deploy started 7:45am) - Infisical prod-only: wrapper defaul…"
+      "title": "2026-10-18 - MONET - COMPLETED - ST embed fail-fast and congress-share upstream 500 breaker."
     },
     {
-      "date": "2026-10-08",
-      "seat": "AG",
+      "date": "2026-10-18",
+      "seat": "GB-MONITOR",
       "app": "botfleet",
-      "title": "2026-09-11 — AG — COMPLETED / DEPLOYED — Quota telemetry countdowns, rates table cleanup, MiniMax & Custom Engines in…"
+      "title": "2026-10-18 - GB-MONITOR - COMPLETED - BotFleet: sharp/librsvg GHSA-wq5f-xc86-pv6w STILL reachable via next@16.3.6 aft…"
     },
     {
-      "date": "2026-10-08",
-      "seat": "AG",
-      "app": "botfleet",
-      "title": "2026-09-11 — AG — COMPLETED / DEPLOYED — Quota telemetry countdowns, rates table cleanup, MiniMax & Custom Engines in…"
+      "date": "2026-10-18",
+      "seat": "MONET",
+      "app": "socratic-trade",
+      "title": "2026-10-18 - MONET - COMPLETED - PR #4668: merge main, triage review threads, fix CI."
     },
     {
-      "date": "2026-10-08",
-      "seat": "GROK",
-      "app": "botfleet",
-      "title": "2026-09-01 — GROK — COMPLETED — Sentry production deploy records (sentry-cli releases deploys new -e production) (bra…"
+      "date": "2026-10-18",
+      "seat": "MONET",
+      "app": "congress-trade",
+      "title": "2026-10-18 - MONET - COMPLETED - PR 2731 share import review fixes."
     },
     {
-      "date": "2026-10-08",
-      "seat": "AG",
-      "app": "botfleet",
-      "title": "2026-09-09 — AG — COMPLETED / DEPLOYED — Scope PATCH /api/instances to affected engine and fix settings lock stall (P…"
-    },
-    {
-      "date": "2026-10-08",
-      "seat": "AG",
-      "app": "botfleet",
-      "title": "2026-09-11 — AG — COMPLETED / DEPLOYED — Infisical timeout handling and full write-through sync (PR #309 squash 2246f…"
-    },
-    {
-      "date": "2026-10-08",
-      "seat": "AG",
-      "app": "botfleet",
-      "title": "2026-09-19 — AG — COMPLETED (PR #492 merged d4acd2c5) — Autocomplete (@ Bots, # Apps/Channels) & Mention Highlighting…"
-    },
-    {
-      "date": "2026-10-08",
-      "seat": "CODEX",
-      "app": "botfleet",
-      "title": "2026-09-11 — CODEX — COMPLETED — Provider request isolation (#278/#279, PR #314, boards a board item / a board item)."
-    },
-    {
-      "date": "2026-10-07",
-      "seat": "CODEX",
-      "app": "personal-site",
-      "title": "2026-09-26 — CODEX — COMPLETED/DEPLOYED — Public portfolio boundary, selected..."
+      "date": "2026-10-18",
+      "seat": "GB-MONITOR",
+      "app": "socratic-trade",
+      "title": "2026-10-18 - GB-MONITOR - COMPLETED - ST #3385 sqliteYieldRetry remainder: scheduler writes + synthetic-stop delete/a…"
     }
   ],
   "corpus": {
     "collection": "fleet-agents",
     "status": "green",
-    "points": 62858,
+    "points": 65811,
     "bySource": {
-      "board": 26677,
-      "effort-log": 3339,
-      "apple-note": 2625,
-      "doc": 26356,
-      "skill": 778,
-      "memory": 865,
+      "board": 27046,
+      "effort-log": 3348,
+      "apple-note": 1319,
+      "doc": 28177,
+      "skill": 965,
+      "memory": 1718,
       "chat-log": 0,
-      "agent-contribution": 2217
+      "agent-contribution": 3237
     },
     "byApp": {
-      "fleet": 7667,
-      "socratic-trade": 22564,
-      "congress-trade": 8488,
-      "congress-trading-shared": 588,
-      "usage-monitor": 4754,
-      "dealdex": 1700,
-      "botfleet": 11703,
-      "personal-site": 424,
-      "fleet-ops": 637,
-      "autorotate": 929,
-      "contactlogo": 832,
-      "clutch": 84,
-      "other": 2488
+      "fleet": 10341,
+      "socratic-trade": 22456,
+      "congress-trade": 8587,
+      "congress-trading-shared": 594,
+      "usage-monitor": 4674,
+      "dealdex": 1731,
+      "botfleet": 11670,
+      "personal-site": 412,
+      "fleet-ops": 678,
+      "autorotate": 907,
+      "contactlogo": 816,
+      "clutch": 134,
+      "other": 2811
     }
   }
 }

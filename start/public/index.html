@@ -426,7 +426,7 @@
           <div id="rag-seats"></div>
         </div>
       </div>
-      <div class="panel-foot">Snapshot from <code id="rag-snap-date"></code> · <a href="https://mac.jays.services/board" target="_blank" rel="noopener">THE BOARD</a> · <a href="https://activity.jays.services/" target="_blank" rel="noopener">Fleet Activity</a></div>
+      <div class="panel-foot">Live from <code id="rag-snap-date"></code> · <a href="https://mac.jays.services/board" target="_blank" rel="noopener">THE BOARD</a> · <a href="https://activity.jays.services/" target="_blank" rel="noopener">Fleet Activity</a></div>
     </div>
   </section>
 
@@ -1272,13 +1272,13 @@
     compEl.replaceChildren(); chgEl.replaceChildren(); seatEl.replaceChildren();
     if (!snap) {
       meta.textContent = "unavailable";
-      compEl.appendChild(el("div", "panel-empty", "No RAG snapshot loaded."));
+      compEl.appendChild(el("div", "panel-empty", "No RAG data loaded."));
       return;
     }
     const generatedAt = snap.generatedAt ? new Date(snap.generatedAt) : null;
     if (dateEl && generatedAt) dateEl.textContent = generatedAt.toISOString().slice(0, 16).replace("T", " ") + "Z";
     const corpusPoints = (snap.corpus && snap.corpus.points) || null;
-    meta.textContent = "snapshot · " + (generatedAt ? relTimeAgo(snap.generatedAt) : "—") + (corpusPoints ? " · " + corpusPoints.toLocaleString() + " pts" : "");
+    meta.textContent = "live · " + (generatedAt ? relTimeAgo(snap.generatedAt) : "—") + (corpusPoints ? " · " + corpusPoints.toLocaleString() + " pts" : "");
 
     const maxHits = Math.max(1, ...(snap.components || []).map(c => c.hits || 0));
     for (const c of (snap.components || []).slice(0, COMPONENT_LIMIT)) {
@@ -1324,7 +1324,7 @@
       const more = allComps.length - COMPONENT_LIMIT;
       compEl.appendChild(el(
         "div", "panel-empty",
-        `+${more} more in the full snapshot (${allComps.length} total).`,
+        `+${more} more in the panel (${allComps.length} total).`,
       ));
     }
 
@@ -1369,9 +1369,9 @@
       renderRag(data);
     } catch (err) {
       const meta = document.getElementById("rag-meta");
-      meta.textContent = "snapshot error";
+      meta.textContent = "panel error";
       const compEl = document.getElementById("rag-components");
-      compEl.replaceChildren(el("div", "panel-empty", "RAG snapshot unavailable. " + (err && err.message ? "(" + err.message + ")" : "")));
+      compEl.replaceChildren(el("div", "panel-empty", "RAG data unavailable. " + (err && err.message ? "(" + err.message + ")" : "")));
     }
   }
 

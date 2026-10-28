@@ -17,7 +17,7 @@
     },
     "api/rag-snapshot.js": {
       "maxDuration": 10,
-      "includeFiles": "site-snapshot.json"
+      "includeFiles": "site-roster.json"
     },
     "api/admin.js": {
       "maxDuration": 30,

@@ -26,7 +26,7 @@ name: Sentry CI Report
 # workflows observed (from `ls .github/workflows/`; see each file's `name:`):
 #   Vercel production catch-up, Vercel production catch-up (start),
 #   Backup GitHub Repositories, CI, Effort Issues Sync, Secret scanning,
-#   Mirror live site, Site CI, refresh-rag-snapshot
+#   Mirror live site, Site CI
 #
 # DELIBERATELY NOT observed:
 #   - Sentry CI Report (this file) — would recurse.
@@ -41,7 +41,6 @@ name: Sentry CI Report
 #   Vercel production catch-up (start)     -> "41 * * * *"
 #   Effort Issues Sync                     -> "27 6 * * *"
 #   Mirror live site                       -> "0 6 * * *"
-#   refresh-rag-snapshot                   -> "0 11 * * *"
 #
 # The app identity below is this repository's historical one,  kept exactly as it
 # was:  the shared fleet-infra project groups by that tag and by that
@@ -66,7 +65,6 @@ on:
       - Secret scanning
       - Mirror live site
       - Site CI
-      - refresh-rag-snapshot
     # Both activity types,  not just "completed".  The shared reporter has two
     # phases:  the requested phase sends the in_progress check-in that OPENS the
     # Sentry Crons monitor before the observed run finishes,  and the completed
@@ -98,8 +96,8 @@ jobs:
     # below to the merge SHA does not invalidate it.
     uses: Simple-With-Us/AI-Fleet-Coordinator/.github/workflows/sentry-ci-report-reusable.yml@b59d85c173ae8a52acf0cab93643ca6d35d84c3e
     with:
-      observed_workflows: '["Vercel production catch-up", "Vercel production catch-up (start)", "Backup GitHub Repositories", "CI", "Effort Issues Sync", "Secret scanning", "Mirror live site", "Site CI", "refresh-rag-snapshot"]'
-      cron_schedules: '{"Vercel production catch-up": "41 * * * *", "Vercel production catch-up (start)": "41 * * * *", "Effort Issues Sync": "27 6 * * *", "Mirror live site": "0 6 * * *", "refresh-rag-snapshot": "0 11 * * *"}'
+      observed_workflows: '["Vercel production catch-up", "Vercel production catch-up (start)", "Backup GitHub Repositories", "CI", "Effort Issues Sync", "Secret scanning", "Mirror live site", "Site CI"]'
+      cron_schedules: '{"Vercel production catch-up": "41 * * * *", "Vercel production catch-up (start)": "41 * * * *", "Effort Issues Sync": "27 6 * * *", "Mirror live site": "0 6 * * *"}'
       reusable_ref: b59d85c173ae8a52acf0cab93643ca6d35d84c3e
       app: personal-site
       app_identity: personal-site

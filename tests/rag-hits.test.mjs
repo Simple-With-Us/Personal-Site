@@ -244,17 +244,27 @@ test("a missing credential is named, not downgraded to a warning", async () => {
 test("an upstream that never answers is abandoned, not waited on", async () => {
   // A hung upstream must reach the catch,  where the stale answer can be
   // served,  rather than sitting there until the platform's own timeout.
+  //
   // The stub honours the abort signal the function passes,  the way a real
-  // fetch does.
+  // fetch does.  It also keeps a timer of its own,  because the abort signal's
+  // own timer is unref'd and would let the event loop resolve before it fired:
+  // the promise would never settle,  and the test runner would cancel the
+  // tests after it.
   const hang = async (url, options = {}) => {
     const signal = options.signal;
-    if (!signal) return new Promise(() => {});
     return new Promise((_, reject) => {
-      signal.addEventListener("abort", () => {
+      const abort = () => {
         const error = new Error("The operation was aborted");
         error.name = "AbortError";
         reject(error);
-      });
+      };
+      const backstop = setTimeout(abort, 2000);
+      if (signal) {
+        signal.addEventListener("abort", () => {
+          clearTimeout(backstop);
+          abort();
+        });
+      }
     });
   };
   const { status, body } = await callPanel({

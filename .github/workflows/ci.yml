@@ -29,6 +29,9 @@ jobs:
           test -f static/index.html
           test -f scripts/sync-effort-issues.py
           test -f .github/workflows/effort-issues-sync.yml
+          test -f start/vercel.json
+          test -f start/api/rag-snapshot.js
+          test -f start/site-roster.json
 
       - name: About copy uses past tense
         run: grep -F "Earlier work included" static/index.html
@@ -44,3 +47,9 @@ jobs:
 
       - name: Sentry CI reporter alignment
         run: python3 scripts/verify-sentry-ci-report.py
+
+      # The start site is a second application in this repository:  the static
+      # `start/` tree served by its own Vercel project, with its own deployment
+      # boundary, its own handlers and the RAG snapshot it serves.
+      - name: Start site boundary, handler and snapshot tests
+        run: node --test tests/deployment-boundary.test.cjs tests/rag-hits.test.mjs tests/admin-api.test.cjs tests/quota-groups.test.cjs tests/start-site-identity.test.cjs

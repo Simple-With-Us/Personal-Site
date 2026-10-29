@@ -1,0 +1,143 @@
+{
+  "note": "The public roster behind the Fleet RAG panel: the apps and the seats the fleet has.  The counts (corpus hits, per-seat activity) and the change rows are live, read by start/api/rag-snapshot.js from the private services;  only this metadata is committed.",
+  "components": [
+    {
+      "acronym": "ST",
+      "name": "Socratic.Trade",
+      "tagline": "Agentic trading console",
+      "url": "https://socratictrade.com",
+      "icon": "app-st.png",
+      "slug": "socratic-trade"
+    },
+    {
+      "acronym": "CT",
+      "name": "Congress.Trade",
+      "tagline": "Public STOCK Act disclosures",
+      "url": "https://congress.trade",
+      "icon": "app-ct.png",
+      "slug": "congress-trade"
+    },
+    {
+      "acronym": "UM",
+      "name": "Usage Monitor",
+      "tagline": "API + agent quota + spend",
+      "url": "https://usage.jays.services",
+      "icon": "app-um.png",
+      "slug": "usage-monitor"
+    },
+    {
+      "acronym": "BF",
+      "name": "BotFleet",
+      "tagline": "Pick a platform per bot",
+      "url": "https://botfleet.app",
+      "icon": "app-bf.png",
+      "slug": "botfleet"
+    },
+    {
+      "acronym": "DD",
+      "name": "DealDex",
+      "tagline": "Pokemon listing desk",
+      "url": "https://dealdex.net",
+      "icon": "app-dd.png",
+      "slug": "dealdex"
+    },
+    {
+      "acronym": "CL",
+      "name": "ContactLogo",
+      "tagline": "Brand icons for contacts",
+      "url": "https://contactlogo.com",
+      "icon": "app-cl.png",
+      "slug": "contactlogo"
+    },
+    {
+      "acronym": "AR",
+      "name": "Autorotate",
+      "tagline": "Zero-plaintext secret rotation",
+      "url": "https://autorotate.vercel.app",
+      "icon": "app-ar.png",
+      "slug": "autorotate"
+    },
+    {
+      "acronym": "CTS",
+      "name": "congress-trading-shared",
+      "tagline": "Shared TS contracts",
+      "url": null,
+      "icon": null,
+      "slug": "congress-trading-shared"
+    },
+    {
+      "acronym": "AFC",
+      "name": "ai-fleet-coordinator",
+      "tagline": "Fleet coordination",
+      "url": null,
+      "icon": "app-afc.png",
+      "slug": "fleet"
+    },
+    {
+      "acronym": "OPS",
+      "name": "fleet-ops",
+      "tagline": "Private ops inventory",
+      "url": null,
+      "icon": null,
+      "slug": "fleet-ops"
+    },
+    {
+      "acronym": "PS",
+      "name": "Personal-Site",
+      "tagline": "jays.services portfolio",
+      "url": "https://jays.services",
+      "icon": "app-ps.png",
+      "slug": "personal-site"
+    }
+  ],
+  "seats": [
+    {
+      "tag": "MM",
+      "fullName": "Mavis (MM)",
+      "color": "#FF6B35",
+      "mark": "minimax.png"
+    },
+    {
+      "tag": "MONET",
+      "fullName": "Monet",
+      "color": "#0EA5E9",
+      "mark": "monet.svg"
+    },
+    {
+      "tag": "GROK",
+      "fullName": "xAI Grok",
+      "color": "#1F1F1F",
+      "mark": "grok-color.png"
+    },
+    {
+      "tag": "AG",
+      "fullName": "Antigravity / Gemini",
+      "color": "#4285F4",
+      "mark": "gemini-color.png"
+    },
+    {
+      "tag": "CLAUDE",
+      "fullName": "Claude / Anthropic",
+      "color": "#D97757",
+      "mark": "claude-color.png"
+    },
+    {
+      "tag": "CURSOR",
+      "fullName": "Cursor",
+      "color": "#7C3AED",
+      "mark": "cursor-color.png"
+    },
+    {
+      "tag": "CODEX",
+      "fullName": "OpenAI Codex",
+      "color": "#10A37F",
+      "mark": "openai-color.png"
+    },
+    {
+      "tag": "FX",
+      "fullName": "Firefox fleet seat",
+      "color": "#8B5CF6",
+      "mark": null
+    }
+  ]
+}

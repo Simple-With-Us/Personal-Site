@@ -1,0 +1,100 @@
+name: Vercel production catch-up (start)
+
+# The catch-up publisher for start.jays.services.  It is the deliberate
+# backstop for the start site, and it is shaped exactly like the main site's
+# catch-up next to it:  the deploy job is gated on the repository variable
+# VERCEL_CATCH_UP_ENABLED, which is unset by default, so this workflow runs its
+# test job and skips the deploy.  That is intentional.  The start site's day to
+# day publisher is Vercel's own Git integration, which builds and deploys the
+# `start/` subtree of this repository's main branch.
+#
+# To hand publishing to this workflow instead, disable Git deployments on the
+# Vercel project (the gate refuses to deploy while a competing Git publisher is
+# enabled) and set VERCEL_CATCH_UP_ENABLED to true.
+on:
+  schedule:
+    - cron: '41 * * * *'
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - start/**
+      - scripts/deploy/**
+      - .github/workflows/vercel-catch-up-start.yml
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: vercel-production-catch-up-start
+  cancel-in-progress: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+      - run: node --test scripts/deploy/vercel-catch-up.test.mjs
+
+  deploy:
+    needs: test
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && vars.VERCEL_CATCH_UP_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      GH_TOKEN: ${{ github.token }}
+      VERCEL_ORG_ID: ${{ vars.VERCEL_START_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ vars.VERCEL_START_PROJECT_ID }}
+      VERCEL_REPO_ID: ${{ vars.VERCEL_START_REPO_ID }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_TELEMETRY_DISABLED: '1'
+      VERCEL_CONFIG_PATH: scripts/deploy/vercel-config.start.json
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+      - name: Require the deploy token
+        # The deploy token comes from this repository's own Actions secret,  and
+        # the environment is the approved source for it.  A missing token fails
+        # here with the variable named,  before the gate and the build run,  so
+        # the workflow never reaches a build that cannot authenticate.
+        run: |
+          set -euo pipefail
+          if [ -z "${VERCEL_TOKEN:-}" ]; then
+            echo "::error::VERCEL_TOKEN is not set;  the catch-up needs the VERCEL_TOKEN repository secret"
+            exit 1
+          fi
+      - name: Check binding, deployed SHA, cooldown and exact-main CI
+        id: gate
+        run: node scripts/deploy/vercel-catch-up.mjs prepare
+      - name: Install pinned Vercel CLI
+        if: steps.gate.outputs.deploy == 'true'
+        run: npm install --global vercel@64.5.0
+      - name: Pull project settings and build from repo root
+        if: steps.gate.outputs.deploy == 'true'
+        run: |
+          vercel pull --yes --environment=production
+          vercel build --prod --yes
+      - name: Recheck main, publisher binding and 3h window before upload
+        if: steps.gate.outputs.deploy == 'true'
+        id: recheck
+        run: node scripts/deploy/vercel-catch-up.mjs
+      - name: Deploy once and verify provider receipt
+        if: steps.recheck.outputs.deploy == 'true'
+        run: |
+          set -euo pipefail
+          vercel deploy --prebuilt --prod --yes --json \
+            --meta fleetCommitSha="$(git rev-parse HEAD)" \
+            --meta githubCommitSha="$(git rev-parse HEAD)" \
+            --meta githubCommitRef=main > "$RUNNER_TEMP/vercel-deployment.json"
+          node scripts/deploy/vercel-catch-up.mjs receipt "$RUNNER_TEMP/vercel-deployment.json"

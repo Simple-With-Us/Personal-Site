@@ -1,50 +1,83 @@
 name: Sentry CI Report
 
-# Fleet-wide CI observability: fires after every other workflow in this repo
-# completes and reports failures to the shared `fleet-infra` Sentry project
-# (org simple-with-us). ADDITIVE ONLY — this file must never modify the
-# behavior of the workflows it observes.
+# Fleet-wide CI observability for this repository.  The reporter itself is the
+# shared workflow_call in the AI-Fleet-Coordinator repository;  this file is the
+# thin listener that names this repository's own workflows and hands the shared
+# reporter the per-caller data it cannot know for itself.  It reports actionable
+# events to the shared `fleet-infra` Sentry project.  ADDITIVE ONLY — this file
+# must never modify the behavior of the workflows it observes.
+#
+# It listens on BOTH activity types:  "requested" opens the Sentry Crons check-in
+# before the observed run finishes,  and "completed" closes it with the run's
+# outcome.
 #
 # Two independent signals per completed run:
-#   1. On conclusion == failure: a Sentry error event, tagged with
-#      {workflow, branch, actor}, carrying the run URL, fingerprinted on
-#      [workflow, branch] so repeated failures on the same branch group
-#      together instead of paging separately every time.
-#   2. On event == schedule (i.e. the completed run was a cron-triggered
-#      run of a workflow that defines `schedule:`): a Sentry Crons check-in
-#      (ok on success, error on failure) with an upsert monitor_config whose
-#      schedule mirrors that workflow's own cron expression, slug
-#      `ci-<workflow-slug>`. This means a nightly/weekly job that silently
-#      STOPS firing (not "runs and fails" but "never runs again") raises a
-#      missed-check-in alert instead of going unnoticed.
-#
-# Raw Sentry envelope HTTP via curl + python3 — no action marketplace dependency, no new job permissions
-# beyond what's needed to read the triggering run.
+#   1. On conclusion == failure / timed_out / startup_failure: a Sentry error
+#      event, tagged with {app, workflow, branch, actor}, carrying the run URL,
+#      fingerprinted on [ci-failure, app, workflow] so every failure of one
+#      workflow groups into ONE Sentry issue instead of paging separately every
+#      time.  The `app` tag and the fingerprint component are REQUIRED: the
+#      fleet-infra project is shared across repositories,  so without `app` a
+#      failure here would dedup into the same issue as a failure elsewhere.
+#   2. On event == schedule: a Sentry Crons check-in, with a monitor_config whose
+#      schedule mirrors that workflow's own cron expression,  so a scheduled job
+#      that silently stops firing raises a missed-check-in alert.
 #
 # workflows observed (from `ls .github/workflows/`; see each file's `name:`):
+#   Vercel production catch-up, Vercel production catch-up (start),
 #   Backup GitHub Repositories, CI, Effort Issues Sync, Secret scanning,
 #   Mirror live site, Site CI
 #
-# Cron schedules mirrored for the check-in step (must match the source
-# workflow's `schedule:` block; keep in sync if those change):
-#   Mirror live site   -> "0 6 * * *"   (mirror-site.yml daily live-site mirror)
-#   Effort Issues Sync -> "27 6 * * *"  (effort-issues-sync.yml daily)
-
+# DELIBERATELY NOT observed:
+#   - Sentry CI Report (this file) — would recurse.
+#   - PR Autofix, Claude Code Autofix and the Kody autofix — they were never
+#     observed here and their failures are handled by their own lanes.
+#
+# Cron schedules mirrored for the check-in step (must match the source workflow's
+# `schedule:` block AND its `name:`;  `scripts/verify-sentry-ci-report.py` fails
+# CI when the two drift apart,  and the shared reporter raises a Sentry issue on
+# the same drift at run time):
+#   Vercel production catch-up             -> "41 * * * *"
+#   Vercel production catch-up (start)     -> "41 * * * *"
+#   Effort Issues Sync                     -> "27 6 * * *"
+#   Mirror live site                       -> "0 6 * * *"
+#
+# The app identity below is this repository's historical one,  kept exactly as it
+# was:  the shared fleet-infra project groups by that tag and by that
+# fingerprint,  so changing either of them would orphan the open issues and the
+# cron monitors this repository already owns.
+#
+# Secret: repo (or org) Actions secret `SENTRY_FLEET_DSN` must be set to the
+# fleet-infra project DSN.  Name only — never commit or print the value.
+# Already provisioned on this repo (do not reset).  The reporter exits 0 with a
+# warning when the secret is absent,  so CI itself is never red-X'd by a missing
+# DSN.
 on:
   workflow_run:
     workflows:
+      # Names must match the `name:` field of workflow files exactly —
+      # a stale entry here silently disables alerting for that pipeline.
       - Vercel production catch-up
+      - Vercel production catch-up (start)
       - Backup GitHub Repositories
       - CI
       - Effort Issues Sync
       - Secret scanning
       - Mirror live site
       - Site CI
+    # Both activity types,  not just "completed".  The shared reporter has two
+    # phases:  the requested phase sends the in_progress check-in that OPENS the
+    # Sentry Crons monitor before the observed run finishes,  and the completed
+    # phase sends the terminal check-in that closes it with the run's outcome.
+    # With "completed" alone the monitor only ever sees the terminal check-in,
+    # so its checkin_margin has to cover the whole observed runtime.
     types: [requested, completed]
-
 
 permissions:
   contents: read
+  # The reporter asks the Actions API whether the observed run already finished,
+  # and the called workflow can only narrow the caller's grants.
+  actions: read
 
 concurrency:
   group: sentry-ci-report-${{ github.event.workflow_run.id }}
@@ -52,59 +85,21 @@ concurrency:
 
 jobs:
   report:
-    # Cost gate (2026-07-05): the reporter only emits on FAILURE (a Sentry error
-    # event) or on SCHEDULE completions (a Sentry Crons check-in). On the common
-    # case — a successful, non-scheduled run — the script is a no-op, yet it was
-    # still spinning up a full runner + checkout for every one of ~95 completions/day.
-    # Gate the whole job so those no-op cases skip at ZERO runner minutes while the
-    # two real signals (failure alerts, cron missed-check-in detection) are unchanged.
-    if: >-
-      (github.event.action == 'requested' && github.event.workflow_run.event == 'schedule') ||
-      (github.event.action == 'completed' && (github.event.workflow_run.conclusion == 'failure' ||
-      github.event.workflow_run.conclusion == 'timed_out' ||
-      github.event.workflow_run.conclusion == 'startup_failure' ||
-      github.event.workflow_run.event == 'schedule'))
-    # Prefer a separate observer lane when one exists. As of 2026-07-24 the
-    # ci-cpx32 box has systemd runners for socratic-ci / socratic-ci-2 only —
-    # there is no socratic-deploy unit under /opt/actions-runners, so jobs that
-    # target that label queue forever. Route the short failure/schedule-only
-    # reporter onto socratic-ci until a dedicated observer runner is restored.
     permissions:
       contents: read
       actions: read
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout (for the reporter script only; does not touch observed workflows)
-        # Deliberately no `ref:` override: actions/checkout defaults workflow_run events to the
-        # repo's default branch (main), NOT the head ref of the triggering run. That's intentional
-        # here — it means this step always executes the trusted, merged copy of the reporter
-        # script rather than whatever version lives on an arbitrary (possibly fork/PR) branch that
-        # triggered the observed workflow. Do not add `ref: ${{ github.event.workflow_run.head_sha }}`
-        # without re-reviewing the security implications.
-        uses: actions/checkout@v7
-        with:
-          sparse-checkout: |
-            scripts/sentry-ci-report.py
-          sparse-checkout-cone-mode: false
-
-      - name: Report failure + cron check-in to Sentry fleet-infra
-        shell: bash
-        env:
-          SENTRY_FLEET_DSN: ${{ secrets.SENTRY_FLEET_DSN }}
-          GITHUB_TOKEN: ${{ github.token }}
-          WORKFLOW_RUN_ACTION: ${{ github.event.action }}
-          WORKFLOW_NAME: ${{ github.event.workflow_run.name }}
-          WORKFLOW_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
-          WORKFLOW_EVENT: ${{ github.event.workflow_run.event }}
-          WORKFLOW_BRANCH: ${{ github.event.workflow_run.head_branch }}
-          WORKFLOW_ACTOR: ${{ github.event.workflow_run.actor.login }}
-          WORKFLOW_RUN_URL: ${{ github.event.workflow_run.html_url }}
-          WORKFLOW_RUN_ID: ${{ github.event.workflow_run.id }}
-          WORKFLOW_RUN_ATTEMPT: ${{ github.event.workflow_run.run_attempt }}
-        run: python3 scripts/sentry-ci-report.py
-
-      - name: Disable sparse checkout (prevent poisoning self-hosted runner workspace)
-        if: always()
-        shell: bash
-        run: |
-          git sparse-checkout disable || true
+    # The `uses:` ref and the `reusable_ref` input MUST be the same SHA:  the
+    # shared workflow checks its own script out of AI-Fleet-Coordinator at
+    # `reusable_ref` and refuses to run when the checked-out commit differs.
+    # The reusable additionally pins the reporter script by BLOB SHA,  and that
+    # blob survives a squash,  a rebase and a merge,  so re-pinning the commit
+    # below to the merge SHA does not invalidate it.
+    uses: Simple-With-Us/AI-Fleet-Coordinator/.github/workflows/sentry-ci-report-reusable.yml@b59d85c173ae8a52acf0cab93643ca6d35d84c3e
+    with:
+      observed_workflows: '["Vercel production catch-up", "Vercel production catch-up (start)", "Backup GitHub Repositories", "CI", "Effort Issues Sync", "Secret scanning", "Mirror live site", "Site CI"]'
+      cron_schedules: '{"Vercel production catch-up": "41 * * * *", "Vercel production catch-up (start)": "41 * * * *", "Effort Issues Sync": "27 6 * * *", "Mirror live site": "0 6 * * *"}'
+      reusable_ref: b59d85c173ae8a52acf0cab93643ca6d35d84c3e
+      app: personal-site
+      app_identity: personal-site
+    secrets:
+      SENTRY_FLEET_DSN: ${{ secrets.SENTRY_FLEET_DSN }}

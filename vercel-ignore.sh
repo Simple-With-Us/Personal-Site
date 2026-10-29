@@ -32,8 +32,11 @@ git_root="$(git rev-parse --show-toplevel 2>/dev/null || true)"
 # A repo-root script watches the tree minus native/docs/CI.
 watch_args=()
 if [[ -n "${VERCEL_IGNORE_WATCH:-}" ]]; then
-  # shellcheck disable=SC2206
-  watch_args=(${VERCEL_IGNORE_WATCH})
+  # Split on whitespace with globbing off, so a "*" stays a git pathspec
+  # instead of expanding against files in the working directory.
+  set -f
+  read -r -a watch_args <<<"${VERCEL_IGNORE_WATCH}"
+  set +f
 elif [[ -n "$git_root" && "$script_dir" != "$git_root" ]]; then
   rel="${script_dir#"$git_root"/}"
   # ":top" anchors to the repo root on purpose.  A bare "$rel" would resolve
@@ -42,21 +45,21 @@ elif [[ -n "$git_root" && "$script_dir" != "$git_root" ]]; then
   watch_args=(":(top)${rel}")
 else
   watch_args=(
-    .
-    ":(exclude)docs"
-    ":(exclude)handbook"
-    ":(exclude)generated"
-    ":(exclude)scripts/handbook"
-    ":(exclude)datadog"
-    ":(exclude)AGENTS.md"
-    ":(exclude)FLEET-PROTOCOL.md"
-    ":(exclude)ATTACK-MAP.md"
-    ":(exclude)CLAUDE.md"
-    ":(exclude)PLAN.md"
-    ":(exclude)PROJECT.md"
-    ":(exclude)STATUS.md"
-    ":(exclude).github"
-    ":(exclude)*.md"
+    ":(top)"
+    ":(top,exclude)docs"
+    ":(top,exclude)handbook"
+    ":(top,exclude)generated"
+    ":(top,exclude)scripts/handbook"
+    ":(top,exclude)datadog"
+    ":(top,exclude)AGENTS.md"
+    ":(top,exclude)FLEET-PROTOCOL.md"
+    ":(top,exclude)ATTACK-MAP.md"
+    ":(top,exclude)CLAUDE.md"
+    ":(top,exclude)PLAN.md"
+    ":(top,exclude)PROJECT.md"
+    ":(top,exclude)STATUS.md"
+    ":(top,exclude).github"
+    ":(top,exclude)*.md"
   )
 fi
 
@@ -97,7 +100,10 @@ if [[ -n "${VERCEL_TOKEN:-}" && -n "${VERCEL_PROJECT_ID:-}" ]]; then
   if [[ -n "$team" ]]; then
     qs="${qs}&teamId=${team}"
   fi
-  created=$(curl -fsS -H "Authorization: Bearer ${VERCEL_TOKEN}" \
+  # The header goes through --config on a /dev/fd path (printf is a shell
+  # builtin), so the token never appears in curl's argv or in ps.
+  created=$(curl -fsS --connect-timeout 5 --max-time 10 \
+    --config <(printf 'header = "Authorization: Bearer %s"\n' "${VERCEL_TOKEN}") \
     "https://api.vercel.com/v6/deployments?${qs}" \
     | python3 -c "import json,sys
 d=json.load(sys.stdin)

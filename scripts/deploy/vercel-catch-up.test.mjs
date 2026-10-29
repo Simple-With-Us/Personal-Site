@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { COOLDOWN_MS, classify, assertProject, assertCi, assertReceipt, deploymentSha, request } from './vercel-catch-up.mjs';
+import { COOLDOWN_MS, classify, assertProject, assertCi, assertReceipt, deploymentSha, request, loadConfig } from './vercel-catch-up.mjs';
 const A = 'a'.repeat(40), B = 'b'.repeat(40), now = 1_800_000_000_000;
 const config = { projectId: 'prj_test', teamId: 'team_test', repoId: 17, rootDirectory: 'site' };
 const baseline = { projectId: 'prj_test', target: 'production', readyState: 'READY', created: now - COOLDOWN_MS - 1, gitSource: { sha: A }, url: 'test.vercel.app' };
@@ -89,4 +89,48 @@ test('entrypoint reconciles skipped site changes behind docs, rechecks and verif
   fixture.baseline.gitSource.sha=latest;result=execute('receipt',receipt);assert.equal(result.status,0,result.stderr);assert.match(result.stdout,/https:\/\/test.vercel.app/);
   fixture.project.targets.production.id='dpl_other';result=execute('receipt',receipt);assert.equal(result.status,1);assert.match(result.stderr,/current production target/);
  } finally { rmSync(dir,{recursive:true,force:true}); }
+});
+
+test('the identifiers come from the environment when the committed file omits them', () => {
+  const saved = { ...process.env };
+  const dir = mkdtempSync(join(tmpdir(), 'vercel-config-'));
+  const file = join(dir, 'config.json');
+  try {
+    writeFileSync(file, JSON.stringify({ repository: 'org/repo', rootDirectory: 'start' }));
+    process.env.VERCEL_ORG_ID = 'team_env';
+    process.env.VERCEL_PROJECT_ID = 'prj_env';
+    process.env.VERCEL_REPO_ID = '42';
+    const loaded = loadConfig(file);
+    assert.equal(loaded.teamId, 'team_env');
+    assert.equal(loaded.projectId, 'prj_env');
+    assert.equal(loaded.repoId, '42');
+    assert.equal(loaded.repository, 'org/repo');
+  } finally {
+    for (const key of ['VERCEL_ORG_ID', 'VERCEL_PROJECT_ID', 'VERCEL_REPO_ID']) {
+      if (saved[key] === undefined) delete process.env[key];
+      else process.env[key] = saved[key];
+    }
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test('a committed identifier wins over the environment', () => {
+  const saved = { ...process.env };
+  const dir = mkdtempSync(join(tmpdir(), 'vercel-config-'));
+  const file = join(dir, 'config.json');
+  try {
+    writeFileSync(file, JSON.stringify({ repository: 'org/repo', teamId: 'team_file', projectId: 'prj_file', repoId: 7 }));
+    process.env.VERCEL_ORG_ID = 'team_env';
+    process.env.VERCEL_PROJECT_ID = 'prj_env';
+    const loaded = loadConfig(file);
+    assert.equal(loaded.teamId, 'team_file');
+    assert.equal(loaded.projectId, 'prj_file');
+    assert.equal(loaded.repoId, 7);
+  } finally {
+    for (const key of ['VERCEL_ORG_ID', 'VERCEL_PROJECT_ID', 'VERCEL_REPO_ID']) {
+      if (saved[key] === undefined) delete process.env[key];
+      else process.env[key] = saved[key];
+    }
+    rmSync(dir, { recursive: true, force: true });
+  }
 });

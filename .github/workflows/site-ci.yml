@@ -51,3 +51,29 @@ jobs:
           name: playwright-report
           path: site/test-results/
           retention-days: 7
+
+  # The start site is the other application in this repository:  the static
+  # `start/` tree served by its own Vercel project.  Its specs run against a
+  # plain static server, not the Vite dev server the main site uses.
+  start-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: site
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - run: npx playwright install --with-deps chromium
+      - run: npx playwright test --config playwright.start.config.ts
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: start-playwright-report
+          path: site/test-results/
+          retention-days: 7

@@ -38,7 +38,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@v7
         with:
-          node-version: '24'
+          node-version: '26'
       - run: node --test scripts/deploy/vercel-catch-up.test.mjs
 
   deploy:
@@ -62,7 +62,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@v7
         with:
-          node-version: '24'
+          node-version: '26'
       - name: Require the deploy token
         # The deploy token comes from this repository's own Actions secret,  and
         # the environment is the approved source for it.  A missing token fails

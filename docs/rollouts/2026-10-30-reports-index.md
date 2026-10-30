@@ -12,7 +12,7 @@ Added docs/reports/README.md to index existing eligible documents.  The index l
 
 ## Verification
 
-- Checked all relative Markdown links resolve against the repository files and this change.
+- The inline link check printed `35 33 0` (total links, relative links, missing links) and exited 0.  `git diff --check` passed; base had no existing docs/reports directory.
 
 ## Follow-ups
 

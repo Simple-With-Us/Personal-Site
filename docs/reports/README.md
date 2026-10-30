@@ -39,3 +39,4 @@ Private evidence stays in private Fleet-OPS and is excluded from public indexes.
 - [2026-10-21-minimax-m31-flash-pin](../rollouts/2026-10-21-minimax-m31-flash-pin.md)
 - [2026-10-28-start-site-moves-to-personal-site](../rollouts/2026-10-28-start-site-moves-to-personal-site.md)
 - [2026-10-28-start-site-reads-the-fleet-live](../rollouts/2026-10-28-start-site-reads-the-fleet-live.md)
+- [2026-10-30-reports-index](../rollouts/2026-10-30-reports-index.md)

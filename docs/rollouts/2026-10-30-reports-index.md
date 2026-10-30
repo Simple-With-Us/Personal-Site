@@ -2,7 +2,7 @@
 
 ## Summary
 
-Added docs/reports/README.md to index existing eligible documents.  The index links historical records in their canonical paths; no files were moved or renamed.  Central placement under Code/Docs/Personal-Site/ is pending the native guard exception.
+Added docs/reports/README.md to index existing eligible documents.  The index links historical records in their canonical paths; no files were moved or renamed.  At publication time, central placement under Code/Docs/Personal-Site/ was pending; the dated update below records the completed placement.
 
 ## Files Changed
 
@@ -16,4 +16,6 @@ Added docs/reports/README.md to index existing eligible documents.  The index l
 
 ## Follow-ups
 
-- Central placement remains pending the native guard exception.
+### Placement update — 2026-10-30
+
+The owner-approved docs-only exception is installed, and central collection under Code/Docs/Personal-Site/ is populated.  The collector and protocol are live in AI-Fleet-Coordinator main at `691f4a3c`.  The 16-repo collection check reported zero planned changes, and protected Git checkouts remain unchanged.  No placement follow-up remains.

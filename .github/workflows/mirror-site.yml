@@ -88,6 +88,11 @@ jobs:
           DATE=$(date -u +%Y-%m-%d)
           git checkout -B mirror/live-site
           git commit -m "chore: update static mirror of live site ${DATE}"
+          # The checkout fetched only main, so an existing mirror/live-site
+          # (an open mirror PR from an earlier day) has no remote-tracking ref
+          # and --force-with-lease rejects the push as "stale info".  Fetch
+          # the branch first so the lease compares against its real tip.
+          git fetch --no-tags origin "+refs/heads/mirror/live-site:refs/remotes/origin/mirror/live-site" || true
           git push --force-with-lease origin mirror/live-site
           EXISTING=$(gh pr list --head mirror/live-site --base main --state open --json number --jq '.[0].number // empty')
           if [ -n "${EXISTING}" ]; then

@@ -98,6 +98,9 @@ jobs:
       - name: Mint GitHub App installation token
         id: app-token
         if: steps.app-creds.outputs.available == 'true'
+        # A failed mint (App not installed, bad key) must not stop the
+        # mirror; the next step falls back to github.token and warns.
+        continue-on-error: true
         uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
         with:
           app-id: ${{ vars.SWU_AUTOFIX_GITHUB_APP_ID }}
@@ -110,7 +113,7 @@ jobs:
           # Use the App token when minted so `verify` runs on the PR;
           # fall back to github.token when the App is not configured.
           GH_TOKEN: ${{ steps.app-token.outputs.token || github.token }}
-          APP_TOKEN_AVAILABLE: ${{ steps.app-creds.outputs.available }}
+          APP_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -122,13 +125,20 @@ jobs:
           DATE=$(date -u +%Y-%m-%d)
           git checkout -B mirror/live-site
           git commit -m "chore: update static mirror of live site ${DATE}"
-          if [ "${APP_TOKEN_AVAILABLE}" != "true" ]; then
-            echo "::warning::GitHub App credentials not configured; falling back to the default workflow credentials, so CI will not start on the mirror PR and the required verify check will not run."
+          if [ -z "${APP_TOKEN}" ]; then
+            echo "::warning::No GitHub App token (credentials missing or the mint failed); falling back to the default workflow credentials, so CI will not start on the mirror PR and the required verify check will not run."
           fi
-          # Push with the same credential as gh, taken from the env, so
-          # the push, not just the PR creation, is authored by the App.
-          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-          git push --force-with-lease origin mirror/live-site
+          # Authenticate git with the same credential as gh, as a per-command
+          # header, so the token is never written to .git/config.
+          AUTH_B64="$(printf 'x-access-token:%s' "${GH_TOKEN}" | base64 -w0)"
+          echo "::add-mask::${AUTH_B64}"
+          AUTH_HEADER="AUTHORIZATION: basic ${AUTH_B64}"
+          # The checkout fetched only main, so an existing mirror/live-site
+          # (an open mirror PR from an earlier day) has no remote-tracking ref
+          # and --force-with-lease rejects the push as "stale info".  Fetch
+          # the branch first so the lease compares against its real tip.
+          git -c http.extraheader="${AUTH_HEADER}" fetch --no-tags origin "+refs/heads/mirror/live-site:refs/remotes/origin/mirror/live-site" || true
+          git -c http.extraheader="${AUTH_HEADER}" push --force-with-lease origin mirror/live-site
           EXISTING=$(gh pr list --head mirror/live-site --base main --state open --json number --jq '.[0].number // empty')
           if [ -n "${EXISTING}" ]; then
             echo "Updated existing PR #${EXISTING}"

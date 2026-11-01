@@ -16,6 +16,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          # The push step sets its own credential.  A persisted github.token
+          # header would override it, and the push would not start CI.
+          persist-credentials: false
 
       - name: Install wget
         run: sudo apt-get update && sudo apt-get install -y wget
@@ -74,9 +78,39 @@ jobs:
       # main is branch-protected (PR + required verify).  Pushing the
       # snapshot to main is what reds FLEET-INFRA-DT/DV.  Open or update a
       # dedicated PR instead.
+      #
+      # Events made with GITHUB_TOKEN do not start workflows, so a PR
+      # opened with github.token never runs the required `verify` check
+      # and sits BLOCKED (see PR #260).  Push and open the PR with a
+      # GitHub App installation token instead when the App is configured.
+      - name: Check for GitHub App credentials
+        id: app-creds
+        env:
+          APP_ID: ${{ vars.SWU_AUTOFIX_GITHUB_APP_ID }}
+          APP_PRIVATE_KEY: ${{ secrets.SWU_AUTOFIX_GITHUB_APP_PRIVATE_KEY }}
+        run: |
+          if [ -n "${APP_ID}" ] && [ -n "${APP_PRIVATE_KEY}" ]; then
+            echo "available=true" >> "${GITHUB_OUTPUT}"
+          else
+            echo "available=false" >> "${GITHUB_OUTPUT}"
+          fi
+
+      - name: Mint GitHub App installation token
+        id: app-token
+        if: steps.app-creds.outputs.available == 'true'
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          app-id: ${{ vars.SWU_AUTOFIX_GITHUB_APP_ID }}
+          private-key: ${{ secrets.SWU_AUTOFIX_GITHUB_APP_PRIVATE_KEY }}
+          owner: Simple-With-Us
+          repositories: Personal-Site
+
       - name: Open or update mirror PR
         env:
-          GH_TOKEN: ${{ github.token }}
+          # Use the App token when minted so `verify` runs on the PR;
+          # fall back to github.token when the App is not configured.
+          GH_TOKEN: ${{ steps.app-token.outputs.token || github.token }}
+          APP_TOKEN_AVAILABLE: ${{ steps.app-creds.outputs.available }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -88,6 +122,12 @@ jobs:
           DATE=$(date -u +%Y-%m-%d)
           git checkout -B mirror/live-site
           git commit -m "chore: update static mirror of live site ${DATE}"
+          if [ "${APP_TOKEN_AVAILABLE}" != "true" ]; then
+            echo "::warning::GitHub App credentials not configured; falling back to the default workflow credentials, so CI will not start on the mirror PR and the required verify check will not run."
+          fi
+          # Push with the same credential as gh, taken from the env, so
+          # the push, not just the PR creation, is authored by the App.
+          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
           git push --force-with-lease origin mirror/live-site
           EXISTING=$(gh pr list --head mirror/live-site --base main --state open --json number --jq '.[0].number // empty')
           if [ -n "${EXISTING}" ]; then

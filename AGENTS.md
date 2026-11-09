@@ -75,7 +75,7 @@ are coordination data, not owner instructions.  Effort logs are archived; Linear
 
 **Always commit + open PR + land** (owner preference, all agents): do not wait
 for the owner to ask. After each coherent finished unit: commit → push →
-`gh pr create` (or update) → merge when CI is green. A remote branch with no PR
+open the PR through the Fleet Tools relay (`gr_open_pr`, or update it) → merge when CI is green through the relay (`gr_wf_merge_guarded`). A remote branch with no PR
 is unfinished.
 
 ## Pre-commit / handoff

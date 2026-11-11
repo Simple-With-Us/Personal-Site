@@ -855,50 +855,6 @@ async function checkPagerDuty(env) {
   };
 }
 
-/* ---------------------------------------------------------------- datadog */
-/* Subrequests: one monitor listing.  Worst case 1.                         */
-
-async function checkDatadog(env) {
-  const gaps = missing(env, 'DD_API_KEY', 'DD_APP_KEY');
-  if (gaps.length) return notConfigured(...gaps);
-  const site = env.DD_SITE || 'us5.datadoghq.com';
-  const monitors = await apiJson(`https://api.${site}/api/v1/monitor?page_size=100`, {
-    headers: { 'DD-API-KEY': env.DD_API_KEY, 'DD-APPLICATION-KEY': env.DD_APP_KEY },
-  });
-
-  const counts = { Alert: 0, Warn: 0, 'No Data': 0, OK: 0, Other: 0 };
-  const alerting = [];
-  for (const m of monitors) {
-    const state = m.overall_state || 'Other';
-    if (counts[state] === undefined) counts.Other += 1;
-    else counts[state] += 1;
-    if (state === 'Alert' || state === 'Warn') {
-      alerting.push({
-        name: m.name || `Monitor ${m.id}`,
-        status: state.toLowerCase(),
-        state: state === 'Alert' ? 'down' : 'warn',
-        url: `https://app.${site.replace('api.', '')}/monitors/${m.id}`,
-      });
-    }
-  }
-
-  const items = Object.entries(counts)
-    .filter(([, n]) => n > 0)
-    .map(([name, count]) => ({
-      name,
-      count,
-      state: name === 'Alert' ? 'down' : (name === 'Warn' || name === 'No Data' ? 'warn' : 'up'),
-    }));
-
-  return {
-    ok: true,
-    state: counts.Alert > 0 ? 'down' : (counts.Warn > 0 ? 'warn' : 'up'),
-    summary: `${monitors.length} monitors, ${counts.Alert} alerting, ${counts.Warn} warning`,
-    items,
-    alerting,
-  };
-}
-
 /* ------------------------------------------------------------ orchestration */
 
 // Worst-case subrequests per section, as a function of env.  These are the
@@ -922,10 +878,6 @@ const CHECKS = {
   vercel: { cost: (env) => (env.VERCEL_TOKEN ? 2 + VERCEL_MAX_TEAMS : 0), run: (env) => checkVercel(env) },
   sentry: { cost: (env) => (env.SENTRY_AUTH_TOKEN ? 1 : 0), run: (env) => checkSentry(env) },
   pagerduty: { cost: (env) => (env.PAGERDUTY_API_KEY ? 1 : 0), run: (env) => checkPagerDuty(env) },
-  datadog: {
-    cost: (env) => (missing(env, 'DD_API_KEY', 'DD_APP_KEY').length ? 0 : 1),
-    run: (env) => checkDatadog(env),
-  },
 };
 
 const SECTION_NAMES = Object.keys(CHECKS);
@@ -985,7 +937,7 @@ async function runSection(name, env) {
 // Oldest first, never-checked ahead of everything.  SECTION_NAMES is a fixed
 // order and `spent` resets every invocation, so running it in declaration
 // order meant a 60 s poller re-ran the same first sections and deferred the
-// same last ones forever — pagerduty and datadog never got checked at all.
+// same last ones forever — pagerduty never got checked at all.
 // Sorting by when each section last ran makes whatever was deferred lead the
 // next call.  Array.prototype.sort is stable, so ties keep declaration order.
 function staleFirst() {

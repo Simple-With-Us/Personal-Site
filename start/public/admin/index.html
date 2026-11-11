@@ -261,7 +261,6 @@
     { key: 'vercel', title: 'Vercel Projects', render: renderSimple, skeleton: 5 },
     { key: 'sentry', title: 'Sentry Issues', render: renderSentry, skeleton: 4 },
     { key: 'pagerduty', title: 'PagerDuty Incidents', render: renderSimple, skeleton: 3 },
-    { key: 'datadog', title: 'Datadog Monitors', render: renderDatadog, skeleton: 4 },
     { key: 'opsSheet', title: 'Ops Reference Sheet', render: renderSimple, skeleton: 7 }
   ];
 
@@ -472,24 +471,6 @@
           status: i.count + (i.count === 1 ? ' issue' : ' issues'),
           url: (data.link || 'https://sentry.io') + '/issues/?project=&query=is%3Aunresolved'
         };
-      }));
-    }
-    return frag;
-  }
-
-  function renderDatadog(data) {
-    var frag = document.createDocumentFragment();
-    var items = data.items || [];
-    if (!items.length) frag.appendChild(emptyNode('No monitors were returned.'));
-    else {
-      frag.appendChild(list(items, function (i) {
-        return { name: i.name, state: i.state, status: i.count + ' monitors' };
-      }));
-    }
-    if (data.alerting && data.alerting.length) {
-      frag.appendChild(el('p', 'card-sub', 'Alerting and warning'));
-      frag.appendChild(list(data.alerting, function (m) {
-        return { name: m.name, state: m.state, status: m.status, url: m.url || '' };
       }));
     }
     return frag;

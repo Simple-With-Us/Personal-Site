@@ -34,3 +34,11 @@ browser errors, tracing, Session Replay, and logs.  Do not reintroduce Datadog o
 - `node scripts/verify-sentry.mjs` and `node scripts/verify-infisical-sot.mjs` pass.
 - Repo grep outside archives (static/, docs/ history, start/) shows no
   remaining Datadog references in site code, scripts, CI, or env examples.
+
+## Follow-up (same day)
+
+Owner asked for the start site's Datadog too.  Removed: the start page card
+and its `si-datadog` icon, the admin panel's Datadog Monitors entry and
+`renderDatadog`, `checkDatadog` and its CHECKS entry in
+`start/api/_admin/worker.mjs`, and the card identity test.  `DD_API_KEY` /
+`DD_APP_KEY` env vars on the start Vercel project can be deleted by the owner.

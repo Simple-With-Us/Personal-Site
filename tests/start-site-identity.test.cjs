@@ -12,12 +12,6 @@ const root = path.resolve(__dirname, '..');
 const read = (rel) => fs.readFileSync(path.join(root, rel), 'utf8');
 const page = read('start/public/index.html');
 
-test('the operator start page names the live Datadog site', () => {
-  assert.match(page, /sub: "us5\.datadoghq\.com"/);
-  assert.match(page, /url: "https:\/\/us5\.datadoghq\.com\/"/);
-  assert.doesNotMatch(page, /slack\.com\/app_redirect/);
-});
-
 test('the operator start page links chat to the fleet Zulip realm', () => {
   assert.match(page, /name: "#Work-In-Progress"/);
   assert.doesNotMatch(page, /#agent-sync(?![\w-])/);

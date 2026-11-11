@@ -1,5 +1,6 @@
 # Status
 
+- 2026-11-10 (follow-up): Start-site Datadog removed too — start page card, admin Monitors panel, checkDatadog in the admin worker, and the card identity test.  Fleet-wide, Datadog is gone from this repo.  PS-146.
 - 2026-11-10: Datadog removed entirely (owner: useless on the free tier). Sentry owns all observability. DD_* keys, site/src/lib/datadog, scripts/verify-datadog.mjs, CI step, and env examples deleted. Start-site Datadog card/admin panel kept (operator monitoring surface). Board PS-146.
 - 2026-10-30: Added docs/reports/README.md to index existing reports and rollout records; historical files remain at their canonical paths.  Central collection under Code/Docs/Personal-Site/ is populated under the owner-approved docs-only exception.  The collector and protocol are live in AI-Fleet-Coordinator main at `691f4a3c`; the 16-repo collection check reported zero planned changes, and protected Git checkouts remain unchanged.  The in-repo index links the existing files.
 

@@ -36,17 +36,6 @@ const MIGRATED_KEYS = [
   "BETTER_AUTH_SECRET",
   "VITE_AUTH_ENABLED",
   "EMAIL_PASSWORD_ENABLED",
-  "DD_API_KEY",
-  "DD_SITE",
-  "DD_APPLICATION_ID",
-  "DD_CLIENT_TOKEN",
-  "DD_SERVICE",
-  "DD_ENV",
-  "DD_VERSION",
-  "DD_AGENT_HOST",
-  "DD_TRACE_AGENT_PORT",
-  "DD_TRACE_SAMPLE_RATE",
-  "DD_FAIL_CLOSED",
   "SENTRY_DSN",
   "SENTRY_AUTH_TOKEN",
   "SENTRY_ORG",
@@ -54,21 +43,12 @@ const MIGRATED_KEYS = [
   "SENTRY_ENVIRONMENT",
   "SENTRY_RELEASE",
 ];
-// Note: DD_TRACE_EXPERIMENTAL_EXPORTER is written (not read) by
-// applyDatadogProcessEnv for dd-trace import-time compat — it is not a
-// managed setting and stays out of SETTINGS_INVENTORY.
-
 // Files allowed to touch process.env for migrated keys, and why:
 //  - lib/settings.server.ts ......... the single sanctioned reader (SOT cache + degraded fallback)
-//  - lib/datadog/fail-closed.ts ..... dependency-injected readers; default param is process.env
-//                                       (its standalone CI unit checks pass env explicitly)
-//  - lib/datadog/server.server.ts ... WRITES resolved values back for dd-trace import-time reads
 //  - vite.config.ts .................. build-time client-bundle defines (Vercel env <- Infisical sync)
 //  - scripts/migrate.mjs ............. build-time DB migration (Vercel env)
 const ALLOWLIST = new Set([
   "site/src/lib/settings.server.ts",
-  "site/src/lib/datadog/fail-closed.ts",
-  "site/src/lib/datadog/server.server.ts",
   "site/vite.config.ts",
   "site/scripts/migrate.mjs",
 ]);

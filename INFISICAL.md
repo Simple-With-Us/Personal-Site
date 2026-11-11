@@ -21,17 +21,6 @@ stay in the app's own store and never go in Infisical.
 | `BETTER_AUTH_SECRET` | secret | Empty — **to be filled by admin**.  Falls back to a process-stable random secret. |
 | `VITE_AUTH_ENABLED` | env-config | Seeded (`true`).  `"false"` forces auth off everywhere (shared dev user). |
 | `EMAIL_PASSWORD_ENABLED` | knob | Empty (= default off) — **to be filled by admin** to enable local email/password sign-in without a code deploy. |
-| `DD_API_KEY` | secret | Empty — **to be filled by admin** (agentless server logs + APM). |
-| `DD_SITE` | env-config | Seeded (`us5.datadoghq.com`). |
-| `DD_APPLICATION_ID` | env-config | Empty — **to be filled by admin**.  Also baked into the client bundle at build time (see below). |
-| `DD_CLIENT_TOKEN` | secret | Empty — **to be filled by admin**.  Also baked into the client bundle at build time (see below). |
-| `DD_SERVICE` | env-config | Seeded (`personal-site`). |
-| `DD_ENV` | env-config | Empty — derived from `VERCEL_ENV` / `NODE_ENV` when unset. |
-| `DD_VERSION` | env-config | Empty — derived from `VERCEL_GIT_COMMIT_SHA` when unset. |
-| `DD_AGENT_HOST` | env-config | Empty — **to be filled by admin** on Coolify/Hetzner.  Unset = agentless intake. |
-| `DD_TRACE_AGENT_PORT` | knob | Empty (= default `8126`). |
-| `DD_TRACE_SAMPLE_RATE` | knob | Seeded (`0.2` — fleet cost rule for production traces). |
-| `DD_FAIL_CLOSED` | knob | Empty (= default off).  `"1"` = Datadog required even outside production. |
 | `SENTRY_DSN` | secret | Empty — **to be filled by admin**.  Browser DSN for the `personal-site` Sentry project.  Baked into the client bundle at build time (see below). |
 | `SENTRY_AUTH_TOKEN` | secret | Empty — **to be filled by admin**.  Build-time source-map upload only (`project:releases`).  Never sent to the browser. |
 | `SENTRY_ORG` | env-config | Empty — defaults to `simple-with-us` in `vite.config.ts`. |
@@ -39,7 +28,7 @@ stay in the app's own store and never go in Infisical.
 | `SENTRY_ENVIRONMENT` | env-config | Empty — derived from `VERCEL_ENV` / `NODE_ENV` when unset. |
 | `SENTRY_RELEASE` | env-config | Empty — derived from `VERCEL_GIT_COMMIT_SHA` when unset. |
 
-The six non-empty defaults (`DD_SERVICE`, `DD_SITE`, `DD_TRACE_SAMPLE_RATE`,
+The non-empty defaults (`SENTRY_*`,
 `GROK_AUTH_ISSUER`, `SENTRY_FLEET_DSN`, `VITE_AUTH_ENABLED`) live in the **prod**
 environment.  The eleven keys marked empty above were deliberately not carried
 over from the retired `dev` environment: an empty key in prod is the
@@ -51,14 +40,14 @@ Secret values are NEVER invented, guessed, or copied from elsewhere — empty me
 
 - **Per-user settings** (auth sessions, user rows, any per-user preference): live in the app's own store (Neon/PGLite via Better Auth + app tables).  Explicitly out of scope.
 - **Platform-injected vars** (`VERCEL_ENV`, `VERCEL_URL`, `VERCEL_GIT_COMMIT_SHA`): provided by Vercel at runtime; read directly where needed.
-- **Build-time client-bundle config** (`VITE_*`, `SENTRY_DSN`, `SENTRY_ENVIRONMENT`, `SENTRY_RELEASE`, leftover `DD_*` server keys via `vite.config.ts` → `import.meta.env`): these are baked into the browser bundle at build time and cannot be fetched from Infisical at runtime (the browser must never hold the universal-auth client secret).  Their SOURCE is still Infisical — the deploy pipeline must sync Infisical → Vercel environment variables so `vite build` picks them up.  A stale client bundle after a rotation is fixed by redeploying.  `SENTRY_AUTH_TOKEN` is build-time only and is never defined into the client.
+- **Build-time client-bundle config** (`VITE_*`, `SENTRY_DSN`, `SENTRY_ENVIRONMENT`, `SENTRY_RELEASE`, `vite.config.ts` → `import.meta.env`): these are baked into the browser bundle at build time and cannot be fetched from Infisical at runtime (the browser must never hold the universal-auth client secret).  Their SOURCE is still Infisical — the deploy pipeline must sync Infisical → Vercel environment variables so `vite build` picks them up.  A stale client bundle after a rotation is fixed by redeploying.  `SENTRY_AUTH_TOKEN` is build-time only and is never defined into the client.
 - **Build-time migration** (`site/scripts/migrate.mjs`, run as `db:migrate` during `npm run build`): reads `DATABASE_URL` from the build environment (Vercel), same sync as above.
 - **Build-time constants that never change at runtime** (route paths, OAuth endpoint path templates, preview allowlist `*.grok-sandbox.com`, P2P poll intervals): stay in code.
 
 ## Runtime contract
 
 1. **Load at startup.**  `site/src/lib/settings.server.ts` exports a singleton built on the shared `createInfisicalSettings` client (`@jaywedgeworth22/congress-trading-shared`).  The module's top-level await runs `initSettings()` before any importer reads settings, so the full secret set for the matching environment is in an in-memory cache before the first request.  When the bootstrap identity IS configured but Infisical cannot be reached, boot fails fast.  Missing required keys throw an error naming the key and pointing here.
-2. **Never fetch per-request.**  `settingsValue()` / `settingsRequired()` / `settingsFlag()` read memory (or the degraded `process.env` fallback) ONLY.  They never touch the network and are safe in hot paths.  The Datadog server module merges the cache over `process.env` in memory (`currentDatadogEnv()`) for the same reason.
+2. **Never fetch per-request.**  `settingsValue()` / `settingsRequired()` / `settingsFlag()` read memory (or the degraded `process.env` fallback) ONLY.  They never touch the network and are safe in hot paths. 
 3. **Background refresh.**  The client refreshes every 5 minutes and on `SIGHUP`.  Refresh failures log loudly and keep serving the last-known-good cache — staleness is safer than an outage.  Admins can also force a reload from the settings console.
 4. **Write-through on admin save.**  The admin console (`/admin/settings`, server functions in `site/src/lib/settings-admin.ts`) calls the client's `set()`, which PATCHes Infisical FIRST and only then updates the local cache.  A failed Infisical write fails the save — the cache and Infisical never diverge silently.
 
@@ -78,7 +67,7 @@ are typed blind when rotating).
 When `INFISICAL_CLIENT_ID` / `INFISICAL_CLIENT_SECRET` are not set (local
 `npm run dev`, live-preview sandbox), settings resolve to `null` and every
 read falls back to `process.env` — the app keeps its existing zero-config
-behavior (PGLite, preview auth client, dark Datadog).  This is loud (a
+behavior (PGLite, preview auth client).  This is loud (a
 startup warning) and intentional: it is the documented local-dev path, not a
 silent failure.  Write-through and reload are disabled in degraded mode and
 fail with a clear error instead of pretending to save.

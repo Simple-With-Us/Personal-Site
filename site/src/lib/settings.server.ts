@@ -31,8 +31,7 @@
  * startup warning) and documented in INFISICAL.md; it is NOT silent.
  *
  * The ONLY process.env reads for migrated keys live in this module (plus the
- * dependency-injected defaults in `datadog/fail-closed.ts`, the build-time
- * `vite.config.ts` Sentry defines, and the build-time `scripts/migrate.mjs`
+ * build-time `vite.config.ts` Sentry defines, and the build-time `scripts/migrate.mjs`
  * — all called out in INFISICAL.md).  `scripts/verify-infisical-sot.mjs`
  * lints this.
  *
@@ -118,79 +117,6 @@ export const SETTINGS_INVENTORY: readonly SettingMeta[] = [
     required: false,
     description:
       "Feature flag: \"true\" enables local email/password sign-in.  Default off.",
-  },
-  {
-    key: "DD_API_KEY",
-    kind: "secret",
-    required: false,
-    description: "Datadog API key (agentless server logs + APM).",
-  },
-  {
-    key: "DD_SITE",
-    kind: "env-config",
-    required: false,
-    description: "Datadog site.  Default us5.datadoghq.com.",
-  },
-  {
-    key: "DD_APPLICATION_ID",
-    kind: "env-config",
-    required: false,
-    description:
-      "Datadog RUM application id.  Also baked into the client bundle at build time (see INFISICAL.md).",
-  },
-  {
-    key: "DD_CLIENT_TOKEN",
-    kind: "secret",
-    required: false,
-    description:
-      "Datadog RUM client token.  Also baked into the client bundle at build time (see INFISICAL.md).",
-  },
-  {
-    key: "DD_SERVICE",
-    kind: "env-config",
-    required: false,
-    description: "Datadog service name.  Default personal-site.",
-  },
-  {
-    key: "DD_ENV",
-    kind: "env-config",
-    required: false,
-    description:
-      "Datadog env tag.  Derived from VERCEL_ENV / NODE_ENV when unset.",
-  },
-  {
-    key: "DD_VERSION",
-    kind: "env-config",
-    required: false,
-    description:
-      "Datadog version tag.  Derived from VERCEL_GIT_COMMIT_SHA when unset.",
-  },
-  {
-    key: "DD_AGENT_HOST",
-    kind: "env-config",
-    required: false,
-    description:
-      "Datadog Agent host (Coolify/Hetzner).  Unset = agentless intake.",
-  },
-  {
-    key: "DD_TRACE_AGENT_PORT",
-    kind: "knob",
-    required: false,
-    description: "Datadog Agent trace port.  Default 8126.",
-  },
-  {
-    key: "DD_TRACE_SAMPLE_RATE",
-    kind: "knob",
-    required: false,
-    description:
-      "Trace sample rate.  Fleet cost rule: 0.2 in production.",
-  },
-  {
-    key: "DD_FAIL_CLOSED",
-    kind: "knob",
-    required: false,
-    description:
-      "\"1\" = Datadog treated as required even outside production.",
   },
   {
     key: "SENTRY_DSN",

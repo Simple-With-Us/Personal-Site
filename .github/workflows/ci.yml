@@ -36,9 +36,6 @@ jobs:
       - name: About copy uses past tense
         run: grep -F "Earlier work included" static/index.html
 
-      - name: Datadog fail-closed instrumentation
-        run: node scripts/verify-datadog.mjs
-
       - name: Sentry browser instrumentation
         run: node scripts/verify-sentry.mjs
 

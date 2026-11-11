@@ -30,7 +30,7 @@ function mustNotMatch(rel, pattern) {
 
 function mustBeGone(rel) {
   if (existsSync(join(root, rel))) {
-    throw new Error(`${rel} should have been removed (Datadog RUM moved to Sentry)`);
+    throw new Error(`${rel} should have been removed (Datadog removed, Sentry owns observability)`);
   }
 }
 
@@ -61,7 +61,7 @@ mustMatch("site/package.json", /"@sentry\/react"/);
 mustMatch("site/package.json", /"@sentry\/vite-plugin"/);
 mustMatch("site/vercel.json", /ingest\.sentry\.io/);
 
-// Datadog browser SDKs are gone; server dd-trace stays.
+// Datadog is fully removed from the site.
 mustNotMatch("site/package.json", /@datadog\/browser/);
 mustNotMatch("site/vercel.json", /datadoghq/);
 mustBeGone("site/src/lib/datadog/rum.ts");

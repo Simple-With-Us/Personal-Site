@@ -24,9 +24,8 @@ Sentry project **`personal-site`**.  Attach `SENTRY_DSN` (and
 `SENTRY_AUTH_TOKEN` for source-map upload) on the Vercel `personal-site`
 project.  Release is `VERCEL_GIT_COMMIT_SHA`.  Do not commit secret values.
 
-Server logs and APM stay on the existing Datadog account (`DD_API_KEY`,
-`DD_SITE`).  Do not run Datadog RUM next to Sentry Replay.  PagerDuty is
-unused here.
+Datadog was removed entirely (owner 2026-11-10: useless on the free tier);
+Sentry owns all observability.  PagerDuty is unused here.
 
 ## Local
 

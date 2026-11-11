@@ -190,13 +190,7 @@ export default defineConfig(({ command }) => ({
     // Hidden maps: uploaded to Sentry, never referenced by the bundle.
     sourcemap: "hidden",
   },
-  ssr: {
-    external: ["dd-trace"],
-  },
-  optimizeDeps: {
-    exclude: ["dd-trace"],
-  },
-  plugins: [
+plugins: [
     pgliteBootstrapPlugin(),
     // Before tanstackStart so /auth/popup never falls through to the SPA.
     authPopupPlugin(),
@@ -206,8 +200,6 @@ export default defineConfig(({ command }) => ({
       ? [
           nitro({
             preset: "vercel",
-            // Native APM tracer must stay external to the Nitro bundle.
-            externals: { external: ["dd-trace"] },
           } as Parameters<typeof nitro>[0]),
         ]
       : []),

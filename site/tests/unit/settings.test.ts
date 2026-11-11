@@ -285,12 +285,6 @@ describe("personal-site settings service", () => {
       "BETTER_AUTH_SECRET",
       "VITE_AUTH_ENABLED",
       "EMAIL_PASSWORD_ENABLED",
-      "DD_API_KEY",
-      "DD_SITE",
-      "DD_APPLICATION_ID",
-      "DD_CLIENT_TOKEN",
-      "DD_SERVICE",
-      "DD_TRACE_SAMPLE_RATE",
       "SENTRY_DSN",
       "SENTRY_AUTH_TOKEN",
       "SENTRY_ORG",
@@ -370,7 +364,6 @@ describe("personal-site settings service", () => {
 
   it("assertSettingKey accepts inventory keys and rejects unknown keys", async () => {
     const { assertSettingKey } = settingsModule;
-    assert.equal(assertSettingKey("DD_API_KEY").key, "DD_API_KEY");
     assert.throws(() => assertSettingKey("EVIL_KEY"), /Unknown setting/);
   });
 

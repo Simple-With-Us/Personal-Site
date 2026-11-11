@@ -34,7 +34,7 @@ const contents = Object.fromEntries(
 
 const publicSource = Object.values(contents).join("\n");
 const forbiddenPrivateDestinations = [
-  /https?:\/\/github\.com\/(?:jaywedgeworth22|Simple-With-Us)\/fleet-ops/i,
+  /github\.com[/:](?:jaywedgeworth22|Simple-With-Us)\/fleet-ops(?![-\w])/i,
   /https?:\/\/(?:mac|board|control)\.jays\.services/i,
 ];
 

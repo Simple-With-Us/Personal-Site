@@ -109,6 +109,23 @@ function RepoBadge({ code }: { code: RepoCode }) {
   );
 }
 
+function visitorSectionLabel(kind: DigestSection["kind"], fallback: string): string {
+  switch (kind) {
+    case "prs":
+      return "Merged pull requests";
+    case "opened":
+      return "Issues opened";
+    case "closed":
+      return "Issues closed";
+    case "effort":
+      return fallback;
+    default: {
+      const unreachable: never = kind;
+      return unreachable;
+    }
+  }
+}
+
 function SectionIcon({ kind }: { kind: DigestSection["kind"] }) {
   const cls = "size-3.5 shrink-0 text-fg-subtle";
   switch (kind) {
@@ -118,8 +135,12 @@ function SectionIcon({ kind }: { kind: DigestSection["kind"] }) {
       return <CircleDot className={cls} aria-hidden />;
     case "closed":
       return <CircleCheck className={cls} aria-hidden />;
-    default:
+    case "effort":
       return <ListTodo className={cls} aria-hidden />;
+    default: {
+      const unreachable: never = kind;
+      return unreachable;
+    }
   }
 }
 
@@ -138,7 +159,7 @@ function ItemRow({ item }: { item: DigestItem }) {
           href={item.href}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-start gap-2 rounded-[var(--radius-sm)] px-2 py-1.5 transition-colors hover:bg-bg-subtle"
+          className="flex min-h-11 items-start gap-2 rounded-[var(--radius-sm)] px-2 py-2.5 transition-colors hover:bg-bg-subtle"
         >
           {body}
         </a>
@@ -147,7 +168,7 @@ function ItemRow({ item }: { item: DigestItem }) {
   }
 
   return (
-    <li className="flex items-start gap-2 rounded-[var(--radius-sm)] px-2 py-1.5">
+    <li className="flex min-h-11 items-start gap-2 rounded-[var(--radius-sm)] px-2 py-2.5">
       {body}
     </li>
   );
@@ -158,10 +179,10 @@ function DayBody({ day }: { day: DigestDay }) {
     <div className="grid gap-4">
       {day.sections.map((section) => (
         <div key={section.label}>
-          <div className="mb-1.5 flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-fg-subtle">
+          <div className="mb-1.5 flex items-center gap-1.5 text-sm font-medium text-fg-muted">
             <SectionIcon kind={section.kind} />
-            {section.label}
-            <span className="font-normal normal-case tracking-normal text-fg-subtle/80">
+            {visitorSectionLabel(section.kind, section.label)}
+            <span className="font-normal text-fg-subtle">
               · {section.items.length}
             </span>
           </div>
@@ -172,7 +193,7 @@ function DayBody({ day }: { day: DigestDay }) {
           </ul>
           {section.items.length > 12 ? (
             <p className="mt-1 px-2 text-xs text-fg-subtle">
-              +{section.items.length - 12} more on the full digest
+              {section.items.length - 12} more on the full activity page
             </p>
           ) : null}
         </div>
@@ -215,75 +236,87 @@ export function FleetActivity() {
           <p className="text-xs font-medium uppercase tracking-[0.14em] text-fg-subtle">
             Activity
           </p>
+          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-fg sm:text-3xl">
+            Recent activity
+          </h2>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-fg-muted">
+            A public log of recent changes.
+          </p>
         </div>
 
         {q.isLoading ? (
           <div
-            className="h-64 animate-pulse rounded-[var(--radius-lg)] border border-border bg-bg-elevated/90"
+            className="flex h-64 flex-col items-center justify-center gap-3 rounded-[var(--radius-lg)] border border-border bg-bg-elevated/90"
             aria-busy="true"
             aria-live="polite"
-          />
+          >
+            <div className="h-2 w-40 animate-pulse rounded-full bg-bg-subtle" />
+            <p className="text-sm text-fg-muted">Loading activity.</p>
+          </div>
         ) : null}
 
         {q.isError ? (
           <div className="rounded-[var(--radius-lg)] border border-border bg-bg-elevated/90 p-6 text-sm text-fg-muted">
-            <p>Could not load the live digest right now.</p>
+            <p>Could not load recent activity.</p>
             <a
               href={site.fleet.html}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-3 inline-flex text-link hover:underline"
+              className="mt-2 inline-flex min-h-11 items-center text-sm font-medium text-link hover:underline"
             >
-              Open the public activity digest instead
+              Open Full Activity
             </a>
           </div>
         ) : null}
 
         {day ? (
           <article className="rounded-[var(--radius-lg)] border border-border bg-bg-elevated/92 p-4 shadow-[var(--shadow-soft)] backdrop-blur-[2px] sm:p-5">
-            <header className="mb-5 flex items-center justify-between gap-2">
-              <button
-                type="button"
-                className={cn(
-                  "inline-flex size-10 shrink-0 items-center justify-center rounded-[var(--radius-sm)] border border-border text-fg transition-colors",
-                  canPrev
-                    ? "hover:bg-bg-subtle hover:border-border-strong"
-                    : "cursor-not-allowed opacity-35",
-                )}
-                aria-label="Previous day"
-                disabled={!canPrev}
-                onClick={() => setDayIndex((i) => Math.min(i + 1, allDays.length - 1))}
-              >
-                <ChevronLeft className="size-5" aria-hidden />
-              </button>
+            <header className="mb-5">
+              <div className="flex items-center justify-between gap-2">
+                <button
+                  type="button"
+                  className={cn(
+                    "inline-flex size-11 shrink-0 items-center justify-center rounded-[var(--radius-sm)] border border-border text-fg transition-colors",
+                    canPrev
+                      ? "hover:bg-bg-subtle hover:border-border-strong"
+                      : "cursor-not-allowed opacity-35",
+                  )}
+                  aria-label="Previous day"
+                  disabled={!canPrev}
+                  onClick={() => setDayIndex((i) => Math.min(i + 1, allDays.length - 1))}
+                >
+                  <ChevronLeft className="size-5" aria-hidden />
+                </button>
 
-              <h3 className="min-w-0 flex-1 text-center text-lg tracking-tight sm:text-xl">
-                <span className="font-bold text-fg">{label}</span>
-                {"\u00A0\u00A0\u00A0"}
+                <h3 className="min-w-0 flex-1 text-center text-lg font-bold tracking-tight text-fg sm:text-xl">
+                  {label}
+                </h3>
+
+                <button
+                  type="button"
+                  className={cn(
+                    "inline-flex size-11 shrink-0 items-center justify-center rounded-[var(--radius-sm)] border border-border text-fg transition-colors",
+                    canNext
+                      ? "hover:bg-bg-subtle hover:border-border-strong"
+                      : "cursor-not-allowed opacity-35",
+                  )}
+                  aria-label="Next day"
+                  disabled={!canNext}
+                  onClick={() => setDayIndex((i) => Math.max(i - 1, 0))}
+                >
+                  <ChevronRight className="size-5" aria-hidden />
+                </button>
+              </div>
+              <div className="mt-1 flex justify-center">
                 <a
                   href={site.fleet.html}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-normal italic text-fg-muted transition-colors hover:text-link"
+                  className="inline-flex min-h-11 items-center px-3 text-sm font-medium text-link hover:underline"
                 >
-                  See Full Digest
+                  See Full Activity
                 </a>
-              </h3>
-
-              <button
-                type="button"
-                className={cn(
-                  "inline-flex size-10 shrink-0 items-center justify-center rounded-[var(--radius-sm)] border border-border text-fg transition-colors",
-                  canNext
-                    ? "hover:bg-bg-subtle hover:border-border-strong"
-                    : "cursor-not-allowed opacity-35",
-                )}
-                aria-label="Next day"
-                disabled={!canNext}
-                onClick={() => setDayIndex((i) => Math.max(i - 1, 0))}
-              >
-                <ChevronRight className="size-5" aria-hidden />
-              </button>
+              </div>
             </header>
 
             <DayBody day={day} />
@@ -291,7 +324,7 @@ export function FleetActivity() {
         ) : null}
 
         {!q.isLoading && !q.isError && allDays.length === 0 ? (
-          <p className="text-sm text-fg-muted">No activity rows in the digest yet.</p>
+          <p className="text-sm text-fg-muted">No activity to show yet.</p>
         ) : null}
       </div>
     </section>

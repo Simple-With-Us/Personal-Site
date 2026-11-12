@@ -58,7 +58,7 @@ export function SiteHeader({ className }: { className?: string }) {
               <a
                 key={item.href}
                 href={item.href}
-                className="rounded-[var(--radius-sm)] px-2.5 py-2 text-sm text-fg-muted transition-colors hover:bg-bg-subtle hover:text-fg sm:px-3"
+                className="inline-flex min-h-11 items-center rounded-[var(--radius-sm)] px-2.5 text-sm text-fg-muted transition-colors hover:bg-bg-subtle hover:text-fg sm:px-3"
               >
                 {item.label}
               </a>
@@ -69,7 +69,7 @@ export function SiteHeader({ className }: { className?: string }) {
             <button
               type="button"
               className={cn(
-                "inline-flex items-center justify-center rounded-[var(--radius-sm)] p-2.5 text-fg-muted transition-colors hover:bg-bg-subtle hover:text-fg",
+                "inline-flex size-11 items-center justify-center rounded-[var(--radius-sm)] text-fg-muted transition-colors hover:bg-bg-subtle hover:text-fg",
                 open === "sections" && "bg-bg-subtle text-fg",
               )}
               aria-expanded={open === "sections"}
@@ -92,14 +92,14 @@ export function SiteHeader({ className }: { className?: string }) {
                 id={sectionsId}
                 role="menu"
                 aria-label="Site menu"
-                className="absolute right-0 top-[calc(100%+0.35rem)] z-50 w-56 overflow-hidden rounded-[var(--radius-md)] border border-border bg-bg-elevated/95 py-1 shadow-[var(--shadow-soft)] backdrop-blur-sm"
+                className="absolute right-0 top-[calc(100%+0.35rem)] z-50 max-h-[calc(100dvh-4.5rem)] w-56 overflow-y-auto overscroll-contain rounded-[var(--radius-md)] border border-border bg-bg-elevated/95 py-1 shadow-[var(--shadow-soft)] backdrop-blur-sm"
               >
                 {nav.map((item) => (
                   <a
                     key={item.href}
                     href={item.href}
                     role="menuitem"
-                    className="block px-3 py-2.5 text-base font-medium tracking-tight text-fg transition-colors hover:bg-bg-subtle"
+                    className="flex min-h-11 items-center px-3 text-base font-medium tracking-tight text-fg transition-colors hover:bg-bg-subtle"
                     onClick={() => setOpen("none")}
                   >
                     {item.label}
@@ -113,7 +113,7 @@ export function SiteHeader({ className }: { className?: string }) {
                     role="menuitem"
                     target={s.id === "email" ? undefined : "_blank"}
                     rel={s.id === "email" ? undefined : "noopener noreferrer"}
-                    className="flex items-center gap-3 px-3 py-2 text-fg transition-colors hover:bg-bg-subtle"
+                    className="flex min-h-11 items-center gap-3 px-3 text-fg transition-colors hover:bg-bg-subtle"
                     onClick={() => setOpen("none")}
                   >
                     <span className="inline-flex size-5 shrink-0 items-center justify-center text-fg-muted">
@@ -130,7 +130,7 @@ export function SiteHeader({ className }: { className?: string }) {
             <button
               type="button"
               className={cn(
-                "inline-flex items-center gap-1 rounded-[var(--radius-sm)] px-2.5 py-2 text-sm text-fg-muted transition-colors hover:bg-bg-subtle hover:text-fg sm:px-3",
+                "inline-flex min-h-11 items-center gap-1 rounded-[var(--radius-sm)] px-2.5 text-sm text-fg-muted transition-colors hover:bg-bg-subtle hover:text-fg sm:px-3",
                 open === "links" && "bg-bg-subtle text-fg",
               )}
               aria-expanded={open === "links"}
@@ -138,7 +138,7 @@ export function SiteHeader({ className }: { className?: string }) {
               aria-haspopup="menu"
               onClick={() => setOpen((v) => (v === "links" ? "none" : "links"))}
             >
-              Links
+              Social
               <ChevronDown
                 className={cn(
                   "size-3.5 transition-transform",
@@ -153,7 +153,7 @@ export function SiteHeader({ className }: { className?: string }) {
                 id={linksId}
                 role="menu"
                 aria-label="Social links"
-                className="absolute right-0 top-[calc(100%+0.35rem)] z-50 w-56 overflow-hidden rounded-[var(--radius-md)] border border-border bg-bg-elevated/95 py-1 shadow-[var(--shadow-soft)] backdrop-blur-sm"
+                className="absolute right-0 top-[calc(100%+0.35rem)] z-50 max-h-[calc(100dvh-4.5rem)] w-56 overflow-y-auto overscroll-contain rounded-[var(--radius-md)] border border-border bg-bg-elevated/95 py-1 shadow-[var(--shadow-soft)] backdrop-blur-sm"
               >
                 {site.social.map((s) => (
                   <a
@@ -162,7 +162,7 @@ export function SiteHeader({ className }: { className?: string }) {
                     role="menuitem"
                     target={s.id === "email" ? undefined : "_blank"}
                     rel={s.id === "email" ? undefined : "noopener noreferrer"}
-                    className="flex items-center gap-3 px-3 py-2.5 text-sm text-fg transition-colors hover:bg-bg-subtle"
+                    className="flex min-h-11 items-center gap-3 px-3 text-sm text-fg transition-colors hover:bg-bg-subtle"
                     onClick={() => setOpen("none")}
                   >
                     <span className="inline-flex size-5 shrink-0 items-center justify-center text-fg-muted">

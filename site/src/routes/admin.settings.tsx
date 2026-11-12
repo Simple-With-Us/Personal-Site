@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
 import { SignedIn, SignedOut } from "@/lib/auth/gates";
 import { GROK_PROVIDERS, signIn } from "@/lib/auth/client";
 import {
@@ -27,24 +28,24 @@ function AdminSettingsPage() {
       <SignedOut>
         <main className="mx-auto max-w-2xl px-6 py-16">
           <h1 className="text-2xl font-semibold text-fg">Admin Settings</h1>
-          <p className="mt-2 text-sm text-fg-subtle">
-            This console is for the site owner. Sign in to manage app
-            settings.
+          <p className="mt-2 text-sm leading-relaxed text-fg-muted">
+            This console is for the site owner.{"\u00A0 "}
+            Sign in to manage app settings.
           </p>
           <div className="mt-6 flex flex-wrap gap-2">
             {GROK_PROVIDERS.map((p) => (
-              <button
+              <Button
                 key={p.providerId}
                 type="button"
+                size="lg"
                 onClick={() =>
                   void signIn(p.providerId, {
                     callbackURL: "/admin/settings",
                   })
                 }
-                className="rounded-md bg-fg px-4 py-2 text-sm font-medium text-bg"
               >
                 Sign in with {p.label}
-              </button>
+              </Button>
             ))}
           </div>
         </main>
@@ -143,14 +144,14 @@ function SettingsPanel() {
         <button
           type="button"
           onClick={() => void reload()}
-          className="rounded-md border border-border bg-bg px-3 py-2 text-sm font-medium text-fg hover:bg-bg-muted"
+          className="inline-flex min-h-11 items-center rounded-[var(--radius-sm)] border border-border bg-bg px-3 text-sm font-medium text-fg hover:bg-bg-subtle"
         >
           Reload settings from Infisical
         </button>
       </div>
 
       {notice && (
-        <p className="mt-4 rounded-md border border-border bg-bg-muted px-3 py-2 text-sm text-fg">
+        <p className="mt-4 rounded-[var(--radius-sm)] border border-border bg-bg-subtle px-3 py-2 text-sm text-fg">
           {notice}
         </p>
       )}
@@ -210,7 +211,7 @@ function SettingsPanel() {
                           type="button"
                           disabled={saving}
                           onClick={() => void save(item.key)}
-                          className="rounded-md bg-fg px-3 py-1 text-sm font-medium text-bg disabled:opacity-50"
+                          className="inline-flex min-h-11 items-center rounded-[var(--radius-sm)] bg-accent px-3 text-sm font-medium text-accent-fg disabled:opacity-50"
                         >
                           {saving ? "Saving…" : "Save"}
                         </button>
@@ -221,7 +222,7 @@ function SettingsPanel() {
                             setEditingKey(null);
                             setDraftValue("");
                           }}
-                          className="rounded-md border border-border px-3 py-1 text-sm text-fg-muted"
+                          className="inline-flex min-h-11 items-center rounded-[var(--radius-sm)] border border-border px-3 text-sm text-fg-muted"
                         >
                           Cancel
                         </button>
@@ -235,7 +236,7 @@ function SettingsPanel() {
                         setDraftValue("");
                         setNotice(null);
                       }}
-                      className="rounded-md border border-border px-3 py-1 text-sm text-fg hover:bg-bg-muted"
+                      className="inline-flex min-h-11 items-center rounded-[var(--radius-sm)] border border-border px-3 text-sm text-fg hover:bg-bg-subtle"
                     >
                       {item.configured ? "Rotate" : "Set"}
                     </button>

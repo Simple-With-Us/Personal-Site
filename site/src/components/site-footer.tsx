@@ -7,7 +7,7 @@ export function SiteFooter() {
   return (
     <footer className="bg-bg/70 backdrop-blur-sm">
       <div className="mx-auto flex w-full max-w-5xl flex-col items-center gap-6 px-4 py-10 sm:px-6 sm:gap-8 sm:py-12">
-        <div className="mx-auto w-[70%]">
+        <div className="mx-auto w-full sm:w-[70%]">
           <div className="grid w-full grid-cols-5 gap-[clamp(0.3rem,1.2vw,0.55rem)] sm:grid-cols-10 sm:gap-[clamp(0.3rem,1vw,0.65rem)]">
             {site.social.filter((s) => s.id !== "simplewithus").map((s) => (
               <a
@@ -51,7 +51,7 @@ export function SiteFooter() {
           </p>
           <Link
             to="/terms-of-service"
-            className="text-[11px] text-fg-subtle/70 transition-colors hover:text-fg-subtle"
+            className="inline-flex min-h-11 items-center px-3 text-sm text-fg-muted transition-colors hover:text-fg"
           >
             Terms of Service
           </Link>

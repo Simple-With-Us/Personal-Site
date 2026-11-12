@@ -1,5 +1,11 @@
 name: Vercel production catch-up
 
+# sentry-cron-self-report: ci-personal-site-vercel-production-catch-up
+# The hourly cron below is the retry cadence. GitHub delivers it about every
+# six hours, so the Sentry monitor is the 12-hour interval in
+# scripts/deploy/sentry-cron-checkin.mjs, not this crontab. The shared
+# reporter must not also upsert that monitor.
+
 on:
   workflow_run:
     workflows: ["CI", "Site CI"]
@@ -31,7 +37,14 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: '26'
-      - run: node --test scripts/deploy/vercel-catch-up.test.mjs
+      - name: Open the Sentry cron check-in
+        if: github.event_name == 'schedule'
+        continue-on-error: true
+        env:
+          SENTRY_FLEET_DSN: ${{ secrets.SENTRY_FLEET_DSN }}
+          CRON_CHECKIN_PHASE: open
+        run: node scripts/deploy/sentry-cron-checkin.mjs
+      - run: node --test scripts/deploy/vercel-catch-up.test.mjs scripts/deploy/sentry-cron-checkin.test.mjs
 
   deploy:
     needs: test
@@ -86,3 +99,28 @@ jobs:
             --meta githubCommitSha="$(git rev-parse HEAD)" \
             --meta githubCommitRef=main > "$RUNNER_TEMP/vercel-deployment.json"
           node scripts/deploy/vercel-catch-up.mjs receipt "$RUNNER_TEMP/vercel-deployment.json"
+
+  cron-close:
+    needs: [test, deploy]
+    continue-on-error: true
+    if: >-
+      always() &&
+      github.event_name != 'pull_request' &&
+      (github.event_name == 'schedule' || needs.test.result == 'failure' || needs.deploy.result == 'failure')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '26'
+      - name: Close the Sentry cron check-in
+        continue-on-error: true
+        env:
+          SENTRY_FLEET_DSN: ${{ secrets.SENTRY_FLEET_DSN }}
+          CRON_CHECKIN_PHASE: close
+          TEST_RESULT: ${{ needs.test.result }}
+          DEPLOY_RESULT: ${{ needs.deploy.result }}
+        run: node scripts/deploy/sentry-cron-checkin.mjs

@@ -24,7 +24,6 @@ name: Sentry CI Report
 #      that silently stops firing raises a missed-check-in alert.
 #
 # workflows observed (from `ls .github/workflows/`; see each file's `name:`):
-#   Vercel production catch-up, Vercel production catch-up (start),
 #   Backup GitHub Repositories, CI, Effort Issues Sync, Secret scanning,
 #   Mirror live site, Site CI
 #
@@ -32,13 +31,17 @@ name: Sentry CI Report
 #   - Sentry CI Report (this file) — would recurse.
 #   - PR Autofix, Claude Code Autofix and the Kody autofix — they were never
 #     observed here and their failures are handled by their own lanes.
+#   - Vercel production catch-up and Vercel production catch-up (start).
+#     They check in from scripts/deploy/sentry-cron-checkin.mjs on the slug
+#     each monitor already has.  This reporter can only upsert the caller's
+#     crontab with a 15-minute margin, and GitHub does not deliver the hourly
+#     catch-up cron inside that margin.  Leaving either workflow here would
+#     put the hourly monitor back on the next scheduled run.
 #
 # Cron schedules mirrored for the check-in step (must match the source workflow's
 # `schedule:` block AND its `name:`;  `scripts/verify-sentry-ci-report.py` fails
 # CI when the two drift apart,  and the shared reporter raises a Sentry issue on
 # the same drift at run time):
-#   Vercel production catch-up             -> "41 * * * *"
-#   Vercel production catch-up (start)     -> "41 * * * *"
 #   Effort Issues Sync                     -> "27 6 * * *"
 #   Mirror live site                       -> "0 6 * * *"
 #
@@ -57,8 +60,6 @@ on:
     workflows:
       # Names must match the `name:` field of workflow files exactly —
       # a stale entry here silently disables alerting for that pipeline.
-      - Vercel production catch-up
-      - Vercel production catch-up (start)
       - Backup GitHub Repositories
       - CI
       - Effort Issues Sync
@@ -96,8 +97,8 @@ jobs:
     # below to the merge SHA does not invalidate it.
     uses: Simple-With-Us/AI-Fleet-Coordinator/.github/workflows/sentry-ci-report-reusable.yml@b59d85c173ae8a52acf0cab93643ca6d35d84c3e
     with:
-      observed_workflows: '["Vercel production catch-up", "Vercel production catch-up (start)", "Backup GitHub Repositories", "CI", "Effort Issues Sync", "Secret scanning", "Mirror live site", "Site CI"]'
-      cron_schedules: '{"Vercel production catch-up": "41 * * * *", "Vercel production catch-up (start)": "41 * * * *", "Effort Issues Sync": "27 6 * * *", "Mirror live site": "0 6 * * *"}'
+      observed_workflows: '["Backup GitHub Repositories", "CI", "Effort Issues Sync", "Secret scanning", "Mirror live site", "Site CI"]'
+      cron_schedules: '{"Effort Issues Sync": "27 6 * * *", "Mirror live site": "0 6 * * *"}'
       reusable_ref: b59d85c173ae8a52acf0cab93643ca6d35d84c3e
       app: personal-site
       app_identity: personal-site

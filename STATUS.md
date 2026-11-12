@@ -1,5 +1,6 @@
 # Status
 
+- 2026-11-12: Vercel production catch-up Sentry monitors were missed check-ins.  GitHub runs the hourly cron about every six hours, and the shared reporter kept a 15-minute margin, so FLEET-INFRA-EY and FLEET-INFRA-G7 fired for hours that never started.  Both workflows now check in on their existing slugs with a 12-hour interval and the real job result.  A skipped deploy stays a successful no-op.  The start-site monitor is not orphaned.  PS-147.
 - 2026-11-12: Public-page UI polish.   Hero actions have room and a 44px target, the activity title no longer collides on a phone, the terms link meets contrast, and an unknown address gets a real page.   Rollout note `docs/rollouts/2026-11-12-ui-polish.md`.   Branch `cursor/ui-polish-0e19`.
 
 - 2026-11-10 (follow-up): Start-site Datadog removed too — start page card, admin Monitors panel, checkDatadog in the admin worker, and the card identity test.  Fleet-wide, Datadog is gone from this repo.  PS-146.

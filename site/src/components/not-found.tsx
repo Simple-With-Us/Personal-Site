@@ -8,7 +8,7 @@ export function NotFound(_props: NotFoundRouteProps) {
         404
       </p>
       <h1 className="mt-2 text-3xl font-semibold tracking-tight text-fg">
-        Page not found
+        Page Not Found
       </h1>
       <p className="mt-3 max-w-md text-base leading-relaxed text-fg-muted">
         That address is not on this site.

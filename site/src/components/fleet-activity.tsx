@@ -112,11 +112,11 @@ function RepoBadge({ code }: { code: RepoCode }) {
 function visitorSectionLabel(kind: DigestSection["kind"], fallback: string): string {
   switch (kind) {
     case "prs":
-      return "Merged pull requests";
+      return "Merged Pull Requests";
     case "opened":
-      return "Issues opened";
+      return "Issues Opened";
     case "closed":
-      return "Issues closed";
+      return "Issues Closed";
     case "effort":
       return fallback;
     default: {

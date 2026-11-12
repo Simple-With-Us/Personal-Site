@@ -73,9 +73,17 @@ function RootComponent() {
         <SentryInit />
         <CreatedWithGrokBanner />
         <TopoBackground />
-        <div className="relative z-10">
+        <div className="relative z-10 flex min-h-dvh flex-col">
+          <a
+            href="#main"
+            className="fixed left-4 top-4 z-[80] inline-flex h-11 -translate-y-[150%] items-center rounded-[var(--radius-sm)] bg-accent px-4 text-sm font-medium text-accent-fg focus:translate-y-0"
+          >
+            Skip to Content
+          </a>
           <SiteHeader />
-          <Outlet />
+          <div id="main" className="flex-1 scroll-mt-20">
+            <Outlet />
+          </div>
           <SiteFooter />
         </div>
       </QueryClientProvider>

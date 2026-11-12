@@ -2,6 +2,8 @@
 
 This publisher compares current main with the last actually promoted production SHA.  It does not compare only the latest two incoming commits, so a skipped site change is not lost behind a later docs-only merge.  Hourly reconciliation retries eligible latest main after the 3h window even when nobody pushes again.  CI completion also triggers reconciliation.  Scheduled runs can arrive late; this is a retry cadence, not an exact deployment deadline.
 
+Sentry watches that delivered cadence, not the hourly crontab.  From 2026-10-28 through 2026-11-11 the schedule runs succeeded and arrived about every six hours (gaps 3.35h to 10.62h), while the shared reporter kept a 15-minute margin on `41 * * * *`.  Each catch-up workflow now checks in on its existing monitor slug with a 12-hour interval and the real job result.  A skipped deploy remains a successful no-op.  See `scripts/deploy/sentry-cron-checkin.mjs`.
+
 The workflow is off until the repository variable `VERCEL_CATCH_UP_ENABLED` is exactly `true`.  There is no force or cooldown bypass input.  A shared concurrency group serializes main publishing.  A second gate after the local build checks for superseded main, an in-flight production build, and a new provider attempt before uploading once.
 
 ## Cutover, after this PR passes review and CI
@@ -16,7 +18,7 @@ Keep the workflow disabled if token access, project mapping, deployment metadata
 
 ## Checks
 
-`node --test scripts/deploy/vercel-catch-up.test.mjs`
+`node --test scripts/deploy/vercel-catch-up.test.mjs scripts/deploy/sentry-cron-checkin.test.mjs`
 
 The dependency-free unit and entrypoint integration tests cover the 3h boundary, last-skipped-merge catch-up, docs-only later commits, failed/canceled attempts, in-flight builds, binding/root drift, malformed provider data, exact-SHA CI, and deployment receipts.  PR runs execute tests without secrets.  Builds run from the repo root so the Vercel root directory is applied once.  CLI is pinned to 64.5.0.
 

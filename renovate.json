@@ -1,26 +1,45 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended"],
+  "extends": [
+    "config:recommended"
+  ],
   "dependencyDashboard": true,
   "minimumReleaseAge": "5 days",
   "packageRules": [
     {
-      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "pin",
+        "digest"
+      ],
       "groupName": "non-major dependencies",
       "automerge": true,
       "automergeType": "pr",
       "platformAutomerge": true
     },
     {
-      "matchUpdateTypes": ["major"],
+      "matchUpdateTypes": [
+        "major"
+      ],
       "automerge": false,
-      "labels": ["dependencies", "major"]
+      "labels": [
+        "dependencies",
+        "major"
+      ]
     },
     {
-      "matchPackageNames": ["typescript"],
-      "allowedVersions": "<7",
-      "description": "Hold TypeScript 7 until typescript-eslint supports it (typescript-eslint#10940)"
+      "matchPackageNames": [
+        "typescript"
+      ],
+      "allowedVersions": ">=4.8.4 <6.1.0",
+      "description": "Hold TypeScript within the range the installed typescript-eslint 8.71.2 supports (peerDependencies: typescript >=4.8.4 <6.1.0; typescript-eslint#10940). Revisit when the installed typescript-eslint supports a newer TypeScript."
     }
   ],
-  "vulnerabilityAlerts": { "labels": ["security"], "minimumReleaseAge": null }
+  "vulnerabilityAlerts": {
+    "labels": [
+      "security"
+    ],
+    "minimumReleaseAge": null
+  }
 }

@@ -34,12 +34,59 @@
       ],
       "allowedVersions": ">=4.8.4 <6.1.0",
       "description": "Hold TypeScript within the range the installed typescript-eslint 8.71.2 supports (peerDependencies: typescript >=4.8.4 <6.1.0; typescript-eslint#10940). Revisit when the installed typescript-eslint supports a newer TypeScript."
+    },
+    {
+      "description": "Major updates come once a month as their own PRs and never automerge.  Dependency Dashboard approval is not used because every fleet repo has GitHub issues turned off, so Renovate has no dashboard to approve from and majors would vanish silently.  Repos keep their own major labels, holds and PR text.",
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "schedule": [
+        "before 6am on the first day of the month"
+      ],
+      "automerge": false,
+      "addLabels": [
+        "major"
+      ]
+    },
+    {
+      "description": "Keep the npm <12 constraint above in place.  npm 12 defaults allow-remote to none, and `npm install --package-lock-only` (what Renovate runs for lockfiles) then refuses registry tarballs of packages with bundleDependencies, such as @tailwindcss/oxide-wasm32-wasi, with EALLOWREMOTE (npm/cli#9800, still open on npm 12.2.1).  Drop the constraint and this rule once a fixed npm 12 ships.",
+      "matchManagers": [
+        "renovate-config"
+      ],
+      "matchDepTypes": [
+        "tool-constraint"
+      ],
+      "enabled": false
     }
   ],
   "vulnerabilityAlerts": {
     "labels": [
       "security"
     ],
-    "minimumReleaseAge": null
+    "minimumReleaseAge": null,
+    "schedule": [
+      "at any time"
+    ]
+  },
+  "timezone": "America/Chicago",
+  "schedule": [
+    "before 6am on monday"
+  ],
+  "updateNotScheduled": false,
+  "prConcurrentLimit": 2,
+  "prHourlyLimit": 2,
+  "rebaseWhen": "conflicted",
+  "labels": [
+    "dependencies"
+  ],
+  "constraints": {
+    "npm": "<12"
+  },
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": [
+      "before 6am on the first day of the month"
+    ],
+    "automerge": true
   }
 }

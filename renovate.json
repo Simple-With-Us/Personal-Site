@@ -1,8 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended",
-    "local>Simple-With-Us/AI-Fleet-Coordinator//renovate.json"
+    "config:recommended"
   ],
   "dependencyDashboard": true,
   "minimumReleaseAge": "5 days",

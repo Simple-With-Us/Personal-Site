@@ -35,7 +35,7 @@ const LOGO_FILES = [...SEAT_MARKS, ...APP_ICONS].map((f) => `logos/${f}`).sort()
 test('static output contains only intended web assets and no repository data', () => {
   assert.equal(config.outputDirectory, 'public');
   const files = fs.readdirSync(path.join(root, 'start/public'), { recursive: true }).sort();
-  assert.deepEqual(files, ['admin', 'admin/index.html', 'admin/muse-assist.png', 'index.html', 'logos', ...LOGO_FILES, 'robots.txt']);
+  assert.deepEqual(files, ['admin', 'admin/index.html', 'admin/muse-assist.png', 'apple-touch-icon.png', 'favicon.png', 'index.html', 'logos', ...LOGO_FILES, 'robots.txt']);
   // Every declared logo must actually exist, so deleting one fails here rather
   // than shipping a 404 the page silently falls back from.
   for (const rel of LOGO_FILES) {

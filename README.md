@@ -2,7 +2,7 @@
 
 Canonical repository for **[jays.services](https://jays.services)** and **[jaywedgeworth.com](https://jaywedgeworth.com)**.
 
-The portfolio shows 11 app families across coding, financial research, and everyday utilities.  Usage Monitor has distinct Client and Local editions, each linked to its own Simple With Us page.  The portfolio links to public product pages, websites, and source where available; Simple With Us maintains platform release details.  The site deploys from GitHub `main` → `site/`, behind Cloudflare.
+The portfolio shows 10 app families across coding, financial research, and everyday utilities.  Usage Monitor has distinct Client and Local editions, each linked to its own Simple With Us page.  The portfolio links to public product pages, websites, and source where available; Simple With Us maintains platform release details.  The site deploys from GitHub `main` → `site/`, behind Cloudflare.
 
 ## Layout
 

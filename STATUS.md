@@ -1,5 +1,9 @@
 # Status
 
+## 2026-11-25 ZC — Fleet-Wide PR Title Header Rule ([OPS-1122](https://linear.app/simple-with-us/issue/OPS-1122))
+
+States the owner ruling (November 26, 2026) that every PR title begins with the compact lettered fleet header for the session that opened the PR (`[<SEAT>:` + three U+200A + `<PAIR>.<GEN>.<HOST>]`), then one ASCII space, then the human title; the title header is never omitted and never stacked under a formatter prefix.  PR descriptions and comments keep carrying the header as their first line.  Rollout: `docs/rollouts/2026-11-25-ops-1122-pr-title-headers.md`.  Canonical definition: AI-Fleet-Coordinator `FLEET-PROTOCOL.md`.
+
 - 2026-11-12: Vercel production catch-up Sentry monitors were missed check-ins.  GitHub runs the hourly cron about every six hours, and the shared reporter kept a 15-minute margin, so FLEET-INFRA-EY and FLEET-INFRA-G7 fired for hours that never started.  Both workflows now check in on their existing slugs with a 12-hour interval and the real job result.  A skipped deploy stays a successful no-op.  The start-site monitor is not orphaned.  PS-147.
 - 2026-11-12: Public-page UI polish.   Hero actions have room and a 44px target, the activity title no longer collides on a phone, the terms link meets contrast, and an unknown address gets a real page.   Rollout note `docs/rollouts/2026-11-12-ui-polish.md`.   Branch `cursor/ui-polish-0e19`.
 

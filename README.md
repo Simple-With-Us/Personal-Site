@@ -1,3 +1,5 @@
+<p><img src="start/public/logos/app-ps.png" alt="Jay Wedgeworth personal site logo" width="96" height="96"></p>
+
 # Jay Wedgeworth — Personal Site
 
 Canonical repository for **[jays.services](https://jays.services)** and **[jaywedgeworth.com](https://jaywedgeworth.com)**.

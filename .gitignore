@@ -20,6 +20,8 @@ site/playwright-report
 *.vars.*
 *.env.*
 .envrc
+*.envrc
+*.envrc.*
 !*.example
 !*.sample
 !*.template
